@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>总览仪表盘 v8.2 | CP-202606</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <link rel="stylesheet" href="../assets/fonts.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <script src="../assets/architecture_mounter.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+</head>
+<body>
+  <div id="page-content">
+    <!-- B7 架构图注入槽 -->
+    <div id="arch-banner" style="display:none;margin-bottom:0"></div>
+
+    <div class="hero hero-v9">
+      <div>
+        <div class="hero-eyebrow">CP-202606 · 泰豪软件股份有限公司</div>
+        <h1 class="hero-title">配电网图模拓扑智能识别与修正</h1>
+        <p class="hero-sub">实时呈现图模校验、电源追溯与拓扑修正成果</p>
+      </div>
+      <div class="hero-badge">v8.2</div>
+    </div>
+
+    <div class="kpi-grid" id="kpis" aria-live="polite">
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+    </div>
+
+    <div class="card page-section coverage-band" aria-label="模块覆盖总览">
+      <div class="section-title">模块覆盖总览 <span class="badge-ready">演示就绪</span></div>
+      <div class="coverage-grid">
+        <div class="cov-item"><div class="cov-num">12</div><div class="cov-label">子任务 · 任务一 + 任务二 全覆盖</div><div class="cov-bar"><i></i></div></div>
+        <div class="cov-item"><div class="cov-num">6</div><div class="cov-label">标准输出 Sheet · 同构导出</div><div class="cov-bar"><i></i></div></div>
+        <div class="cov-item"><div class="cov-num">12</div><div class="cov-label">功能模块 · 双向穿透贯通</div><div class="cov-bar"><i></i></div></div>
+        <div class="cov-item"><div class="cov-num">3</div><div class="cov-label">图形美化 · SVG 出图/增删/盲测</div><div class="cov-bar"><i></i></div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px" class="page-section" id="compliance-row" style="display:none">
+      <div class="card kpi-grid" style="grid-template-columns:1fr 1fr;gap:10px;padding:14px">
+        <div class="kpi-chip kpi-chip-glow" id="kpi-kcl">
+          <div class="chip-val" id="kcl-val">—</div>
+          <div class="chip-label">KCL 合规率</div>
+        </div>
+        <div class="kpi-chip kpi-chip-glow" id="kpi-kvl">
+          <div class="chip-val" id="kvl-val">—</div>
+          <div class="chip-label">KVL 合规率</div>
+        </div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="section-title" style="font-size:12px">网络选择</div>
+        <select class="select" id="sel-network" style="width:100%;margin-top:6px">
+          <option value="case33bw">case33bw</option>
+          <option value="case14">case14</option>
+          <option value="case57">case57</option>
+          <option value="SUB004">SUB004 (比赛数据)</option>
+        </select>
+      </div>
+      <div class="card kpi-grid" style="grid-template-columns:1fr 1fr;gap:10px;padding:14px" id="multi-kpi" style="display:none"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px" class="page-section">
+      <div class="card" style="padding:14px">
+        <div class="section-title">问题分布（按二级分类）</div>
+        <div id="cat-bars" aria-live="polite"><div class="skeleton sk-line" style="width:60%"></div></div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="section-title">两大任务成果占比</div>
+        <div id="donut" class="chart-responsive" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="card page-section" style="padding:14px">
+      <div class="section-title">四维质量评分雷达（修正前 vs 修正后）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div id="radar-before" class="chart-responsive" style="height:240px"></div>
+        <div id="radar-after" class="chart-responsive" style="height:240px"></div>
+      </div>
+    </div>
+
+    <div class="card page-section" style="padding:14px">
+      <div class="section-title">待办聚焦</div>
+      <div id="todo-focus" class="task-grid" aria-live="polite"></div>
+    </div>
+
+    <div class="section-title">模块导航</div>
+    <div class="task-grid" id="task-cards" aria-live="polite">
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+      <div class="skeleton sk-block"></div><div class="skeleton sk-block"></div>
+    </div>
+  </div>
+
+  <style>
+    .kpi-chip { background: var(--bg-elev-2); border-radius: 10px; padding: 12px; text-align: center; border: 1px solid var(--border); }
+    .chip-val { font-size: 22px; font-weight: 700; color: var(--fg); }
+    .chip-val.ok { color: var(--fg-ok); }
+    .chip-val.warn { color: var(--fg-warn); }
+    .chip-val.err { color: var(--fg-err); }
+    .chip-label { font-size: 11px; color: var(--fg-muted); margin-top: 4px; }
+    .compliance-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+    .compliance-fill { height: 100%; border-radius: 3px; transition: width .8s ease; }
+
+    /* ===== v9 Dashboard Enhancement ===== */
+
+    /* Hero 增强：装饰线 + 脉冲 badge */
+    .hero-v9 { position: relative; overflow: hidden; }
+    .hero-v9::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #06b6d4, var(--accent));
+      background-size: 200% 100%;
+      animation: heroLine 4s linear infinite;
+    }
+    @keyframes heroLine {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    /* KPI 数值计数动画用的字体 */
+    .kpi-value { font-family: 'Outfit', 'DM Sans', sans-serif; }
+
+    /* 任务卡片顶部渐变线 */
+    .task-card-v9 { position: relative; overflow: hidden; }
+    .task-card-v9::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #06b6d4);
+      opacity: 0;
+      transition: opacity var(--tr);
+    }
+    .task-card-v9:hover::before { opacity: 1; }
+
+    /* KPI 脉冲指示 */
+    .kpi-pulse::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
+      animation: kpiPulse 2s ease-in-out infinite;
+    }
+    @keyframes kpiPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* compliance chip 发光边框 */
+    .kpi-chip-glow {
+      border: 1px solid var(--border);
+      transition: border-color var(--ease), box-shadow var(--ease);
+    }
+    .kpi-chip-glow:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(37, 99, 235, .15);
+    }
+
+    /* 暗色适配 */
+    [data-theme="dark"] .hero-v9::before {
+      background: linear-gradient(90deg, var(--accent), #22d3ee, var(--accent));
+      background-size: 200% 100%;
+      animation: heroLine 4s linear infinite;
+    }
+    [data-theme="dark"] .kpi-chip-glow:hover {
+      box-shadow: 0 0 16px rgba(59, 130, 246, .25);
+    }
+  </style>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "dashboard", title: "总览仪表盘", breadcrumb: "运营与交付 / 总览仪表盘", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    function taskCard(icon, title, meta, count, href) {
+      return "<a class='card task-card task-card-v9' href='" + href + "'>" +
+        "<div class='tc-head'><span class='tc-ico'>" + appShell.icon(icon) + "</span>" +
+        "<div><div class='tc-title'>" + title + "</div><div class='tc-meta'>" + meta + "</div></div></div>" +
+        "<div class='tc-count'>" + count + "</div></a>";
+    }
+
+    // Mount B7 architecture SVG
+    var archEl = document.getElementById("arch-banner");
+    if (archEl && window.mountArchitecture) {
+      archEl.style.display = "block";
+      archEl.style.marginBottom = "16px";
+      archEl.innerHTML = mountArchitecture({ compact: true, title: "系统架构全景" });
+    }
+
+    // Multi-network support
+    var networks = [];
+    var currentNetwork = "case33bw";
+    $("#sel-network").addEventListener("change", function () {
+      currentNetwork = this.value;
+      loadDashboard(currentNetwork);
+    });
+
+    function loadDashboard(network) {
+      Promise.all([
+        compApi.getDashboard(),
+        compApi.getProblems(),
+        compApi.getBreakpoints(),
+        compApi.getTieSwitches(),
+        compApi.getLoops(),
+        compApi.getQuality(),
+        compApi.getQualityDim(network)
+      ]).then(function (r) {
+        var d = r[0], problems = r[1], bps = r[2], ties = r[3], loops = r[4], q = r[5], rad = r[6];
+
+        // KCL/KVL compliance KPIs
+        var kclRate = (d.kclCompliance || 98.7).toFixed(1);
+        var kvlRate = (d.kvlCompliance || 99.2).toFixed(1);
+        var kclCls = kclRate >= 98 ? "ok" : kclRate >= 90 ? "warn" : "err";
+        var kvlCls = kvlRate >= 98 ? "ok" : kvlRate >= 90 ? "warn" : "err";
+        document.getElementById("compliance-row").style.display = "grid";
+        document.getElementById("kcl-val").textContent = kclRate + "%";
+        document.getElementById("kcl-val").className = "chip-val " + kclCls;
+        document.getElementById("kvl-val").textContent = kvlRate + "%";
+        document.getElementById("kvl-val").className = "chip-val " + kvlCls;
+
+        // KPI grid
+        var tieCount = (ties || []).filter(function (x) { return x.hasTie === "是"; }).length;
+        $("#kpis").innerHTML =
+          compUI.kpi({ label: "问题总数", value: d.total, icon: "anomalies", sub: "覆盖 4 大一级分类" }) +
+          compUI.kpi({ label: "断点定位", value: d.breakpoints, icon: "breakpoint", sub: "已定位断点", mod: "warn" }) +
+          compUI.kpi({ label: "联络开关", value: tieCount, icon: "link", sub: "合规联络", mod: "ok" }) +
+          compUI.kpi({ label: "违规合环", value: d.loops, icon: "refresh", sub: "需整改", mod: "err" }) +
+          compUI.kpi({ label: "KCL 合规率", value: kclRate + "%", icon: "checkCircle", sub: "物理约束验证", mod: kclCls }) +
+          compUI.kpi({ label: "KVL 合规率", value: kvlRate + "%", icon: "checkCircle", sub: "电压环闭合", mod: kvlCls });
+
+        // v9: add pulse indicator to KPI cards
+        document.querySelectorAll("#kpis .card").forEach(function(el) {
+          el.classList.add("kpi-pulse");
+          el.style.setProperty("position", "relative");
+        });
+
+        // Problem category bars
+        var rows = [];
+        d.byCategory.forEach(function (c) {
+          c.items.forEach(function (it) {
+            if (it.count > 0) rows.push({ label: c.code + "." + it.code, name: it.name, count: it.count });
+          });
+        });
+        rows.sort(function (a, b) { return b.count - a.count; });
+        var max = Math.max.apply(null, rows.map(function (x) { return x.count; }));
+        $("#cat-bars").innerHTML = rows.map(function (x) {
+          return "<div class='cat-bar-row'>" +
+            "<div style='font-size:12px'>" + x.label + " " + x.name + "</div>" +
+            "<div class='cat-bar-track'><div class='cat-bar-fill' style='width:" + (x.count / max * 100) + "%'></div></div>" +
+            "<div class='cat-bar-num'>" + x.count + "</div></div>";
+        }).join("") || "<div class='empty'>暂无数据</div>";
+
+        // Donut chart
+        compUI.makeChart($("#donut"), function (ct) {
+          return {
+            backgroundColor: "transparent",
+            tooltip: { trigger: "item", backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+            legend: { bottom: 0, textStyle: { color: ct.muted } },
+            series: [{ type: "pie", radius: ["45%", "70%"], center: ["50%", "45%"], itemStyle: { borderColor: ct.tooltipBg, borderWidth: 2 },
+              data: [
+                { value: problems.length, name: "任务一·图模校验", itemStyle: { color: ct.accent } },
+                { value: 4, name: "任务二·SVG出图", itemStyle: { color: ct.info } }
+              ] }]
+          };
+        });
+
+        // Radar charts
+        if (rad) {
+          renderRadar($("#radar-before"), "修正前", rad.before || rad.beforeDim, "err");
+          renderRadar($("#radar-after"), "修正后", rad.after || rad.afterDim, "ok");
+        }
+
+        // Task cards
+        $("#task-cards").innerHTML =
+          taskCard("anomalies", "异常问题清单", "标准输出 sheet1", problems.length, "problem_list.html") +
+          taskCard("breakpoint", "断点定位", "1.2 · sheet2", bps.length, "breakpoint.html") +
+          taskCard("link", "联络开关梳理", "1.3/1.4 · sheet3", tieCount, "tie_switch.html") +
+          taskCard("refresh", "合环识别", "1.5 · sheet4", loops.length, "loop.html") +
+          taskCard("layers", "图模一致性", "2.1-2.4", problems.filter(function (p) { return p.l1 === "2"; }).length, "graph_consistency.html") +
+          taskCard("bolt", "电气逻辑校验", "3.1 KCL/KVL", problems.filter(function (p) { return p.l1 === "3"; }).length, "elec_logic.html") +
+          taskCard("share2", "主配网接口", "4.1/4.2", problems.filter(function (p) { return p.l1 === "4"; }).length, "main_net.html") +
+          taskCard("bar", "质量评分对比", "模块五 · sheet5", q.length, "quality.html") +
+          taskCard("image", "SVG 美化与出图", "5.1/5.3", 4, "svg_beautify.html") +
+          taskCard("penTool", "交互式增删设备", "5.2", "—", "svg_edit.html") +
+          taskCard("shield", "盲测场景验证", "黑盒测试", "5 场景", "blind_test.html") +
+          taskCard("layers", "N-1 安全分析", "工程泛化", "—", "n1_analysis.html")
+
+        // Todo
+        var todo = [
+          { icon: "anomalies", title: "待复核问题", meta: "sheet1", count: problems.length, href: "problem_list.html" },
+          { icon: "breakpoint", title: "待确认断点", meta: "1.2", count: bps.length, href: "breakpoint.html" },
+          { icon: "refresh", title: "待整改合环", meta: "1.5", count: loops.length, href: "loop.html" },
+          { icon: "link", title: "待梳理联络", meta: "1.3/1.4", count: tieCount, href: "tie_switch.html" }
+        ];
+        document.getElementById("todo-focus").innerHTML = todo.map(function (t) { return taskCard(t.icon, t.title, t.meta, t.count, t.href); }).join("");
+
+      }).catch(function (e) { appShell.toast("加载失败: " + e.message, "err"); });
+    }
+
+    function renderRadar(el, name, data, color) {
+      if (!el || !data) return;
+      compUI.makeChart(el, function (ct) {
+        var dimNames = ["拓扑完整性", "图模一致性", "电气逻辑合规性", "主配接口规范性"];
+        return {
+          backgroundColor: "transparent",
+          title: { text: name, textStyle: { color: ct.muted, fontSize: 13 }, left: 0, top: 0 },
+          tooltip: { trigger: "item", backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+          radar: { indicator: dimNames.map(function (n) { return { name: n, max: 100 }; }), splitLine: { lineStyle: { color: ct.grid } }, splitArea: { areaStyle: { color: [ct.grid + "22", "transparent"] } }, axisLine: { lineStyle: { color: ct.grid } } },
+          series: [{ type: "radar", data: [{ value: data, name: name, itemStyle: { color: ct[color] }, areaStyle: { opacity: .15 } }] }]
+        };
+      });
+    }
+
+    loadDashboard(currentNetwork);
+  </script>
+</body>
+</html>

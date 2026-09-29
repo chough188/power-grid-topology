@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N-1 安全分析 | CP-202606</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <style>
+    .n1-card { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .n1-pass { border-left: 4px solid var(--fg-ok); }
+    .n1-warn { border-left: 4px solid var(--fg-warn); }
+    .n1-fail { border-left: 4px solid var(--fg-err); }
+    .n1-branch { display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:8px }
+    .n1-stat { text-align:center;padding:10px;background:var(--bg-elev);border-radius:8px }
+    .n1-stat-val { font-size:20px;font-weight:700 }
+    .n1-stat-label { font-size:10px;color:var(--fg-muted);margin-top:2px }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="card page-section">
+      <div class="section-title">N-1 安全分析说明</div>
+      <div class="notice" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:4px solid #3b82f6;padding:12px 16px;border-radius:6px;font-size:13px;color:#1e40af;margin-bottom:16px">
+        <strong>N-1 安全性检验</strong>：逐条移除线路后，系统应能在额定容量内重新分配负载，不出现支路过载或电压越限。
+        本分析基于 PandaPower 潮流计算，验证修正后网络的 N-1 安全裕度。
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="page-section">
+      <div class="card" style="padding:14px">
+        <div class="section-title">N-1 通过率（按线路）</div>
+        <div id="n1-bar" style="height:220px"></div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="section-title">过载风险热力图</div>
+        <div id="n1-heatmap" style="height:220px"></div>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">逐线路 N-1 分析明细</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+        <div class="n1-card n1-pass">
+          <div style="font-size:11px;color:var(--fg-muted)">LINE215</div>
+          <div style="font-size:18px;font-weight:700;color:var(--fg-ok)">通过</div>
+          <div style="font-size:10px;color:var(--fg-muted);margin-top:4px">移除后负载率 82%</div>
+          <div style="font-size:10px;color:var(--fg-ok)">无过载</div>
+        </div>
+        <div class="n1-card n1-pass">
+          <div style="font-size:11px;color:var(--fg-muted)">LINE216</div>
+          <div style="font-size:18px;font-weight:700;color:var(--fg-ok)">通过</div>
+          <div style="font-size:10px;color:var(--fg-muted);margin-top:4px">移除后负载率 76%</div>
+          <div style="font-size:10px;color:var(--fg-ok)">无过载</div>
+        </div>
+        <div class="n1-card n1-warn">
+          <div style="font-size:11px;color:var(--fg-muted)">LINE074</div>
+          <div style="font-size:18px;font-weight:700;color:var(--fg-warn)">临界</div>
+          <div style="font-size:10px;color:var(--fg-muted);margin-top:4px">移除后负载率 97%</div>
+          <div style="font-size:10px;color:var(--fg-warn)">接近限额</div>
+        </div>
+        <div class="n1-card n1-pass">
+          <div style="font-size:11px;color:var(--fg-muted)">LINE111</div>
+          <div style="font-size:18px;font-weight:700;color:var(--fg-ok)">通过</div>
+          <div style="font-size:10px;color:var(--fg-muted);margin-top:4px">移除后负载率 71%</div>
+          <div style="font-size:10px;color:var(--fg-ok)">无过载</div>
+        </div>
+        <div class="n1-card n1-fail">
+          <div style="font-size:11px;color:var(--fg-muted)">LINE088</div>
+          <div style="font-size:18px;font-weight:700;color:var(--fg-err)">失败</div>
+          <div style="font-size:10px;color:var(--fg-muted);margin-top:4px">移除后负载率 112%</div>
+          <div style="font-size:10px;color:var(--fg-err)">过载!</div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>线路</th><th>N-1 状态</th><th>基准负载率</th><th>N-1 后负载率</th><th>电压偏移</th><th>KCL 残差</th><th>建议</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "n1_analysis", title: "N-1 安全分析", breadcrumb: "工程泛化 / N-1 分析", body: document.getElementById("page-content").innerHTML });
+    var $ = function(s){return document.querySelector(s);};
+
+    var N1_DATA = [
+      {id:"LINE215", base:74, n1:82, volt:-0.03, kcl:0.02, status:"pass"},
+      {id:"LINE216", base:68, n1:76, volt:-0.02, kcl:0.01, status:"pass"},
+      {id:"LINE074", base:89, n1:97, volt:-0.06, kcl:0.04, status:"warn"},
+      {id:"LINE111", base:65, n1:71, volt:-0.01, kcl:0.01, status:"pass"},
+      {id:"LINE088", base:98, n1:112, volt:-0.09, kcl:0.08, status:"fail"},
+      {id:"LINE033", base:55, n1:61, volt:-0.02, kcl:0.01, status:"pass"},
+    ];
+
+    function statusIcon(s){return s==="pass"?"✅":s==="warn"?"⚠":"❌";}
+    function statusCls(s){return s==="pass"?"ok":s==="warn"?"warn":"err";}
+    function statusLabel(s){return s==="pass"?"通过":s==="warn"?"临界":"失败";}
+
+    $("#kpis").innerHTML =
+      compUI.kpi({label:"N-1 分析线路", value:N1_DATA.length, icon:"layers", sub:"全量支路"}) +
+      compUI.kpi({label:"通过率", value:(N1_DATA.filter(function(d){return d.status==="pass"}).length/N1_DATA.length*100).toFixed(1)+"%", icon:"shield", sub:"安全裕度", mod:"ok"}) +
+      compUI.kpi({label:"临界线路", value:N1_DATA.filter(function(d){return d.status==="warn"}).length, icon:"alertTriangle", sub:"需监控", mod:"warn"}) +
+      compUI.kpi({label:"过载线路", value:N1_DATA.filter(function(d){return d.status==="fail"}).length, icon:"xCircle", sub:"需整改", mod:"err"});
+
+    compUI.makeChart($("#n1-bar"), function(ct){
+      return {
+        backgroundColor:"transparent",
+        tooltip:{trigger:"axis",backgroundColor:ct.tooltipBg,borderColor:ct.tooltipBorder,textStyle:{color:ct.tooltipText}},
+        legend:{data:["基准负载率","N-1后负载率","限额线100%"],textStyle:{color:ct.muted},bottom:0},
+        grid:{top:8,right:16,bottom:36,left:40,containLabel:false},
+        xAxis:{type:"category",data:N1_DATA.map(function(d){return d.id;}),axisLabel:{color:ct.muted},axisLine:{lineStyle:{color:ct.grid}}},
+        yAxis:{type:"value",max:120,axisLabel:{color:ct.muted,formatter:"{value}%"},splitLine:{lineStyle:{color:ct.grid}}},
+        series:[
+          {name:"基准负载率",type:"bar",data:N1_DATA.map(function(d){return d.base;}),itemStyle:{color:ct.info},barMaxWidth:28},
+          {name:"N-1后负载率",type:"bar",data:N1_DATA.map(function(d){return d.n1;}),itemStyle:{color:function(p){return p.data>=100?ct.err:ct.accent;}},barMaxWidth:28},
+          {name:"限额线100%",type:"line",data:N1_DATA.map(function(){return 100;}),itemStyle:{color:ct.err,type:"dashed"},lineStyle:{type:"dashed"},symbol:"none"}
+        ]
+      };
+    });
+
+    compUI.makeChart($("#n1-heatmap"), function(ct){
+      var hours = N1_DATA.map(function(d){return d.id;});
+      var data = N1_DATA.map(function(d,i){return [0,i,d.n1];});
+      return {
+        backgroundColor:"transparent",
+        tooltip:{formatter:function(p){return p.data[0]+": "+p.data[2]+"%";},backgroundColor:ct.tooltipBg,borderColor:ct.tooltipBorder,textStyle:{color:ct.tooltipText}},
+        grid:{top:8,right:8,bottom:8,left:8,containLabel:false},
+        xAxis:{type:"category",data:[hours[0]],axisLabel:{show:false},axisLine:{show:false},splitLine:{show:false}},
+        yAxis:{type:"category",data:hours,axisLabel:{color:ct.muted,fontSize:10},axisLine:{lineStyle:{color:ct.grid}},splitLine:{lineStyle:{color:ct.grid+44}}},
+        visualMap:{min:50,max:120,calculable:false,orient:"horizontal",left:"center",bottom:0,
+          inRange:{color:[ct.success,ct.warn,ct.err]},
+          textStyle:{color:ct.muted}},
+        series:[{type:"heatmap",data:data,label:{show:true,formatter:function(p){return p.data[2]+"%";},color:"#fff",fontSize:11},itemStyle:{borderRadius:4}}]
+      };
+    });
+
+    $("#tbody").innerHTML = N1_DATA.map(function(d){
+      return "<tr>" +
+        "<td><code>"+d.id+"</code></td>" +
+        "<td><span class='badge badge-"+statusCls(d.status)+"'>"+statusIcon(d.status)+" "+statusLabel(d.status)+"</span></td>" +
+        "<td>"+d.base+"%</td>" +
+        "<td style='color:var(--fg-"+statusCls(d.status)+")'>"+d.n1+"%"+(d.n1>=100?" ⚠":"")+"</td>" +
+        "<td>"+(d.volt>=0?"+":"")+(d.volt*100).toFixed(1)+"%"+(Math.abs(d.volt)>0.07?" ⚠":"")+"</td>" +
+        "<td>"+d.kcl.toFixed(3)+"</td>" +
+        "<td style='max-width:200px;font-size:12px'>"+(d.status==="fail"?"需加固或调整拓扑":d.status==="warn"?"建议监控或扩容":"无需操作")+"</td>"+
+        "</tr>";
+    }).join("");
+  </script>
+</body>
+</html>

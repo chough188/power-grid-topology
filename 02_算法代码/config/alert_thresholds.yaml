@@ -1,0 +1,11 @@
+critical_conf_min: 0.70
+warning_conf_min: 0.60
+info_conf_min: 0.50
+large_network_relax: 0.05
+
+per_type_overrides:
+  topo_interrupt: 0.65
+  voltage_collapse: 0.60
+  grounding_fault: 0.60
+  harmonic_pollution: 0.55
+  clock_drift: 0.40

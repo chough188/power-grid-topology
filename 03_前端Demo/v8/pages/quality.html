@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>质量评分对比 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <style>
+    .imp-bar-track { height: 10px; background: var(--bg-elev-2); border-radius: var(--radius-pill); overflow: hidden; min-width: 90px; }
+    .imp-bar-fill { height: 100%; background: var(--success); border-radius: var(--radius-pill); }
+    .score-badge { font-variant-numeric: tabular-nums; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div class="card page-section">
+      <div class="section-title">模型修正质量评分结果（标准输出 sheet5 · 模块五）</div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>序号</th><th>厂站名称</th><th>厂站id</th><th>馈线名称</th><th>馈线id</th><th>修正前评分</th><th>修正后评分</th><th>提升幅度</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-sm" id="btn-csv">导出 CSV</button>
+        <button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="page-section">
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <strong>四维质量评分雷达（修正前 vs 修正后）</strong>
+          <select class="select" id="sel-station" style="width:auto;min-width:180px"></select>
+        </div>
+        <div id="radar" class="chart-responsive"></div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="section-title">各馈线修正前后评分对比</div>
+        <div id="bar" class="chart-responsive"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "quality", title: "质量评分对比", breadcrumb: "任务一 / 质量评分对比 (模块五 · sheet5)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    var LAST = [];
+
+    function renderTable() {
+      $("#tbody").innerHTML = LAST.map(function (q) {
+        var imp = q.after - q.before;
+        return "<tr>" +
+          "<td>" + q.seq + "</td>" +
+          "<td>" + q.station + "</td><td><code>" + q.stationId + "</code></td>" +
+          "<td>" + q.feeder + "</td><td><code>" + q.feederId + "</code></td>" +
+          "<td class='score-badge' style='color:var(--fg-err)'>" + q.before + "</td>" +
+          "<td class='score-badge' style='color:var(--fg-ok)'>" + q.after + "</td>" +
+          "<td><div style='display:flex;align-items:center;gap:8px'><div class='imp-bar-track'><div class='imp-bar-fill' style='width:" + Math.min(100, imp * 5) + "%'></div></div><span class='badge badge-ok'>+" + imp + "</span></div></td>" +
+          "</tr>";
+      }).join("");
+    }
+
+    function renderRadar(stationId) {
+      compApi.getQualityDim(stationId).then(function (d) {
+        if (!d) { $("#radar").innerHTML = '<div class="empty">该站暂无四维明细</div>'; return; }
+        compUI.makeChart($("#radar"), function (ct) {
+          return {
+            backgroundColor: "transparent",
+            tooltip: { backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+            legend: { data: ["修正前", "修正后"], textStyle: { color: ct.muted }, bottom: 0 },
+            radar: { indicator: compApi.QUALITY_DIM_AXES.map(function (a) { return { name: a, max: 100 }; }), axisName: { color: ct.muted }, splitLine: { lineStyle: { color: ct.grid } }, splitArea: { areaStyle: { color: [ct.grid + "22", "transparent"] } }, axisLine: { lineStyle: { color: ct.grid } } },
+            series: [{ type: "radar", data: [
+              { value: d.before, name: "修正前", itemStyle: { color: ct.err }, areaStyle: { opacity: .15 } },
+              { value: d.after, name: "修正后", itemStyle: { color: ct.success }, areaStyle: { opacity: .2 } }
+            ] }]
+          };
+        });
+      });
+    }
+
+    function renderBar() {
+      compUI.makeChart($("#bar"), function (ct) {
+        return {
+          backgroundColor: "transparent",
+          tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+          legend: { data: ["修正前", "修正后"], textStyle: { color: ct.muted }, top: 0 },
+          grid: { left: 10, right: 16, top: 30, bottom: 10, containLabel: true },
+          xAxis: { type: "category", data: LAST.map(function (q) { return q.feederId; }), axisLabel: { color: ct.muted, fontSize: 11 }, axisLine: { lineStyle: { color: ct.grid } } },
+          yAxis: { type: "value", max: 100, axisLabel: { color: ct.muted }, splitLine: { lineStyle: { color: ct.grid } } },
+          series: [
+            { name: "修正前", type: "bar", data: LAST.map(function (q) { return q.before; }), itemStyle: { color: ct.err, borderRadius: [3, 3, 0, 0] }, barMaxWidth: 18 },
+            { name: "修正后", type: "bar", data: LAST.map(function (q) { return q.after; }), itemStyle: { color: ct.success, borderRadius: [3, 3, 0, 0] }, barMaxWidth: 18 }
+          ]
+        };
+      });
+    }
+
+    setTimeout(function () {
+      compApi.getQuality().then(function (list) {
+        LAST = list;
+        var avgB = (list.reduce(function (s, q) { return s + q.before; }, 0) / list.length).toFixed(1);
+        var avgA = (list.reduce(function (s, q) { return s + q.after; }, 0) / list.length).toFixed(1);
+        $("#kpis").innerHTML =
+          compUI.kpi({ label: "平均修正前评分", value: avgB, mod: "err", icon: "bar", sub: "整改前模型质量" }) +
+          compUI.kpi({ label: "平均修正后评分", value: avgA, mod: "ok", icon: "bar", sub: "整改后模型质量" }) +
+          compUI.kpi({ label: "平均提升", value: "+" + (avgA - avgB).toFixed(1), mod: "ok", icon: "trending", sub: "量化提升效果" }) +
+          compUI.kpi({ label: "评分馈线数", value: list.length, icon: "list", sub: "覆盖厂站/馈线" });
+        renderTable(); renderBar();
+      });
+
+      compApi.getQuality().then(function () {
+        var stations = [{ id: "SUB004", name: "SUB004 兴港变电站" }, { id: "000300", name: "000300 新建站房" }];
+        $("#sel-station").innerHTML = stations.map(function (s) { return "<option value='" + s.id + "'>" + s.name + "</option>"; }).join("");
+        renderRadar("SUB004");
+        $("#sel-station").addEventListener("change", function () { renderRadar(this.value); });
+      });
+
+      $("#btn-csv").addEventListener("click", function () {
+        var rows = LAST.map(function (q) { return [q.seq, q.station, q.stationId, q.feeder, q.feederId, q.before, q.after]; });
+        compUI.exportCSV("质量评分结果.csv", compApi.STANDARD_HEADERS.quality, rows); appShell.toast("已导出 CSV", "ok");
+      });
+      $("#btn-xlsx").addEventListener("click", function () {
+        var rows = LAST.map(function (q) { return [q.seq, q.station, q.stationId, q.feeder, q.feederId, q.before, q.after]; });
+        compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "模型修正质量评分任务结果", headers: compApi.STANDARD_HEADERS.quality, rows: rows }]); appShell.toast("已导出标准 XLSX", "ok");
+      });
+    }, 50);
+  </script>
+  <script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

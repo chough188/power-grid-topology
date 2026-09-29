@@ -1,0 +1,31 @@
+{
+  "dingtalk": {
+    "topo_interrupt": {
+      "title": "拓扑中断告警",
+      "content": "## [严重] 拓扑中断 @ {location}\n置信度: {confidence}\n请调度员立即确认开关位置并隔离故障段。",
+      "atMobiles": []
+    },
+    "voltage_collapse": {
+      "title": "电压崩溃告警",
+      "content": "## [严重] 电压崩溃 @ {location}\nVM={vm_pu}\n请立即启动电压恢复预案。",
+      "atMobiles": []
+    },
+    "_default": {
+      "title": "配电网异常",
+      "content": "## 异常: {type} @ {location}\n置信度: {confidence}\n请及时处置。"
+    }
+  },
+  "wechat": {
+    "_default": {
+      "title": "配电网异常",
+      "description": "异常: {type} @ {location}, 置信度: {confidence}",
+      "url": "https://example.com"
+    }
+  },
+  "email": {
+    "_default": {
+      "subject": "[配电网监控] {type} @ {location}",
+      "body": "异常类型: {type}\n位置: {location}\n置信度: {confidence}\n时间: {timestamp}"
+    }
+  }
+}

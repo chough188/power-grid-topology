@@ -1,0 +1,1 @@
+"""Reports: KPI monthly summary."""

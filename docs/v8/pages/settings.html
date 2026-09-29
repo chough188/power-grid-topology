@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统设置 | PowerGrid AI v8</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <style>
+    .settings-grid { display: grid; grid-template-columns: 280px 1fr; gap: var(--sp-4); }
+    @media (max-width: 920px) { .settings-grid { grid-template-columns: 1fr; } }
+    .menu-item { padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm); cursor: pointer; margin-bottom: var(--sp-1); font-size: var(--fs-base); }
+    .menu-item:hover { background: var(--bg-elev-2); }
+    .menu-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .form-group { margin-bottom: var(--sp-4); }
+    .form-label { display: block; font-size: var(--fs-sm); font-weight: 600; margin-bottom: var(--sp-2); color: var(--fg-muted); }
+    .badge-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="settings-grid">
+      <div class="card">
+        <strong style="display:block;margin-bottom:10px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>分类</strong>
+        <div class="menu-item active" data-section="general"><span class="mi-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>通用</div>
+        <div class="menu-item" data-section="api"><span class="mi-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span>API 配置</div>
+        <div class="menu-item" data-section="theme"><span class="mi-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/></svg></span>主题</div>
+        <div class="menu-item" data-section="profile"><span class="mi-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>个人资料</div>
+        <div class="menu-item" data-section="about"><span class="mi-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>关于</div>
+      </div>
+      <div>
+        <div class="card" id="section-general">
+          <strong style="display:block;margin-bottom:14px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>通用</strong>
+          <div class="form-group">
+            <label class="form-label">默认网络</label>
+            <select class="select" id="cfg-network"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">趋势默认天数</label>
+            <input class="input" id="cfg-days" type="number" min="1" max="365" value="14">
+          </div>
+          <button class="btn btn-primary" id="btn-save-general"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 保存</button>
+        </div>
+
+        <div class="card" id="section-api" style="display:none">
+          <strong style="display:block;margin-bottom:14px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span>API 配置</strong>
+          <div class="form-group">
+            <label class="form-label">后端地址 (API_BASE)</label>
+            <input class="input" id="cfg-api" value="" placeholder="http://localhost:8000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">超时 (ms)</label>
+            <input class="input" id="cfg-timeout" type="number" value="30000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">重试次数</label>
+            <input class="input" id="cfg-retry" type="number" value="1">
+          </div>
+          <button class="btn btn-primary" id="btn-save-api"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 保存并刷新</button>
+        </div>
+
+        <div class="card" id="section-theme" style="display:none">
+          <strong style="display:block;margin-bottom:14px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/></svg></span>主题</strong>
+          <div class="badge-row">
+            <button class="btn" data-theme="light"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> 浅色</button>
+            <button class="btn" data-theme="dark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> 深色</button>
+          </div>
+          <div style="margin-top:14px;font-size:11px;color:var(--fg-muted)">当前: <span id="cur-theme">—</span></div>
+        </div>
+
+        <div class="card" id="section-profile" style="display:none">
+          <strong style="display:block;margin-bottom:14px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>个人资料</strong>
+          <div class="form-group"><label class="form-label">租户</label><input class="input" id="profile-tenant" disabled></div>
+          <div class="form-group"><label class="form-label">账号</label><input class="input" id="profile-user" disabled></div>
+          <div class="form-group"><label class="form-label">令牌</label><input class="input" id="profile-token" disabled></div>
+          <button class="btn btn-danger" id="btn-logout"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> 登出</button>
+        </div>
+
+        <div class="card" id="section-about" style="display:none">
+          <strong style="display:block;margin-bottom:14px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>关于</strong>
+          <div style="font-size:13px;line-height:1.8">
+            <p><strong>PowerGrid AI Operations <span id="about-version">v8.0.0</span></strong></p>
+            <p>配电网图模拓扑智能识别与修正平台</p>
+            <p style="font-size:11px;color:var(--fg-muted)">
+              技术栈: 纯 HTML + 本地 D3 v7 + 本地 ECharts 5 · 0 npm · 0 node_modules · 全离线<br>
+              后端: FastAPI + PandaPower + (可选) GNN · 28 类异常检测<br>
+              项目: CP-202606 泰豪软件 揭榜挂帅擂台赛
+            </p>
+            <div class="badge-row" style="margin-top:12px">
+              <span class="badge badge-ok" id="about-badge">v8.0.0 重构版</span>
+              <span class="badge">兼容 v3 / v4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "settings", title: "系统设置", breadcrumb: "v8 / settings", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    function showSection(name) {
+      ["general", "api", "theme", "profile", "about"].forEach(function (n) {
+        var sec = document.getElementById("section-" + n);
+        if (sec) sec.style.display = n === name ? "block" : "none";
+      });
+      document.querySelectorAll(".menu-item").forEach(function (el) {
+        el.classList.toggle("active", el.getAttribute("data-section") === name);
+      });
+    }
+
+    setTimeout(function () {
+      // 菜单切换
+      document.querySelectorAll(".menu-item").forEach(function (el) {
+        el.addEventListener("click", function () { showSection(el.getAttribute("data-section")); });
+      });
+
+      // 主题
+      var ct = CONFIG.THEME;
+      document.getElementById("cur-theme").textContent = ct === "dark" ? "深色" : "浅色";
+      document.querySelectorAll("[data-theme]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var t = this.getAttribute("data-theme");
+          document.documentElement.setAttribute("data-theme", t);
+          CONFIG.THEME = t;
+          try { localStorage.setItem("v5-theme", t); } catch (e) {}
+          document.getElementById("cur-theme").textContent = t === "dark" ? "深色" : "浅色";
+        });
+      });
+
+      // 关于页版本 (跟随 CONFIG.VERSION)
+      var av = document.getElementById("about-version"); if (av) av.textContent = CONFIG.VERSION;
+      var ab = document.getElementById("about-badge"); if (ab) ab.textContent = CONFIG.VERSION + " 重构版";
+
+      // API 配置
+      document.getElementById("cfg-api").value = CONFIG.API_BASE;
+      document.getElementById("cfg-timeout").value = CONFIG.API_TIMEOUT_MS;
+      document.getElementById("cfg-retry").value = CONFIG.API_RETRY;
+
+      // 加载网络列表
+      api.networks().then(function (r) {
+        var list = (r.data && Array.isArray(r.data)) ? r.data : (r.data && r.data.networks) || ["case33bw", "case14", "case57"];
+        document.getElementById("cfg-network").innerHTML = list.map(function (n) {
+          var v = typeof n === "string" ? n : (n.name || "case33bw");
+          return "<option value=\"" + v + "\"" + (v === CONFIG.DEFAULT_NETWORK ? " selected" : "") + ">" + v + "</option>";
+        }).join("");
+      }).catch(function () {
+        document.getElementById("cfg-network").innerHTML = "<option value=\"case33bw\">case33bw</option>";
+      });
+
+      // 个人资料
+      try {
+        var u = JSON.parse(sessionStorage.getItem("v5-user") || "{}");
+        document.getElementById("profile-tenant").value = u.tenant || "—";
+        document.getElementById("profile-user").value = u.user || "—";
+        document.getElementById("profile-token").value = sessionStorage.getItem("v5-token") || "—";
+      } catch (e) {}
+
+      // 按钮
+      document.getElementById("btn-save-general").addEventListener("click", function () {
+        CONFIG.DEFAULT_NETWORK = document.getElementById("cfg-network").value;
+        CONFIG.DEFAULT_TREND_DAYS = parseInt(document.getElementById("cfg-days").value || "14", 10);
+        try { localStorage.setItem("v5-cfg-net", CONFIG.DEFAULT_NETWORK); localStorage.setItem("v5-cfg-days", CONFIG.DEFAULT_TREND_DAYS); } catch (e) {}
+        appShell.toast("已保存", "ok");
+      });
+      document.getElementById("btn-save-api").addEventListener("click", function () {
+        CONFIG.API_BASE = document.getElementById("cfg-api").value || "http://localhost:8000";
+        CONFIG.API_TIMEOUT_MS = parseInt(document.getElementById("cfg-timeout").value || "30000", 10);
+        CONFIG.API_RETRY = parseInt(document.getElementById("cfg-retry").value || "1", 10);
+        try { localStorage.setItem("v5-cfg-api", CONFIG.API_BASE); } catch (e) {}
+        appShell.toast("已保存,3 秒后刷新...", "ok");
+        setTimeout(function () { location.reload(); }, 3000);
+      });
+      document.getElementById("btn-logout").addEventListener("click", function () {
+        if (confirm("确认登出?")) { api.logout(); window.location.replace("./login.html"); }
+      });
+    }, 50);
+  </script>
+</body>
+</html>

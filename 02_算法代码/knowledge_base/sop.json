@@ -1,0 +1,341 @@
+{
+  "topo_interrupt": {
+    "steps": [
+      "1. 确认开关位置",
+      "2. 检查保护动作记录",
+      "3. 隔离故障段",
+      "4. 转供负荷"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "SCADA",
+      "现场操作票"
+    ],
+    "estimated_hours": 2
+  },
+  "virtual_faulty": {
+    "steps": [
+      "1. 比对 CIM 模型与现场接线",
+      "2. 核实开关实际位置",
+      "3. 更新模型或现场"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "CIM 浏览器",
+      "现场记录"
+    ],
+    "estimated_hours": 4
+  },
+  "model_mismatch": {
+    "steps": [
+      "1. 比对 SVG 与 CIM 设备列表",
+      "2. 同步图模",
+      "3. 重新跑检测"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "图模一致性工具"
+    ],
+    "estimated_hours": 3
+  },
+  "ghost_topology": {
+    "steps": [
+      "1. 核实幽灵连接是否存在",
+      "2. 删除或标记",
+      "3. 更新模型"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "拓扑分析"
+    ],
+    "estimated_hours": 2
+  },
+  "topo_obfuscation": {
+    "steps": [
+      "1. KCL 不平衡分析",
+      "2. 定位混淆点",
+      "3. 校正拓扑"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "状态估计"
+    ],
+    "estimated_hours": 4
+  },
+  "bus_section_mismatch": {
+    "steps": [
+      "1. 检查母线段开关",
+      "2. 核实连接状态",
+      "3. 修正"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "SCADA"
+    ],
+    "estimated_hours": 2
+  },
+  "telemetry_mismatch": {
+    "steps": [
+      "1. 比对量测与拓扑",
+      "2. 校准量测",
+      "3. 重跑检测"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "量测管理"
+    ],
+    "estimated_hours": 1
+  },
+  "signal_mismatch": {
+    "steps": [
+      "1. 比对遥信与遥测",
+      "2. 核实开关",
+      "3. 校正信号"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "信号管理"
+    ],
+    "estimated_hours": 1
+  },
+  "measurement_outlier": {
+    "steps": [
+      "1. 过滤异常量测",
+      "2. 替换/插补",
+      "3. 重测"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "数据清洗"
+    ],
+    "estimated_hours": 1
+  },
+  "stale_data": {
+    "steps": [
+      "1. 检查数据通道",
+      "2. 修复通信",
+      "3. 刷新数据"
+    ],
+    "responsible": "通信班",
+    "tools": [
+      "通信诊断"
+    ],
+    "estimated_hours": 2
+  },
+  "measurement_bias": {
+    "steps": [
+      "1. 校准量测偏差",
+      "2. 修正系数",
+      "3. 验证"
+    ],
+    "responsible": "计量班",
+    "tools": [
+      "校准仪"
+    ],
+    "estimated_hours": 4
+  },
+  "duplicate_measurement": {
+    "steps": [
+      "1. 识别重复量测",
+      "2. 合并或删除",
+      "3. 重跑检测"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "数据库"
+    ],
+    "estimated_hours": 1
+  },
+  "parameter_error": {
+    "steps": [
+      "1. 核对设备参数",
+      "2. 修正数据库",
+      "3. 重测"
+    ],
+    "responsible": "运维班",
+    "tools": [
+      "参数管理"
+    ],
+    "estimated_hours": 3
+  },
+  "impedance_degradation": {
+    "steps": [
+      "1. 测量线路阻抗",
+      "2. 评估老化程度",
+      "3. 检修/更换"
+    ],
+    "responsible": "检修班",
+    "tools": [
+      "阻抗测试仪"
+    ],
+    "estimated_hours": 8
+  },
+  "bypass_operation": {
+    "steps": [
+      "1. 确认旁路运行",
+      "2. 评估风险",
+      "3. 恢复或维持"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "SCADA"
+    ],
+    "estimated_hours": 2
+  },
+  "load_transfer_residual": {
+    "steps": [
+      "1. 核实转供是否完成",
+      "2. 清理残余",
+      "3. 验证"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "SCADA"
+    ],
+    "estimated_hours": 1
+  },
+  "load_shift": {
+    "steps": [
+      "1. 分析负荷转移",
+      "2. 调整运行方式",
+      "3. 监控"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "潮流分析"
+    ],
+    "estimated_hours": 2
+  },
+  "reverse_power_flow": {
+    "steps": [
+      "1. 确认反向潮流",
+      "2. 评估 DG 影响",
+      "3. 调整保护"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "保护管理"
+    ],
+    "estimated_hours": 4
+  },
+  "branch_contingency": {
+    "steps": [
+      "1. 隔离 N-1 支路",
+      "2. 转供",
+      "3. 修复"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "SCADA"
+    ],
+    "estimated_hours": 4
+  },
+  "voltage_collapse": {
+    "steps": [
+      "1. 紧急切负荷",
+      "2. 启动备用",
+      "3. 恢复电压"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "AVC"
+    ],
+    "estimated_hours": 1
+  },
+  "voltage_regulation": {
+    "steps": [
+      "1. 调节分接头",
+      "2. 投切电容",
+      "3. 验证"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "AVC"
+    ],
+    "estimated_hours": 2
+  },
+  "dg_intermittent": {
+    "steps": [
+      "1. 检查 DG 状态",
+      "2. 评估出力波动",
+      "3. 平衡负荷"
+    ],
+    "responsible": "调度运行班",
+    "tools": [
+      "DG 监控"
+    ],
+    "estimated_hours": 2
+  },
+  "communication_loss": {
+    "steps": [
+      "1. 检查通信链路",
+      "2. 切换备用",
+      "3. 修复"
+    ],
+    "responsible": "通信班",
+    "tools": [
+      "通信诊断"
+    ],
+    "estimated_hours": 2
+  },
+  "protection_misconfig": {
+    "steps": [
+      "1. 核对保护定值",
+      "2. 修正配置",
+      "3. 传动试验"
+    ],
+    "responsible": "保护班",
+    "tools": [
+      "保护管理"
+    ],
+    "estimated_hours": 4
+  },
+  "trafo_tap_fault": {
+    "steps": [
+      "1. 检查分接头",
+      "2. 修正位置",
+      "3. 验证电压"
+    ],
+    "responsible": "检修班",
+    "tools": [
+      "分接头控制器"
+    ],
+    "estimated_hours": 4
+  },
+  "grounding_fault": {
+    "steps": [
+      "1. 隔离接地",
+      "2. 选线",
+      "3. 修复"
+    ],
+    "responsible": "检修班",
+    "tools": [
+      "接地故障定位"
+    ],
+    "estimated_hours": 4
+  },
+  "clock_drift": {
+    "steps": [
+      "1. 同步 PMU 时钟",
+      "2. 检查 GPS",
+      "3. 校准"
+    ],
+    "responsible": "自动化班",
+    "tools": [
+      "时钟同步"
+    ],
+    "estimated_hours": 1
+  },
+  "harmonic_pollution": {
+    "steps": [
+      "1. 测量谐波",
+      "2. 定位谐波源",
+      "3. 治理"
+    ],
+    "responsible": "电能质量班",
+    "tools": [
+      "电能质量分析仪"
+    ],
+    "estimated_hours": 6
+  }
+}

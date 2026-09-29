@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>启动中 | PowerGrid AI v9</title>
+  <link rel="stylesheet" href="./assets/fonts.css">
+  <link rel="stylesheet" href="./assets/theme.css">
+  <style>
+    body { background: var(--bg-page); color: var(--fg); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif; }
+    .splash {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+    .splash .spinner { width: 28px; height: 28px; }
+    .splash-brand { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .3px; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <div class="splash-brand">PowerGrid AI</div>
+    <div class="spinner"></div>
+    <div style="font-size:13px;color:var(--fg-muted)" id="splash-msg">正在校验登录态...</div>
+  </div>
+  <script src="./assets/config.js"></script>
+  <script src="./assets/api.js"></script>
+  <script>
+    var msg = document.getElementById("splash-msg");
+    if (!api.isLoggedIn()) {
+      msg.textContent = "未登录,跳转到登录页...";
+      setTimeout(function () { window.location.replace("./login.html"); }, 600);
+    } else {
+      msg.textContent = "已登录,加载控制台...";
+      setTimeout(function () { window.location.replace("./pages/dashboard.html"); }, 400);
+    }
+  </script>
+</body>
+</html>

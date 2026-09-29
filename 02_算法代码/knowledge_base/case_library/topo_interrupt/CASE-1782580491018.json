@@ -1,0 +1,11 @@
+{
+  "id": "CASE-1782580491018",
+  "anomaly_type": "topo_interrupt",
+  "network": "case118",
+  "ground_truth": {},
+  "detection_result": {},
+  "root_cause": "switch_open",
+  "fix_action": "close",
+  "lessons": "",
+  "created_at": 1782580491.0180633
+}

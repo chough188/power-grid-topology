@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交互式增删设备 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <style>
+    .editor-stage text { fill: var(--svg-text); font-size: 12px; font-family: var(--font-sans); }
+    .log { font-size: 12px; color: var(--fg-muted); max-height: 170px; overflow-y: auto; }
+    .log div { padding: 4px 0; border-bottom: 1px dashed var(--border); }
+    .io-row { display: flex; gap: var(--sp-3); flex-wrap: wrap; align-items: flex-end; }
+    .io-row .field { display: flex; flex-direction: column; gap: 4px; }
+    .io-row label { font-size: 11px; color: var(--fg-muted); }
+    /* 5.1.4 站房容器底部引出线 (纯视觉层, 不影响 glyphGroup/class 契约) */
+    .lead { stroke: var(--dev-station); stroke-width: 2; fill: none; }
+    .g-switch.muted circle { fill: var(--fg-muted); opacity: 0.55; }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="card page-section">
+      <div class="section-title"><span id="ico"></span> 5.2 交互式增删设备（SVG 编辑，图形与模型同步）</div>
+      <p style="font-size:12px;color:var(--fg-muted);margin:0 0 12px">在标准化美化画布上动态新增/删除设备，增删后自动同步节点坐标与线路连接关系，保证图形拓扑与后台模型逻辑一致（<b>不产生新的悬空 / 断连 / 虚假连通</b>）。柜箱设备遵循国网 5.1.4 规范：容器内开关纵向展示、连接线从容器底部引出。</p>
+      <div class="io-row" style="margin-bottom:12px">
+        <div class="field"><label>选择馈线（对应美化图）</label>
+          <select class="select" id="sel-feeder" style="min-width:240px">
+            <option value="LINE215">LINE215 美化图 · 测试任务1（新增站房000300）</option>
+            <option value="LINE216">LINE216 美化图 · 测试任务2（删除开关00024）</option>
+          </select>
+        </div>
+        <span class="badge" id="task-badge">测试任务 1</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" id="btn-add">+ 新增站房000300 + 开关00301/00302/00303</button>
+        <button class="btn btn-sm" id="btn-del">删除开关00024（自动连通）</button>
+        <button class="btn btn-ghost btn-sm" id="btn-reset">重置</button>
+        <span style="flex:1"></span>
+        <button class="btn btn-sm" id="btn-export">导出 SVG</button>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div id="stage" class="svg-canvas" style="min-height:320px"></div>
+      <div class="legend" style="margin-top:10px">
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-bus)"></span>母线</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-switch)"></span>开关/刀闸</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-load)"></span>负荷</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-station)"></span>站房容器</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-tie)"></span>联络开关</span>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">操作日志（模型同步校验）</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "svg_edit", title: "交互式增删设备", breadcrumb: "任务二 / 交互式增删设备 (5.2)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    $("#ico").innerHTML = appShell.icon("penTool");
+    var LAST_SVG = "";
+
+    // 各馈线初始拓扑(5.1 美化后基准)
+    var INITIAL = {
+      LINE215: {
+        nodes: [
+          { id: "BUS", name: "10kV母线", type: "bus", x: 60, y: 170 },
+          { id: "00104", name: "开关00104", type: "switch", x: 220, y: 170 },
+          { id: "00102", name: "开关00102", type: "switch", x: 560, y: 170 },
+          { id: "LOAD", name: "负荷", type: "load", x: 720, y: 170 },
+        ],
+        edges: [ { from: "BUS", to: "00104" }, { from: "00104", to: "00102" }, { from: "00102", to: "LOAD" } ],
+      },
+      LINE216: {
+        nodes: [
+          { id: "BUS2", name: "10kV II段母线", type: "bus", x: 60, y: 170 },
+          { id: "00024", name: "开关00024", type: "switch", x: 270, y: 170 },
+          { id: "LOAD", name: "负荷", type: "load", x: 470, y: 170 },
+        ],
+        edges: [ { from: "BUS2", to: "00024" }, { from: "00024", to: "LOAD" } ],
+      },
+    };
+    var state = null;
+    var logs = [];
+
+    function reset(feeder) {
+      var init = INITIAL[feeder];
+      state = { nodes: init.nodes.map(function (n) { return Object.assign({}, n); }), edges: init.edges.map(function (e) { return Object.assign({}, e); }) };
+      logs = [];
+    }
+    function node(id) { return state.nodes.find(function (n) { return n.id === id; }); }
+    function addLog(msg, ok) { logs.unshift((ok === false ? "✗ " : "✓ ") + msg); $("#log").innerHTML = logs.map(function (l) { return "<div>" + l + "</div>"; }).join(""); }
+
+    function render() {
+      // 渲染坐标独立计算, 绝不修改 state (保证导出/拓扑契约不变)
+      var pos = {};
+      state.nodes.forEach(function (n) { pos[n.id] = { x: n.x, y: n.y }; });
+
+      // 检测站房容器 -> 启用 5.1.4 纵向布局 (纯视觉重排, 不动图元形状/数据)
+      var station = state.nodes.find(function (n) { return n.type === "station"; });
+      var layout = null;
+      if (station) {
+        // 内部母线: 与站房同位的 bus 节点
+        var ibus = state.nodes.find(function (n) {
+          return n.type === "bus" && Math.abs(n.x - station.x) < 2 && Math.abs(n.y - station.y) < 2;
+        });
+        if (ibus) {
+          var internal = {}; internal[ibus.id] = true;
+          state.edges.forEach(function (e) {
+            if (e.from === ibus.id) internal[e.to] = true;
+            if (e.to === ibus.id) internal[e.from] = true;
+          });
+          var sws = state.nodes.filter(function (n) { return internal[n.id] && n.type === "switch"; });
+          layout = { station: station, ibus: ibus, sws: sws, internal: internal };
+        }
+      }
+
+      var W, H;
+      if (layout) {
+        var cx = layout.station.x, cy = layout.station.y;
+        var TITLE_H = 26, ROW = 48, PAD = 22, BOTTOM_LEAD = 46, SW_R = 14;
+        var N = layout.sws.length;
+        var innerH = TITLE_H + ROW * (N + 1) + BOTTOM_LEAD + PAD * 2;
+        var Hc = Math.max(240, innerH);
+        var Wc = 300;
+        var top = cy - Hc / 2;
+        var ibusY = top + PAD + TITLE_H + ROW / 2;
+        pos[layout.ibus.id] = { x: cx, y: ibusY };
+        layout.sws.forEach(function (s, i) { pos[s.id] = { x: cx, y: ibusY + ROW + i * ROW }; });
+        // 外部馈线 (与内部开关相连但不在 internal 集合): 仅下移"外部端", 体现"从底部引出"
+        var ext = {};
+        state.edges.forEach(function (e) {
+          var aIn = !!layout.internal[e.from], bIn = !!layout.internal[e.to];
+          if (aIn !== bIn) { ext[aIn ? e.to : e.from] = true; }
+        });
+        Object.keys(ext).forEach(function (id) { if (pos[id]) pos[id] = { x: pos[id].x, y: top + Hc + 60 }; });
+        layout.box = { cx: cx, top: top, Hc: Hc, Wc: Wc, bottomY: top + Hc };
+        W = Math.max(620, Math.max.apply(null, state.nodes.map(function (n) { return pos[n.id].x; })) + 120);
+        H = Math.max(260, top + Hc + 60 + 90);
+      } else {
+        W = Math.max(620, Math.max.apply(null, state.nodes.map(function (n) { return n.x; })) + 120);
+        H = Math.max(260, Math.max.apply(null, state.nodes.map(function (n) { return n.y; })) + 90);
+      }
+
+      var parts = ['<svg class="editor-stage" viewBox="0 0 ' + W + ' ' + H + '" width="100%" xmlns="http://www.w3.org/2000/svg">'];
+
+      // 连线: 跨容器边界的线从容器底部中心引出/引入
+      state.edges.forEach(function (e) {
+        var a = pos[e.from], b = pos[e.to]; if (!a || !b) return;
+        if (layout) {
+          var aIn = !!layout.internal[e.from], bIn = !!layout.internal[e.to];
+          if (aIn !== bIn) {
+            var bc = { x: layout.box.cx, y: layout.box.bottomY };
+            parts.push('<path class="lead" d="M' + a.x + ',' + a.y + ' L' + bc.x + ',' + bc.y + ' L' + b.x + ',' + b.y + '"/>');
+            return;
+          }
+        }
+        parts.push('<path class="wire" d="M' + a.x + ',' + a.y + ' L' + b.x + ',' + b.y + '"/>');
+      });
+
+      // 节点: 图元形状一律走 compUI.glyphGroup, 仅改变位置/容器尺寸
+      state.nodes.forEach(function (n) {
+        var p = pos[n.id];
+        if (n.type === "station") {
+          if (layout && layout.station === n) {
+            var b = layout.box;
+            parts.push('<g class="g-station" transform="translate(' + b.cx + ',' + (b.top + b.Hc / 2) + ')"><rect x="' + (-b.Wc / 2) + '" y="' + (-b.Hc / 2) + '" width="' + b.Wc + '" height="' + b.Hc + '" rx="14"/></g>');
+            parts.push('<text class="glyph-label" x="' + b.cx + '" y="' + (b.top + 18) + '" text-anchor="middle" font-weight="700">' + n.name + '</text>');
+          } else {
+            parts.push('<g class="g-station" transform="translate(' + p.x + ',' + p.y + ')"><rect x="-95" y="-75" width="190" height="150" rx="10"/></g>');
+            parts.push('<text class="glyph-label" x="' + p.x + '" y="' + (p.y - 84) + '" text-anchor="middle" font-weight="700">' + n.name + '</text>');
+          }
+        } else {
+          var muted = !!n.suspNote;
+          parts.push('<g class="g-' + n.type + (muted ? ' muted' : '') + '" transform="translate(' + p.x + ',' + p.y + ')">' + compUI.glyphGroup(n.type) + '</g>');
+          parts.push('<text class="glyph-label" x="' + p.x + '" y="' + (p.y + 30) + '" text-anchor="middle">' + n.name + (n.suspNote ? ' (' + n.suspNote + ')' : '') + '</text>');
+        }
+      });
+
+      parts.push('</svg>');
+      LAST_SVG = parts.join("");
+      $("#stage").innerHTML = LAST_SVG;
+    }
+
+    /* 测试任务1: 在开关00104 与 00102 之间新增站房000300
+       站内 3 台负荷开关: 00301 对接 00104 / 00302 作备用间隔 / 00303 对接 00102 */
+    function addStation() {
+      if (node("ST000300")) { addLog("站房000300 已存在, 无需重复新增。", false); return; }
+      // 移除 00104-00102 直连, 改为经站房贯通
+      state.edges = state.edges.filter(function (e) { return !(e.from === "00104" && e.to === "00102") && !(e.from === "00102" && e.to === "00104"); });
+      var station = { id: "ST000300", name: "站房000300", type: "station", x: 390, y: 170 };
+      var stbus = { id: "STBUS", name: "站房母线", type: "bus", x: 390, y: 170 };
+      var s1 = { id: "00301", name: "开关00301", type: "switch", x: 330, y: 120 };
+      var s2 = { id: "00302", name: "开关00302", type: "switch", x: 330, y: 220, suspNote: "备用间隔" };
+      var s3 = { id: "00303", name: "开关00303", type: "switch", x: 450, y: 120 };
+      state.nodes.push(station, stbus, s1, s2, s3);
+      // 拓扑连接: 00104→00301→站房母线; 站房母线→00302(备用, 仅单侧); 站房母线→00303→00102
+      state.edges.push(
+        { from: "00104", to: "00301" },
+        { from: "00301", to: "STBUS" },
+        { from: "STBUS", to: "00302" },
+        { from: "STBUS", to: "00303" },
+        { from: "00303", to: "00102" }
+      );
+      render();
+      addLog("新增站房000300 + 开关00301/00302/00303: 00301对接00104、00302作备用间隔(末端豁免)、00303对接00102, 拓扑经站房母线贯通, 无新悬空/断连。");
+      appShell.toast("已新增站房000300 + 3 负荷开关", "ok");
+    }
+
+    /* 测试任务2: 删除开关00024, 自动连通其左右两侧设备 */
+    function delSwitch() {
+      var id = "00024";
+      if (!node(id)) { addLog("开关00024 不存在(可能已删除)。", false); return; }
+      var inE = state.edges.find(function (e) { return e.to === id; });
+      var outE = state.edges.find(function (e) { return e.from === id; });
+      state.edges = state.edges.filter(function (e) { return e.from !== id && e.to !== id; });
+      if (inE && outE) state.edges.push({ from: inE.from, to: outE.to });
+      state.nodes = state.nodes.filter(function (n) { return n.id !== id; });
+      render();
+      addLog("已删除开关00024, 自动连通 " + (inE ? inE.from : "?") + " → " + (outE ? outE.to : "?") + ", 拓扑保持连续。");
+      appShell.toast("已删除开关00024并自动连通", "ok");
+    }
+
+    function syncButtons(feeder) {
+      var is215 = feeder === "LINE215";
+      $("#btn-add").disabled = !is215;
+      $("#btn-del").disabled = is215;
+      $("#btn-add").style.opacity = is215 ? 1 : 0.5;
+      $("#btn-del").style.opacity = is215 ? 0.5 : 1;
+      $("#task-badge").textContent = is215 ? "测试任务 1" : "测试任务 2";
+    }
+
+    function doPrefill() {
+      var sel = $("#sel-feeder"); if (sel) sel.value = "LINE215";
+      reset("LINE215"); render(); syncButtons("LINE215");
+      addStation();
+      appShell.toast("已填入示例：站房000300 + 3 负荷开关", "ok");
+    }
+    document.addEventListener("appshell:prefill", doPrefill);
+
+    setTimeout(function () {
+      try { if (sessionStorage.getItem("v8-prefill") === "1") { sessionStorage.removeItem("v8-prefill"); doPrefill(); } } catch (e) {}
+      var feeder = $("#sel-feeder").value;
+      reset(feeder); render(); syncButtons(feeder);
+      addLog("已载入 " + feeder + " 美化后初始拓扑。");
+
+      $("#sel-feeder").addEventListener("change", function () {
+        feeder = this.value; reset(feeder); render(); syncButtons(feeder);
+        addLog("切换至 " + feeder + " 美化图, 已重置拓扑。");
+      });
+      $("#btn-add").addEventListener("click", function () { if (!this.disabled) addStation(); });
+      $("#btn-del").addEventListener("click", function () { if (!this.disabled) delSwitch(); });
+      $("#btn-reset").addEventListener("click", function () { reset(feeder); render(); addLog("已重置为 " + feeder + " 初始拓扑。"); });
+      $("#btn-export").addEventListener("click", function () {
+        if (!LAST_SVG) return;
+        var blob = new Blob([LAST_SVG], { type: "image/svg+xml;charset=utf-8" });
+        var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "svg_edit_" + feeder + "_" + Date.now() + ".svg"; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 2000);
+        appShell.toast("已导出 SVG", "ok");
+      });
+    }, 50);
+  </script>
+</body>
+</html>

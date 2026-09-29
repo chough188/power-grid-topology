@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 880" width="1600" height="880" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <title>CP-202606 — 系统架构图 (5 层检测器 + 28 异常类型)</title>
+  <desc>配电网图模拓扑智能识别与修正系统 — 端到端流水线总览</desc>
+
+  <!-- =========== 背景渐变 + 网格 =========== -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="layerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.65"/>
+    </linearGradient>
+    <linearGradient id="inputGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0e7490" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0891b2" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="outputGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#16a34a" stop-opacity="0.85"/>
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <polygon points="0 0, 12 6, 0 12" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <polygon points="0 0, 12 6, 0 12" fill="#10b981"/>
+    </marker>
+    <style>
+      .title { fill:#fff; font-size:28px; font-weight:700; letter-spacing:1px; }
+      .sub   { fill:#94a3b8; font-size:14px; }
+      .boxLabel { fill:#fff; font-size:18px; font-weight:600; }
+      .boxSub   { fill:#cbd5e1; font-size:12px; }
+      .boxName  { fill:#fff; font-size:15px; font-weight:600; }
+      .boxHint  { fill:#cbd5e1; font-size:11px; }
+      .pill     { fill:#fff; font-size:11px; font-weight:600; }
+      .pillAccent { fill:#0f172a; font-size:11px; font-weight:600; }
+      .flow     { fill:#94a3b8; font-size:11px; font-style:italic; }
+      .legend   { fill:#cbd5e1; font-size:12px; }
+      .legendHot{ fill:#fde68a; font-size:11px; font-weight:700; }
+      .group    { fill:#fff; font-size:13px; font-weight:600; }
+    </style>
+  </defs>
+  <rect width="1600" height="880" fill="url(#bgGrad)"/>
+
+  <!-- =========== 顶栏 =========== -->
+  <text x="40" y="50" class="title">CP-202606 系统架构全景图</text>
+  <text x="40" y="74" class="sub">面向新型电力系统的配电网图模拓扑智能识别与修正 — 5 层检测器 / 28 异常类型 / 12 子任务 / 51 基准网络</text>
+  <text x="1560" y="50" class="sub" text-anchor="end">检测→定位→修正→验证→可回滚 | 闭环比 100%</text>
+  <line x1="40" y1="92" x2="1560" y2="92" stroke="#334155" stroke-width="1"/>
+
+  <!-- =========== 输入区 (左) =========== -->
+  <g id="inputs">
+    <rect x="40"  y="120" width="220" height="700" rx="8" fill="url(#inputGrad)" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="150" y="148" class="boxLabel" text-anchor="middle">多源输入数据</text>
+    <text x="150" y="170" class="boxSub"  text-anchor="middle">14 SQL 表 · 3 格式</text>
+
+    <!-- SCADA -->
+    <g transform="translate(60,200)">
+      <rect width="180" height="100" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="14" y="26" class="boxName">⚡ SCADA 实时</text>
+      <text x="14" y="48" class="boxHint">96 量测点</text>
+      <text x="14" y="66" class="boxHint">遥信 / 遥测 / 事件</text>
+      <text x="14" y="84" class="boxHint">CSV / JSON / 仿真</text>
+    </g>
+
+    <!-- SVG -->
+    <g transform="translate(60,330)">
+      <rect width="180" height="100" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="14" y="26" class="boxName">🎨 SVG 图形</text>
+      <text x="14" y="48" class="boxHint">Q/GDW 10518</text>
+      <text x="14" y="66" class="boxHint">GB/T 35689</text>
+      <text x="14" y="84" class="boxHint">·/DOM 解析</text>
+    </g>
+
+    <!-- CIM -->
+    <g transform="translate(60,460)">
+      <rect width="180" height="100" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="14" y="26" class="boxName">🗂 CIM/E 模型</text>
+      <text x="14" y="48" class="boxHint">IEC 61970/61968</text>
+      <text x="14" y="66" class="boxHint">RDF / XML</text>
+      <text x="14" y="84" class="boxHint">6 主网 + 5 配电 + 3 字典</text>
+    </g>
+
+    <!-- Topology -->
+    <g transform="translate(60,590)">
+      <rect width="180" height="100" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="14" y="26" class="boxName">🔗 已有拓扑</text>
+      <text x="14" y="48" class="boxHint">NetworkX 图</text>
+      <text x="14" y="66" class="boxHint">pandapower 网络</text>
+      <text x="14" y="84" class="boxHint">SLB / DB / Witness</text>
+    </g>
+
+    <!-- Bench -->
+    <g transform="translate(60,720)">
+      <rect width="180" height="80" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="14" y="26" class="boxName">📚 51 基准网络</text>
+      <text x="14" y="48" class="boxHint">case14 / 33bw / 57 / 1354</text>
+      <text x="14" y="66" class="boxHint">cigre_mv / 4gs / 1888rte</text>
+    </g>
+
+    <!-- Arrows from inputs to layer stack -->
+    <path d="M 240,250 C 290,250 320,270 380,290" stroke="#94a3b8" fill="none" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <path d="M 240,380 C 290,380 320,380 380,380" stroke="#94a3b8" fill="none" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <path d="M 240,510 C 290,510 320,470 380,470" stroke="#94a3b8" fill="none" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <path d="M 240,640 C 290,640 320,560 380,560" stroke="#94a3b8" fill="none" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <path d="M 240,760 C 290,760 320,650 380,650" stroke="#94a3b8" fill="none" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- =========== 5 层检测器 (中) =========== -->
+  <g id="layers">
+    <rect x="380" y="120" width="540" height="700" rx="8" fill="url(#layerGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="650" y="148" class="boxLabel" text-anchor="middle">5 层协同检测引擎</text>
+    <text x="650" y="170" class="boxSub"  text-anchor="middle">5-Layer Hybrid Detection Engine</text>
+
+    <!-- L1 规则 -->
+    <g transform="translate(400,200)">
+      <rect width="500" height="120" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">L1 · 规则引擎  (rule_engine)</text>
+      <text x="14" y="50" class="boxHint">R1 CIM-SVG 设备匹配   R2 拓扑联通性   R3 开关状态一致</text>
+      <text x="14" y="68" class="boxHint">R4 量测合理性          R5 信号跳变     R6 三相不平衡 (&gt;15%)</text>
+      <text x="14" y="92" class="pillAccent" fill="#86efac">耗时 &lt; 100 ms</text>
+      <text x="120" y="92" class="pillAccent" fill="#86efac">精准筛</text>
+      <text x="200" y="92" class="pillAccent" fill="#86efac">不确定 → 流入 L2</text>
+      <rect x="370" y="74" width="120" height="22" rx="11" fill="#10b981"/>
+      <text x="430" y="90" class="pillAccent" text-anchor="middle">假阳 FP ↓</text>
+    </g>
+
+    <!-- L2 状态估计 -->
+    <g transform="translate(400,340)">
+      <rect width="500" height="100" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">L2 · 状态估计 WLS  (state_estimation)</text>
+      <text x="14" y="50" class="boxHint">加權最小二乗 (SciPy.optimize) + chi² 全局检验 (α=0.01) + BDD 标准化残差</text>
+      <text x="14" y="74" class="pillAccent" fill="#86efac">可疑设备清单 → L3</text>
+      <rect x="380" y="56" width="120" height="22" rx="11" fill="#10b981"/>
+      <text x="430" y="72" class="pillAccent" text-anchor="middle">异常粗定位</text>
+    </g>
+
+    <!-- L3 28类型 -->
+    <g transform="translate(400,460)">
+      <rect width="500" height="160" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="14" y="28" class="boxName" fill="#fde68a">L3 · 28 类型专项检测 (type_detectors)</text>
+      <text x="14" y="48" class="boxHint">拓扑 5 类 · 量测 6 类 · 参数 4 类 · 潮流 4 类 · 电压 3 类 · 其他 6 类</text>
+      <g transform="translate(14,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">topo_interrupt</text></g>
+      <g transform="translate(78,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">virtual_faulty</text></g>
+      <g transform="translate(142,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">model_mismatch</text></g>
+      <g transform="translate(206,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">ghost_topo</text></g>
+      <g transform="translate(270,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">signal_mismatch</text></g>
+      <g transform="translate(334,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">telemetry</text></g>
+      <g transform="translate(398,60)">
+        <rect width="58" height="22" rx="11" fill="#1e293b"/><text x="29" y="16" class="pill" text-anchor="middle">load_shift</text></g>
+      <g transform="translate(14,88)">
+        <rect width="80" height="22" rx="11" fill="#1e293b"/><text x="40" y="16" class="pill" text-anchor="middle">voltage_collapse</text></g>
+      <g transform="translate(100,88)">
+        <rect width="80" height="22" rx="11" fill="#1e293b"/><text x="40" y="16" class="pill" text-anchor="middle">harmonic_pollution</text></g>
+      <g transform="translate(186,88)">
+        <rect width="80" height="22" rx="11" fill="#1e293b"/><text x="40" y="16" class="pill" text-anchor="middle">clock_drift</text></g>
+      <g transform="translate(272,88)">
+        <rect width="80" height="22" rx="11" fill="#1e293b"/><text x="40" y="16" class="pill" text-anchor="middle">trafo_tap</text></g>
+      <g transform="translate(358,88)">
+        <rect width="80" height="22" rx="11" fill="#1e293b"/><text x="40" y="16" class="pill" text-anchor="middle">+18 others</text></g>
+      <text x="14" y="132" class="pillAccent" fill="#86efac">全 28/28 類型 · Recall 100% · 偵測置信 co-rated</text>
+    </g>
+
+    <!-- L4 GNN -->
+    <g transform="translate(400,640)">
+      <rect width="500" height="80" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="1"/>
+      <text x="14" y="28" class="boxName" fill="#e9d5ff">L4 · GNN v52 端到端  (gnn_graph_binary_v52.pt)</text>
+      <text x="14" y="50" class="boxHint">GCN + GAT + 二分类头 · 51 网络训练 · F1 96.5% Recall 100% · CUDA 加速</text>
+      <text x="14" y="68" class="pillAccent" fill="#86efac">难例增强 → 与规则融合</text>
+    </g>
+
+    <!-- L5 融合 -->
+    <g transform="translate(400,740)">
+      <rect width="500" height="60" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="14" y="24" class="boxName" fill="#fde68a">L5 · 多源置信融合 (gnn_graph_verify)</text>
+      <text x="14" y="44" class="boxHint">去重 + 加权置信 + 二元验证 · 输出 唯一异常集 → 修正引擎</text>
+    </g>
+  </g>
+
+  <!-- =========== 输出区 (右) =========== -->
+  <g id="outputs">
+    <rect x="940" y="120" width="320" height="700" rx="8" fill="url(#outputGrad)" stroke="#10b981" stroke-width="1.5"/>
+    <text x="1100" y="148" class="boxLabel" text-anchor="middle">修正引擎 + 验证闭环</text>
+    <text x="1100" y="170" class="boxSub"  text-anchor="middle">Correction · Verify · Rollback</text>
+
+    <!-- 修正引擎 -->
+    <g transform="translate(960,200)">
+      <rect width="280" height="120" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">🛠 修正引擎 correction_engine</text>
+      <text x="14" y="50" class="boxHint">合规 + 最小化 + 可行 三原则</text>
+      <text x="14" y="68" class="boxHint">逆向 SQL UPDATE 生成</text>
+      <text x="14" y="86" class="boxHint">5 类修正策略: INSERT Terminal /</text>
+      <text x="14" y="102" class="boxHint">UPDATE CN / 新增设备 / 删除连边</text>
+    </g>
+
+    <!-- SQL 输出 -->
+    <g transform="translate(960,340)">
+      <rect width="280" height="100" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">💾 SQL UPDATE 双面板</text>
+      <text x="14" y="50" class="boxHint">Sheet 1–5 · 前置预览</text>
+      <text x="14" y="68" class="boxHint">validate_sql_preview</text>
+      <text x="14" y="86" class="boxHint">沙箱执行 → 立即回滚</text>
+    </g>
+
+    <!-- KCL/KVL 验证 -->
+    <g transform="translate(960,460)">
+      <rect width="280" height="100" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">✅ 物理约束验证</text>
+      <text x="14" y="50" class="boxHint">KCL Σ I_in = Σ I_out</text>
+      <text x="14" y="68" class="boxHint">KVL Σ ΔU = 0</text>
+      <text x="14" y="86" class="boxHint">修正三原则 (合规/最小化/可行)</text>
+    </g>
+
+    <!-- 操作票 -->
+    <g transform="translate(960,580)">
+      <rect width="280" height="100" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">📋 操作票 + 工单</text>
+      <text x="14" y="50" class="boxHint">SQLite SOP 知识库 28/28</text>
+      <text x="14" y="68" class="boxHint">现场作业定位 (高德 API)</text>
+      <text x="14" y="86" class="boxHint">JWT + 审计 + QR</text>
+    </g>
+
+    <!-- v8 Dashboard -->
+    <g transform="translate(960,700)">
+      <rect width="280" height="100" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="28" class="boxName">📊 v8 Dashboard 输出</text>
+      <text x="14" y="50" class="boxHint">D3 拓扑 + ECharts KPI</text>
+      <text x="14" y="68" class="boxHint">PDF 报告 + 28 异常趋势</text>
+      <text x="14" y="86" class="boxHint">JWT + 移动端 + 实时</text>
+    </g>
+
+    <!-- Arrows from layer stack to outputs -->
+    <path d="M 920,770 C 940,770 950,260 960,260" stroke="#10b981" fill="none" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <path d="M 920,770 C 940,770 950,390 960,390" stroke="#10b981" fill="none" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <path d="M 920,770 C 940,770 950,510 960,510" stroke="#10b981" fill="none" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <path d="M 920,770 C 940,770 950,630 960,630" stroke="#10b981" fill="none" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <path d="M 920,770 C 940,770 950,750 960,750" stroke="#10b981" fill="none" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  </g>
+
+  <!-- =========== 反馈闭环 (右→左) =========== -->
+  <g id="loopback">
+    <path d="M 1100,820 C 1100,860 800,860 650,860 L 650,830" stroke="#f59e0b" fill="none" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrowhead)"/>
+    <text x="900" y="855" class="flow" text-anchor="middle">↩ 闭环反馈: 工单现场结果 → 标记 FP/FN → 训练集回流</text>
+  </g>
+
+  <!-- =========== 底部图例 =========== -->
+  <g id="legend" transform="translate(40,840)">
+    <text x="0" y="0" class="legendHot">图例</text>
+    <rect x="0" y="10" width="20" height="12" fill="url(#inputGrad)" rx="2"/><text x="28" y="20" class="legend">多源数据输入</text>
+    <rect x="120" y="10" width="20" height="12" fill="url(#layerGrad)" rx="2"/><text x="148" y="20" class="legend">5 层检测引擎</text>
+    <rect x="260" y="10" width="20" height="12" fill="url(#outputGrad)" rx="2"/><text x="288" y="20" class="legend">修正 + 验证 + 输出</text>
+    <rect x="430" y="10" width="20" height="12" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,2"/><text x="458" y="20" class="legend">反馈闭环</text>
+    <text x="600" y="20" class="legend">方案版本 v1.1 · 2026-07-22 · 主维护者: Codex Assistant</text>
+  </g>
+</svg>

@@ -1,0 +1,786 @@
+/*
+ * PowerGrid AI Operations — v9 设计升级层 (theme-v9.css)
+ * 工业科技控制台美学 (Industrial Tech Console)
+ * 增量覆盖层: 通过 [data-v9] 命名空间隔离, 不影响 v8 原始样式
+ * 引入方式: shell.js 动态注入 (data-v9 属性设置在 <html> 上)
+ */
+
+@import url('./fonts.css');
+
+/* ============================================================================
+ * 1. 字体系统升级 — Industrial Tech Console Typography
+ *    主字体: DM Sans | 中文后备: Noto Sans CJK SC
+ *    展示字体: Outfit (hero / KPI 数值)
+ *    等宽字体: JetBrains Mono
+ * ============================================================================ */
+
+[data-v9] body {
+  /* Windows 11 原生字体优先: Segoe UI 在 Windows 上始终可用且零下载 */
+  font-family: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, "Noto Sans CJK SC", "DM Sans", sans-serif;
+}
+
+[data-v9] code,
+[data-v9] .skeleton,
+[data-v9] .skeleton-text,
+[data-v9] .sk-line,
+[data-v9] .sk-block {
+  /* Windows Terminal 字体优先, 离线可用 */
+  font-family: "Cascadia Code", "Cascadia Mono", Consolas, "JetBrains Mono", "SF Mono", monospace;
+}
+
+[data-v9] .hero-title,
+[data-v9] .kpi-value,
+[data-v9] .fs-display {
+  font-family: "Segoe UI Semibold", "Segoe UI Variable", "Segoe UI", "Outfit", "DM Sans", sans-serif;
+}
+
+/* ============================================================================
+ * 2. 色彩系统升级 — 更深沉的科技蓝黑 / 青色辅助
+ * ============================================================================ */
+
+[data-v9]:root {
+  /* 亮色模式: 页面背景微蓝灰 */
+  --v9-bg-page: #f0f4f8;
+  /* 亮色模式: 卡片背景极淡蓝调 */
+  --v9-bg-card: #f6f9fc;
+  /* accent 主色增加青色成分 (科技感色偏) */
+  --v9-accent: #1a6dd4;
+  --v9-accent-soft: rgba(26, 109, 212, .12);
+  --v9-accent-rgb: 26, 109, 212;
+  /* 青色辅助色: 状态指示灯 / 装饰线 */
+  --v9-accent-cyan: #06b6d4;
+  --v9-accent-cyan-soft: rgba(6, 182, 212, .12);
+  --v9-accent-cyan-rgb: 6, 182, 212;
+  /* KPI / Hero 多阶渐变 (蓝 → 青科技渐变) */
+  --v9-grad-kpi: linear-gradient(135deg, rgba(26, 109, 212, .10) 0%, rgba(6, 182, 212, .06) 50%, rgba(26, 109, 212, .03) 100%);
+  --v9-grad-hero: linear-gradient(135deg, rgba(26, 109, 212, .14) 0%, rgba(6, 182, 212, .06) 60%, rgba(26, 109, 212, .03) 100%);
+  --v9-grad-brand: linear-gradient(135deg, #1a6dd4 0%, #1d4ed8 40%, #0891b2 100%);
+  --v9-grad-brand-soft: linear-gradient(135deg, rgba(26, 109, 212, .16), rgba(6, 182, 212, .06));
+  --v9-grad-accent-bar: linear-gradient(90deg, #1a6dd4, #06b6d4);
+  /* 背景层: 多层径向渐变 (角落微光) */
+  --v9-bg-radial-1: radial-gradient(ellipse 600px 400px at 0% 0%, rgba(26, 109, 212, .06) 0%, transparent 70%);
+  --v9-bg-radial-2: radial-gradient(ellipse 500px 350px at 100% 100%, rgba(6, 182, 212, .05) 0%, transparent 70%);
+  --v9-bg-radial-3: radial-gradient(ellipse 400px 300px at 100% 0%, rgba(26, 109, 212, .03) 0%, transparent 60%);
+  /* sidebar 竖条纹纹理 */
+  --v9-sidebar-stripe: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 38px,
+    rgba(26, 109, 212, .03) 38px,
+    rgba(26, 109, 212, .03) 40px
+  );
+  /* 卡片玻璃效果 */
+  --v9-card-blur: blur(12px);
+  --v9-card-bg-glass: rgba(246, 249, 252, .72);
+  /* 点阵网格 */
+  --v9-grid-dot: rgba(26, 109, 212, .07);
+
+  /* ===== v9.1 Motion Token (借鉴 v7 工业级设计系统) ===== */
+  --v9-dur-fast: 120ms;
+  --v9-dur: 200ms;
+  --v9-dur-slow: 360ms;
+  --v9-dur-slower: 540ms;
+  --v9-ease: cubic-bezier(.4, 0, .2, 1);
+  --v9-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --v9-ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+  --v9-ease-spring: cubic-bezier(.175, .885, .32, 1.275);
+}
+
+/* 暗色模式全覆盖 */
+[data-v9][data-theme="dark"] {
+  --v9-bg-page: #080e1a;
+  --v9-bg-card: rgba(17, 24, 39, .65);
+  --v9-accent: #3b9cf6;
+  --v9-accent-soft: rgba(59, 156, 246, .15);
+  --v9-accent-rgb: 59, 156, 246;
+  --v9-accent-cyan: #22d3ee;
+  --v9-accent-cyan-soft: rgba(34, 211, 238, .15);
+  --v9-accent-cyan-rgb: 34, 211, 238;
+  --v9-grad-kpi: linear-gradient(135deg, rgba(59, 156, 246, .14) 0%, rgba(34, 211, 238, .08) 50%, rgba(59, 156, 246, .04) 100%);
+  --v9-grad-hero: linear-gradient(135deg, rgba(59, 156, 246, .18) 0%, rgba(34, 211, 238, .08) 60%, rgba(59, 156, 246, .04) 100%);
+  --v9-grad-brand: linear-gradient(135deg, #3b9cf6 0%, #2563eb 40%, #22d3ee 100%);
+  --v9-grad-brand-soft: linear-gradient(135deg, rgba(59, 156, 246, .20), rgba(34, 211, 238, .08));
+  --v9-grad-accent-bar: linear-gradient(90deg, #3b9cf6, #22d3ee);
+  /* 暗色背景层: 角落光晕更强 */
+  --v9-bg-radial-1: radial-gradient(ellipse 700px 500px at 0% 0%, rgba(59, 156, 246, .12) 0%, transparent 70%);
+  --v9-bg-radial-2: radial-gradient(ellipse 600px 400px at 100% 100%, rgba(34, 211, 238, .10) 0%, transparent 70%);
+  --v9-bg-radial-3: radial-gradient(ellipse 500px 350px at 100% 0%, rgba(59, 156, 246, .06) 0%, transparent 60%);
+  --v9-sidebar-stripe: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 38px,
+    rgba(59, 156, 246, .04) 38px,
+    rgba(59, 156, 246, .04) 40px
+  );
+  /* 暗色 glassmorphism */
+  --v9-card-blur: blur(16px);
+  --v9-card-bg-glass: rgba(17, 24, 39, .55);
+  --v9-grid-dot: rgba(59, 156, 246, .09);
+  /* v9.1: 暗色模式 mesh 渐变光晕色 (借鉴 v6 三色径向渐变) */
+  --v9-glow-1: rgba(59, 156, 246, .18);
+  --v9-glow-2: rgba(124, 58, 237, .12);
+  --v9-glow-3: rgba(34, 211, 238, .10);
+}
+
+/* ============================================================================
+ * 3. 背景层升级 — 多层径向渐变 + 点阵网格 + sidebar 竖条纹
+ * ============================================================================ */
+
+/* 页面背景 */
+[data-v9] body {
+  background-color: var(--v9-bg-page);
+}
+
+/* 主区域: v6 mesh 渐变光晕 + v9 多层径向渐变 + 极淡点阵网格 */
+[data-v9] .main {
+  background:
+    radial-gradient(ellipse 900px 600px at 15% 10%, rgba(29, 109, 212, .10) 0%, transparent 70%),
+    radial-gradient(ellipse 700px 500px at 85% 85%, rgba(124, 58, 237, .06) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 400px at 60% 40%, rgba(6, 182, 212, .04) 0%, transparent 70%),
+    var(--v9-bg-radial-1),
+    var(--v9-bg-radial-2),
+    var(--v9-bg-radial-3),
+    radial-gradient(var(--v9-grid-dot) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    22px 22px;
+  background-color: var(--v9-bg-page);
+}
+
+/* Sidebar 竖条纹纹理 (控制室仪器面板感) */
+[data-v9] .sidebar {
+  background-image: var(--v9-sidebar-stripe);
+  background-size: 100% 100%;
+}
+
+/* 暗色 sidebar: 多层渐变 + 竖条纹，增加深度感 */
+[data-v9][data-theme="dark"] .sidebar {
+  background:
+    linear-gradient(180deg, rgba(10, 17, 32, .95) 0%, rgba(8, 14, 26, .98) 100%),
+    var(--v9-sidebar-stripe);
+  background-size: 100% 100%, 100% 100%;
+}
+
+/* ============================================================================
+ * 4. 卡片系统升级 — accent 顶线 / hover 边框 / glassmorphism / pulse 色带
+ * ============================================================================ */
+
+/* --- 通用卡片: 半透明 + 顶部 accent 渐变线 + glassmorphism --- */
+[data-v9] .card {
+  background: var(--v9-card-bg-glass);
+  backdrop-filter: var(--v9-card-blur);
+  -webkit-backdrop-filter: var(--v9-card-blur);
+  border-color: color-mix(in srgb, var(--v9-accent) 12%, var(--border));
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部 accent 渐变色带 (伪元素实现, 2px) */
+[data-v9] .card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--v9-grad-accent-bar);
+  opacity: 0;
+  transition: opacity var(--tr);
+  z-index: 1;
+}
+
+[data-v9] .card:hover {
+  border-color: var(--v9-accent);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 1px rgba(var(--v9-accent-rgb), .22),
+    0 0 24px rgba(var(--v9-accent-rgb), .08);
+  transform: translateY(-3px);
+}
+
+[data-v9] .card:hover::before {
+  opacity: 1;
+}
+
+/* --- KPI 卡片: 升级渐变 + 左侧色带呼吸 + glassmorphism --- */
+[data-v9] .kpi {
+  background: var(--v9-grad-kpi), var(--v9-card-bg-glass);
+  backdrop-filter: var(--v9-card-blur);
+  -webkit-backdrop-filter: var(--v9-card-blur);
+  border-color: color-mix(in srgb, var(--v9-accent) 10%, var(--border));
+}
+
+/* KPI 左侧色带增加 pulse 呼吸动效 */
+[data-v9] .kpi::before {
+  width: 3px;
+  background: var(--v9-grad-accent-bar);
+  animation: v9-pulse-bar 2.8s ease-in-out infinite;
+}
+[data-v9] .kpi.warn::before {
+  background: linear-gradient(180deg, var(--warn), #fbbf24);
+}
+[data-v9] .kpi.err::before {
+  background: linear-gradient(180deg, var(--err), #f87171);
+}
+[data-v9] .kpi.ok::before {
+  background: linear-gradient(180deg, var(--success), #4ade80);
+}
+
+[data-v9] .kpi:hover {
+  border-color: var(--v9-accent);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 1px rgba(var(--v9-accent-rgb), .22),
+    0 0 20px rgba(var(--v9-accent-rgb), .07);
+  transform: translateY(-3px);
+}
+
+/* --- Hero 区域: 丰富渐变 --- */
+[data-v9] .hero {
+  background: var(--v9-grad-hero);
+  border-color: color-mix(in srgb, var(--v9-accent) 20%, var(--border));
+  backdrop-filter: var(--v9-card-blur);
+  -webkit-backdrop-filter: var(--v9-card-blur);
+}
+
+[data-v9] .hero-badge {
+  background: var(--v9-grad-brand);
+}
+
+/* KPI 数值用 Outfit 展示字体加强 */
+[data-v9] .kpi-value {
+  letter-spacing: -.02em;
+  background: var(--v9-grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================================================
+ * 5. 动效系统升级 — fadeUp 增强 / borderGlow / pulse / 按钮光效 / nav 滑动条
+ * ============================================================================ */
+
+/* --- fadeUp 增强版: 增加 scale 微缩放 (0.97 → 1) --- */
+@keyframes v9-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+[data-v9] .kpi-grid > .kpi,
+[data-v9] .task-grid > .task-card,
+[data-v9] .page-section > .card,
+[data-v9] .hero {
+  animation: v9-fadeUp .6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- borderGlow: 卡片边框呼吸光效 --- */
+@keyframes v9-borderGlow {
+  0%, 100% {
+    border-color: color-mix(in srgb, var(--v9-accent) 12%, var(--border));
+    box-shadow: var(--shadow);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--v9-accent) 30%, var(--border));
+    box-shadow: var(--shadow-md), 0 0 16px rgba(var(--v9-accent-rgb), .10);
+  }
+}
+
+/* --- pulse: 状态点脉冲 --- */
+@keyframes v9-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--v9-accent-cyan-rgb), .5); }
+  70%  { box-shadow: 0 0 0 6px rgba(var(--v9-accent-cyan-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--v9-accent-cyan-rgb), 0); }
+}
+
+@keyframes v9-pulse-bar {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .55; }
+}
+
+/* 状态点增加脉冲动画 */
+[data-v9] .status-dot.ok {
+  animation: v9-pulse 2.4s ease-in-out infinite;
+}
+
+/* --- 按钮光效跟随 hover --- */
+[data-v9] .btn {
+  transition:
+    background var(--tr-fast),
+    border-color var(--tr-fast),
+    box-shadow var(--tr),
+    transform var(--tr),
+    color var(--tr-fast);
+}
+
+[data-v9] .btn:hover {
+  box-shadow:
+    var(--shadow-sm),
+    0 0 12px rgba(var(--v9-accent-rgb), .12);
+}
+
+[data-v9] .btn-primary {
+  background: var(--v9-grad-brand);
+}
+
+[data-v9] .btn-primary:hover {
+  background: var(--v9-grad-brand);
+  box-shadow:
+    var(--shadow-md),
+    0 0 20px rgba(var(--v9-accent-rgb), .18),
+    0 0 40px rgba(var(--v9-accent-cyan-rgb), .08);
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+/* --- sidebar nav-item 滑动指示条动画 --- */
+[data-v9] .nav-item {
+  position: relative;
+}
+
+[data-v9] .nav-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 3px 3px 0;
+  background: var(--v9-grad-accent-bar);
+  transition: transform var(--tr);
+}
+
+[data-v9] .nav-item:hover::after {
+  transform: translateY(-50%) scaleY(.6);
+}
+
+[data-v9] .nav-item.active::after {
+  transform: translateY(-50%) scaleY(1);
+}
+
+/* active 态加强: 青色辉光 */
+[data-v9] .nav-item.active {
+  border-left-color: transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--v9-accent-rgb), .15),
+    0 0 12px rgba(var(--v9-accent-rgb), .06);
+}
+
+/* ============================================================================
+ * 6. 暗色模式全面适配 — glassmorphism / 深度感 / 氛围光
+ * ============================================================================ */
+
+/* 暗色: 卡片 glassmorphism 风格 */
+[data-v9][data-theme="dark"] .card {
+  background: rgba(17, 24, 39, .55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(59, 156, 246, .12);
+}
+
+[data-v9][data-theme="dark"] .card:hover {
+  border-color: rgba(59, 156, 246, .45);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, .5),
+    0 0 0 1px rgba(59, 156, 246, .25),
+    0 0 32px rgba(59, 156, 246, .10),
+    0 0 60px rgba(34, 211, 238, .05);
+}
+
+[data-v9][data-theme="dark"] .card::before {
+  background: linear-gradient(90deg, #3b9cf6, #22d3ee);
+}
+
+/* 暗色: KPI glassmorphism */
+[data-v9][data-theme="dark"] .kpi {
+  background:
+    var(--v9-grad-kpi),
+    rgba(17, 24, 39, .50);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(59, 156, 246, .10);
+}
+
+[data-v9][data-theme="dark"] .kpi:hover {
+  border-color: rgba(59, 156, 246, .40);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, .5),
+    0 0 0 1px rgba(59, 156, 246, .22),
+    0 0 24px rgba(59, 156, 246, .08);
+}
+
+/* 暗色: Hero 区域 */
+[data-v9][data-theme="dark"] .hero {
+  background: var(--v9-grad-hero), rgba(8, 14, 26, .60);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(59, 156, 246, .18);
+}
+
+/* 暗色: 按钮光效更强 */
+[data-v9][data-theme="dark"] .btn:hover {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, .4),
+    0 0 16px rgba(59, 156, 246, .15);
+}
+
+[data-v9][data-theme="dark"] .btn-primary:hover {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, .5),
+    0 0 24px rgba(59, 156, 246, .22),
+    0 0 48px rgba(34, 211, 238, .10);
+}
+
+/* 暗色: nav-item 滑动条 */
+[data-v9][data-theme="dark"] .nav-item.active {
+  box-shadow:
+    inset 0 0 0 1px rgba(59, 156, 246, .18),
+    0 0 16px rgba(59, 156, 246, .08);
+}
+
+/* 暗色: section-title 前置色带升级 */
+[data-v9] .section-title::before {
+  background: var(--v9-grad-accent-bar);
+}
+
+/* 暗色: 状态点脉冲用 cyan 辉光 */
+[data-v9][data-theme="dark"] .status-dot.ok {
+  background: #22d3ee;
+  box-shadow: 0 0 8px rgba(34, 211, 238, .6);
+  animation: v9-pulse 2.4s ease-in-out infinite;
+}
+
+/* ============================================================================
+ * 7. 辅助视觉元素 — 装饰线 / 分隔条 / accent-cyan 用法示例
+ * ============================================================================ */
+
+/* accent-cyan 装饰线辅助类 (可在 HTML 中按需使用) */
+[data-v9] .v9-accent-line {
+  width: 100%;
+  height: 2px;
+  background: var(--v9-grad-accent-bar);
+  border: none;
+  border-radius: 1px;
+}
+
+/* accent-cyan 状态指示点 */
+[data-v9] .v9-status-cyan {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--v9-accent-cyan);
+  box-shadow: 0 0 6px rgba(var(--v9-accent-cyan-rgb), .5);
+  animation: v9-pulse 2.4s ease-in-out infinite;
+}
+
+/* ============================================================================
+ * 8. 无障碍适配 — 减少动态偏好
+ * ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-v9] .kpi-grid > .kpi,
+  [data-v9] .task-grid > .task-card,
+  [data-v9] .page-section > .card,
+  [data-v9] .hero {
+    animation: none !important;
+  }
+  [data-v9] .kpi::before {
+    animation: none !important;
+  }
+  [data-v9] .status-dot.ok,
+  [data-v9] .v9-status-cyan {
+    animation: none !important;
+  }
+  [data-v9] .nav-item::after {
+    transition: none !important;
+  }
+}
+
+/* ============================================================================
+ * 9. 高级感精炼层 (PREMIUM POLISH · v9.2) — 纯增强, 不改动既有契约/class
+ *    设计依据: Impeccable / frontend-dev / GSAP 技能
+ *    仅新增 token / 状态组件 / 触感过渡; 不改 renderShell·icon·chartTheme 契约、
+ *    NAV、渲染 class 名、页面比赛内容与模块穿透逻辑。
+ * ============================================================================ */
+
+[data-v9] {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius-lg: 18px;
+  --radius-md: 13px;
+  --radius-sm: 9px;
+  --shadow-1: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+  --shadow-2: 0 4px 12px rgba(15, 23, 42, .08), 0 2px 4px rgba(15, 23, 42, .06);
+  --shadow-3: 0 18px 40px -12px rgba(15, 23, 42, .20), 0 8px 16px -8px rgba(15, 23, 42, .12);
+  --glass: saturate(140%) blur(14px);
+  --glass-bg: rgba(255, 255, 255, .55);
+  --ring: 0 0 0 3px rgba(var(--v9-accent-rgb), .35);
+}
+
+[data-v9][data-theme="dark"] {
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, .5);
+  --shadow-3: 0 20px 44px -12px rgba(0, 0, 0, .65);
+  --glass-bg: rgba(17, 24, 39, .55);
+  --ring: 0 0 0 3px rgba(var(--v9-accent-rgb), .45);
+}
+
+/* 焦点可见性 (a11y + 精致描边) */
+[data-v9] a:focus-visible,
+[data-v9] button:focus-visible,
+[data-v9] .btn:focus-visible,
+[data-v9] input:focus-visible,
+[data-v9] select:focus-visible,
+[data-v9] textarea:focus-visible,
+[data-v9] .nav-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--radius-sm);
+}
+
+/* 卡片触感: 悬停抬升 + 分层阴影 + 顶部渐变细线 */
+[data-v9] .card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  transition: transform .35s var(--ease-premium), box-shadow .35s var(--ease-premium), border-color .25s ease;
+}
+[data-v9] .card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-3);
+  border-color: rgba(var(--v9-accent-rgb), .35);
+}
+
+/* 按钮触感: 悬停微抬 + 按压回弹 */
+[data-v9] .btn {
+  border-radius: var(--radius-md);
+  transition: transform .18s var(--ease-premium), box-shadow .25s ease, background-color .2s ease, filter .2s ease;
+  will-change: transform;
+}
+[data-v9] .btn:hover { transform: translateY(-1px); }
+[data-v9] .btn:active { transform: translateY(0) scale(.98); }
+[data-v9] .btn-primary {
+  background: var(--v9-grad-brand);
+  box-shadow: 0 6px 18px -6px rgba(var(--v9-accent-rgb), .55);
+}
+[data-v9] .btn-primary:hover { box-shadow: 0 10px 26px -8px rgba(var(--v9-accent-rgb), .7); filter: saturate(1.05); }
+
+/* 导航 active 指示条加粗 + 激活底色 */
+[data-v9] .nav-item.active { background: var(--v9-accent-soft); }
+[data-v9] .nav-item.active::after { width: 3px; background: var(--v9-grad-accent-bar); }
+
+/* 顶栏 / 侧栏 轻玻璃 */
+[data-v9] .topbar {
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--border, rgba(15, 23, 42, .08));
+}
+
+/* 空状态 / 错误态 组件 (有教育意义, 非占位) */
+[data-v9] .empty-state,
+[data-v9] .error-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 12px; padding: 48px 24px; border-radius: var(--radius-lg);
+  border: 1px dashed rgba(var(--v9-accent-rgb), .25);
+  background: linear-gradient(180deg, rgba(var(--v9-accent-rgb), .03), transparent);
+  color: var(--fg-muted, #64748b);
+}
+[data-v9] .empty-state .es-ico,
+[data-v9] .error-state .es-ico {
+  width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--v9-accent-soft); color: var(--v9-accent);
+}
+[data-v9] .empty-state .es-title { font-size: 16px; font-weight: 600; color: var(--fg, #0f172a); }
+[data-v9] .empty-state .es-desc { font-size: 13px; max-width: 44ch; line-height: 1.6; }
+[data-v9] .error-state { border-color: rgba(239, 68, 68, .35); background: linear-gradient(180deg, rgba(239, 68, 68, .04), transparent); }
+[data-v9] .error-state .es-ico { background: rgba(239, 68, 68, .12); color: #ef4444; }
+[data-v9] .error-state .es-title { color: #ef4444; }
+
+/* 骨架态 shimmer 增强 */
+[data-v9] .skeleton,
+[data-v9] .sk-line,
+[data-v9] .sk-block {
+  background: linear-gradient(100deg, rgba(15, 23, 42, .06) 30%, rgba(15, 23, 42, .12) 50%, rgba(15, 23, 42, .06) 70%);
+  background-size: 200% 100%;
+  animation: v9-shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+@keyframes v9-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* 数字跳动等宽 (premium.js 用 GSAP 驱动, 此处置保底) */
+[data-v9] .count-up { font-variant-numeric: tabular-nums; }
+
+/* 减少动态偏好: 关闭本层新增动效, 保证内容始终可见 */
+@media (prefers-reduced-motion: reduce) {
+  [data-v9] .card:hover { transform: none; }
+  [data-v9] .btn:hover { transform: none; }
+  [data-v9] .skeleton,
+  [data-v9] .sk-line,
+  [data-v9] .sk-block { animation: none !important; }
+}
+
+/* ============================================================================
+ * 10. 命令面板发现性 + Dashboard 覆盖总览 (PREMIUM POLISH · v9.2 续)
+ *     纯增强: 浮动提示徽标 / 模块覆盖带; 不改任何既有契约/class/比赛内容。
+ * ============================================================================ */
+
+/* 命令面板浮动提示徽标 (点击复用既有 Ctrl/Cmd+K 唤起, 不改动 shell.js) */
+[data-v9] .cmdk-hint {
+  position: fixed; right: 22px; bottom: 22px; z-index: 8000;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; color: var(--fg);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass); -webkit-backdrop-filter: var(--glass);
+  border: 1px solid rgba(var(--v9-accent-rgb), .35);
+  box-shadow: var(--shadow-2);
+  cursor: pointer; user-select: none;
+  transition: transform .25s var(--ease-premium), box-shadow .25s ease, border-color .25s ease;
+  animation: cmdkHintIn .5s var(--ease-premium) both;
+}
+[data-v9] .cmdk-hint:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3);
+  border-color: rgba(var(--v9-accent-rgb), .6);
+}
+[data-v9] .cmdk-hint kbd {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  padding: 2px 6px; border-radius: 6px;
+  background: var(--v9-accent-soft); color: var(--v9-accent);
+  border: 1px solid rgba(var(--v9-accent-rgb), .25);
+}
+[data-v9] .cmdk-hint .hint-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--v9-accent);
+  box-shadow: 0 0 8px rgba(var(--v9-accent-rgb), .6);
+  animation: v9-pulse 2s ease-in-out infinite;
+}
+@keyframes cmdkHintIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Dashboard 模块覆盖总览带 */
+[data-v9] .coverage-band { padding: 16px 18px; }
+[data-v9] .coverage-band .badge-ready {
+  display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .03em;
+  color: #047857; background: rgba(16, 185, 129, .14); border: 1px solid rgba(16, 185, 129, .35);
+}
+[data-v9][data-theme="dark"] .coverage-band .badge-ready { color: #34d399; background: rgba(16, 185, 129, .18); }
+[data-v9] .coverage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 12px; }
+[data-v9] .cov-item { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+[data-v9] .cov-num { font-family: "Segoe UI Semibold", "Segoe UI Variable", "Segoe UI", sans-serif; font-size: 30px; font-weight: 800; line-height: 1; color: var(--v9-accent); }
+[data-v9] .cov-label { font-size: 12px; color: var(--fg-muted); margin-top: 6px; min-height: 32px; }
+[data-v9] .cov-bar { height: 5px; border-radius: 3px; background: var(--border); margin-top: 10px; overflow: hidden; }
+[data-v9] .cov-bar > i { display: block; height: 100%; width: 100%; border-radius: 3px; background: var(--v9-grad-accent-bar); }
+
+@media (max-width: 880px) {
+  [data-v9] .coverage-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-v9] .cmdk-hint { animation: none !important; }
+  [data-v9] .cmdk-hint .hint-dot { animation: none !important; }
+}
+
+/* ============================================================================
+ * 9. Windows 11 Fluent 桌面外壳 (v9.2)
+ *    窗口标题栏 + 云母(mica)桌面 + 圆角窗口外框 + 系统蓝强调色
+ *    纯视觉/UX 层: 全部 [data-v9] 命名空间隔离, 不触碰比赛契约/class。
+ * ============================================================================ */
+
+[data-v9] {
+  --v9-titlebar-h: 38px;     /* 窗口标题栏高度 */
+  --v9-win-radius: 12px;     /* 窗口圆角 */
+  --v9-ctrl-size: 46px;      /* 系统按钮热区宽度 (贴近 Win11) */
+}
+
+/* ---- 9.1 强调色统一为 Windows 蓝 (覆盖 comp-v9 的青绿字面量) ---- */
+[data-v9]:root {
+  --v9-accent: #0078D4;                 /* Windows 11 默认强调蓝 */
+  --v9-accent-rgb: 0, 120, 212;
+  --v9-accent-soft: rgba(0, 120, 212, .12);
+  --v9-accent-cyan: #2ba6e0;            /* 保留一档青蓝作为次级 */
+  --v9-accent-cyan-soft: rgba(43, 166, 224, .12);
+  --v9-accent-glow: rgba(0, 120, 212, .35);
+  --v9-accent-strong: rgba(0, 120, 212, .55);
+  --v9-hud-line: rgba(0, 120, 212, .18);
+  --v9-hud-line-dark: rgba(0, 120, 212, .35);
+  --v9-grid-color: rgba(0, 120, 212, .06);
+  --v9-grid-color-dark: rgba(0, 120, 212, .12);
+  --v9-grad-brand: linear-gradient(135deg, #0078D4 0%, #2563eb 40%, #0891b2 100%);
+  --v9-grad-brand-soft: linear-gradient(135deg, rgba(0,120,212,.16), rgba(43,166,224,.06));
+  --v9-grad-accent-bar: linear-gradient(90deg, #0078D4, #2ba6e0);
+  --v9-sidebar-stripe: repeating-linear-gradient(90deg, transparent 0px, transparent 38px, rgba(0,120,212,.03) 38px, rgba(0,120,212,.03) 40px);
+}
+[data-v9][data-theme="dark"]:root {
+  --v9-accent: #2ba6e0;
+  --v9-accent-rgb: 43, 166, 224;
+  --v9-accent-soft: rgba(43, 166, 224, .15);
+  --v9-accent-cyan: #5cc6f5;
+  --v9-grad-brand: linear-gradient(135deg, #2ba6e0 0%, #2563eb 40%, #22d3ee 100%);
+  --v9-grad-accent-bar: linear-gradient(90deg, #2ba6e0, #5cc6f5);
+}
+
+/* ---- 9.2 云母(mica)桌面底纹: 覆盖 shell.js 内联背景 ---- */
+[data-v9] body {
+  background:
+    radial-gradient(1100px 760px at 10% -10%, rgba(0,120,212,.10), transparent 60%),
+    radial-gradient(820px 620px at 102% 4%, rgba(43,166,224,.07), transparent 55%),
+    linear-gradient(157deg, #eaf0f7 0%, #e1e8f1 46%, #d8e0ec 100%) !important;
+}
+[data-v9][data-theme="dark"] body {
+  background:
+    radial-gradient(1100px 760px at 10% -10%, rgba(0,120,212,.16), transparent 60%),
+    radial-gradient(820px 620px at 102% 4%, rgba(43,166,224,.10), transparent 55%),
+    linear-gradient(157deg, #0a1018 0%, #0c1422 50%, #090e18 100%) !important;
+}
+
+/* ---- 9.3 窗口外框 (Fluent window): 圆角 + 阴影 + 顶部贴合标题栏 ---- */
+[data-v9] .app {
+  height: calc(100vh - var(--v9-titlebar-h));
+  margin-top: var(--v9-titlebar-h);
+  border-radius: var(--v9-win-radius) var(--v9-win-radius) 0 0;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 26px 70px rgba(8,15,30,.30), 0 0 0 1px rgba(255,255,255,.10) inset;
+}
+[data-v9][data-theme="dark"] .app {
+  box-shadow: 0 28px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+}
+[data-v9] .app.win-max {
+  height: 100vh; margin-top: 0; border-radius: 0; border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+}
+
+/* ---- 9.4 移动端: 标题栏收起, 窗口铺满 ---- */
+@media (max-width: 768px) {
+  [data-v9] .win-titlebar { display: none; }
+  [data-v9] .app { height: 100vh; margin-top: 0; border-radius: 0; border-color: transparent; }
+}
+
+/* ---- 9.5 页面入场幕布 (premium.js 控制淡出) ---- */
+[data-v9] .page-curtain {
+  position: fixed; inset: 0; z-index: 8800;
+  background: linear-gradient(135deg, #0078D4 0%, #2563eb 45%, #0891b2 100%);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+[data-v9] .page-curtain .curtain-mark {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: rgba(255,255,255,.16);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
+[data-v9] .page-curtain .curtain-mark svg { width: 26px; height: 26px; }
+

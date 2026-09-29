@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>断点定位 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+    <style>
+    .io-row { display: flex; gap: var(--sp-3); flex-wrap: wrap; align-items: flex-end; }
+    .io-row .field { display: flex; flex-direction: column; gap: 4px; }
+    .io-row label { font-size: 11px; color: var(--fg-muted); }
+    .path-svg text { fill: var(--svg-text); font-size: 12px; font-family: var(--font-sans); }
+    .break-flag { fill: var(--dev-loop); }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="card page-section">
+      <div class="section-title"><span id="ico"></span> 拓扑连通性异常诊断与断点定位（任务 1.2）</div>
+      <p style="font-size:12px;color:var(--fg-muted);margin:0 0 12px">依据接线图与遥信遥测，检索两点间拓扑通道，定位开关分断 / 拓扑断连等故障断点。<b>注意不经过末端配电站房（站房内仅进线无出线）</b>。</p>
+      <div class="io-row">
+        <div class="field"><label>起点设备 id</label><input class="input" id="start" value="TMP00013138" style="min-width:170px" aria-label="起点设备id"></div>
+        <div class="field"><label>终点设备 id</label><input class="input" id="end" value="TMP00047197" style="min-width:170px" aria-label="终点设备id"></div>
+        <button class="btn btn-primary" id="btn-locate">定位断点</button>
+        <span style="flex:1"></span>
+        <span class="badge">测试任务 1</span>
+        <button class="btn btn-sm" data-s="TMP00013138" data-e="TMP00047197" onclick="fillTask(this)">TMP00013138→TMP00047197</button>
+        <button class="btn btn-sm" data-s="TMP00007913" data-e="TMP00007907" onclick="fillTask(this)">TMP00007913→TMP00007907</button>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "breakpoint", title: "断点定位", breadcrumb: "任务一 / 断点定位 (1.2 · sheet2)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    $("#ico").innerHTML = appShell.icon("breakpoint");
+
+    window.fillTask = function (el) { $("#start").value = el.dataset.s; $("#end").value = el.dataset.e; locate(); };
+
+    function doPrefill() {
+      $("#start").value = "TMP00013138";
+      $("#end").value = "TMP00047197";
+      locate();
+      appShell.toast("已填入示例：TMP00013138 → TMP00047197", "ok");
+    }
+    document.addEventListener("appshell:prefill", doPrefill);
+
+    function pathSVG(bp) {
+      var W = 760, H = 200;
+      var x1 = 90, x2 = 380, x3 = 670;
+      var y = 110;
+      return '<div class="svg-canvas" style="margin-top:12px"><svg class="path-svg" viewBox="0 0 ' + W + ' ' + H + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
+        '<text x="' + x1 + '" y="60" text-anchor="middle" font-weight="700">起点</text>' +
+        '<text x="' + x3 + '" y="60" text-anchor="middle" font-weight="700">终点</text>' +
+        '<path class="wire" d="M' + x1 + ',' + y + ' L' + (x2 - 24) + ',' + y + '"/>' +
+        '<path class="wire-loop" stroke-dasharray="6 5" d="M' + (x2 + 24) + ',' + y + ' L' + x3 + ',' + y + '"/>' +
+        // 起点
+        '<g class="g-source" transform="translate(' + x1 + ',' + y + ')"><circle r="16"/></g>' +
+        '<text x="' + x1 + '" y="' + (y + 34) + '" text-anchor="middle">' + bp.startId + '</text>' +
+        // 断点
+        '<g class="g-loop" transform="translate(' + x2 + ',' + y + ')"><circle r="18"/></g>' +
+        '<text class="break-flag" x="' + x2 + '" y="' + (y + 5) + '" text-anchor="middle" font-size="16" font-weight="700">✕</text>' +
+        '<text x="' + x2 + '" y="' + (y + 38) + '" text-anchor="middle" font-weight="600">本侧疑似断点</text>' +
+        '<text x="' + x2 + '" y="' + (y + 54) + '" text-anchor="middle" font-size="11">' + bp.thisSideId + '</text>' +
+        // 终点
+        '<g class="g-switch" transform="translate(' + x3 + ',' + y + ')"><circle r="16"/></g>' +
+        '<text x="' + x3 + '" y="' + (y + 34) + '" text-anchor="middle">' + bp.endId + '</text>' +
+        // 断点类型标注
+        '<text x="' + x2 + '" y="170" text-anchor="middle" fill="var(--dev-loop)" font-weight="600">' + bp.breakType + '</text>' +
+        '</svg></div>';
+    }
+
+    function render(bp) {
+      var box = $("#result");
+      if (!bp) {
+        box.innerHTML = '<div class="card"><div class="empty"><span class="status-dot ok"></span><div style="font-weight:600">未检测到断点</div><div style="font-size:12px">路径 ' + $("#start").value + ' → ' + $("#end").value + ' 拓扑连通正常</div></div></div>';
+        return;
+      }
+      var row = [bp.seq, bp.startId, bp.endId, bp.breakType, bp.thisSideId, bp.thisSideName, bp.otherSideId, bp.otherSideName, bp.fix, bp.sql, bp.note || ""];
+      box.innerHTML =
+        '<div class="card page-section">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>断点定位结果</strong><span class="badge badge-err">断点类型：' + bp.breakType + '</span></div>' +
+          pathSVG(bp) +
+          '<div class="legend" style="margin-top:12px">' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:var(--dev-source)"></span>起点设备</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:var(--dev-loop)"></span>本侧疑似断点</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:var(--dev-switch)"></span>对侧/终点</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:var(--dev-loop)"></span>断点（虚线=拓扑断开）</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card page-section">' +
+          '<div class="section-title">标准输出（sheet2 拓扑连通性异常诊断与断点定位结果）</div>' +
+          '<div class="table-responsive"><table class="table"><thead><tr>' +
+            '<th>序号</th><th>起点设备id</th><th>终点设备id</th><th>断点类型</th><th>本侧疑似断点设备id</th><th>本侧疑似断点设备名称</th><th>对侧疑似断点设备id</th><th>对侧疑似断点设备名称</th><th>修正方案</th><th>修正sql</th><th>备注</th>' +
+          '</tr></thead><tbody><tr>' +
+            row.map(function (c, i) { return '<td' + (i >= 8 ? ' class="sql-cell"' : '') + '>' + (i >= 8 ? '<pre class="sql-box">' + String(c).replace(/</g, "&lt;") + '</pre>' : c) + '</td>'; }).join("") +
+          '</tr></tbody></table></div>' +
+          '<div style="margin-top:10px;display:flex;gap:8px">' +
+            '<button class="btn btn-sm" id="btn-csv">导出 CSV</button>' +
+            '<button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>' +
+            '<button class="btn btn-sm" id="btn-xlsx-all">导出全部断点 XLSX</button>' +
+          '</div>' +
+        '</div>';
+      $("#btn-csv").addEventListener("click", function () { compUI.exportCSV("断点定位结果.csv", compApi.STANDARD_HEADERS.breakpoints, [row]); appShell.toast("已导出 CSV", "ok"); });
+      $("#btn-xlsx").addEventListener("click", function () { compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "拓扑连通性异常诊断与断点定位结果", headers: compApi.STANDARD_HEADERS.breakpoints, rows: [row] }]); appShell.toast("已导出标准 XLSX（当前断点）", "ok"); });
+      $("#btn-xlsx-all").addEventListener("click", function () {
+        compApi.getBreakpoints().then(function (list) {
+          var rows = list.map(function (b) { return [b.seq, b.startId, b.endId, b.breakType, b.thisSideId, b.thisSideName, b.otherSideId, b.otherSideName, b.fix, b.sql, b.note || ""]; });
+          compUI.exportXLSX("断点定位结果_全量.xlsx", [{ name: "拓扑连通性异常诊断与断点定位结果", headers: compApi.STANDARD_HEADERS.breakpoints, rows: rows }]);
+          appShell.toast("已导出全部 " + rows.length + " 条断点（sheet2 全量）", "ok");
+        });
+      });
+      appShell.toast("已定位断点：" + bp.thisSideId, "ok");
+    }
+
+    function locate() {
+      var s = $("#start").value.trim(), e = $("#end").value.trim();
+      compApi.getBreakpoints().then(function (list) {
+        var bp = list.find(function (b) { return (b.startId === s && b.endId === e) || (b.startId === e && b.endId === s); });
+        render(bp || null);
+      });
+    }
+
+    setTimeout(function () {
+      $("#btn-locate").addEventListener("click", locate);
+      locate();
+      try {
+        if (sessionStorage.getItem("v8-prefill") === "1") { sessionStorage.removeItem("v8-prefill"); doPrefill(); }
+      } catch (e) {}
+    }, 50);
+  </script>
+<script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

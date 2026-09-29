@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" class="ic-svg">
+  <title>Battery (储能电池 BAT)</title>
+  <desc>国网标准储能符号, 多电池单元串联示意</desc>
+  <rect class="ic-bg" width="256" height="256"/>
+  <g transform="translate(128,128)">
+  <style>
+    .ic-bg { fill: #ffffff; fill-opacity: 0.001; }
+    .ic-line { fill: none; stroke: #111827; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-fill { fill: #111827; }
+    .ic-line-thin { fill: none; stroke: #111827; stroke-width: 3; stroke-linecap: round; }
+    .ic-text { font-family: -apple-system, Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 600; fill: #111827; text-anchor: middle; }
+  </style>
+
+  <!-- 电池单元 -->
+  <rect class="ic-line" x="-72" y="-32" width="144" height="64" rx="4"/>
+  <rect class="ic-line" x="-72" y="-14" width="20" height="28" rx="2"/>
+  <rect class="ic-line" x="-44" y="-22" width="20" height="44" rx="2"/>
+  <rect class="ic-line" x="-16" y="-30" width="20" height="60" rx="2"/>
+  <rect class="ic-line" x="12" y="-22" width="20" height="44" rx="2"/>
+  <rect class="ic-line" x="40" y="-14" width="20" height="28" rx="2"/>
+  <line class="ic-line" x1="-90" y1="-2" x2="-90" y2="20"/>
+  <line class="ic-line" x1="92" y1="-2" x2="92" y2="20"/>
+  <text x="0" y="92" class="ic-text" style="font-size:18px">BAT</text>
+</g>
+</svg>

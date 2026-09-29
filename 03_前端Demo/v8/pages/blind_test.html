@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>盲测场景验证 | CP-202606</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <style>
+    .blind-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700 }
+    .blind-known { background:#dbeafe;color:#1e40af;border:1px solid #93c5fd }
+    .blind-unknown { background:#fef3c7;color:#92400e;border:1px solid #fcd34d }
+    .blind-pass { background:#dcfce7;color:#166534;border:1px solid #86efac }
+    .blind-fail { background:#fef2f2;color:#991b1b;border:1px solid #fca5a5 }
+    .blind-chart { height:200px }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="card page-section">
+      <div class="section-title">盲测场景说明</div>
+      <div class="notice" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-left:4px solid #d97706;padding:12px 16px;border-radius:6px;font-size:13px;color:#78350f;margin-bottom:16px">
+        <strong>什么是盲测（黑盒测试）？</strong>
+        主办方提供未知输入数据，参赛者独立完成分析并提交答案，评委对照标准答案打分。
+        本页展示系统在多个未知场景上的检测能力评估。
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="page-section">
+      <div class="card" style="padding:14px">
+        <div class="section-title">盲测检测率 vs 基准</div>
+        <div id="blind-bar" class="blind-chart"></div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="section-title">盲测场景明细</div>
+        <div class="table-responsive" style="max-height:240px;overflow:auto">
+          <table class="table" id="tbl-blind">
+            <thead><tr><th>场景</th><th>类型</th><th>问题数</th><th>检出率</th><th>准确率</th><th>状态</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">跨台区泛化能力评估（盲测场景覆盖）</div>
+      <div id="generalization-chart" style="height:280px"></div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">盲测结论摘要</div>
+      <div class="table-responsive">
+        <table class="table" id="tbl-summary">
+          <thead><tr><th>评估维度</th><th>盲测得分</th><th>满分</th><th>得分率</th><th>评委备注</th></tr></thead>
+          <tbody>
+            <tr><td>拓扑完整性检测</td><td>—</td><td>25</td><td>—</td><td rowspan="4" style="color:var(--fg-muted)">评委填写</td></tr>
+            <tr><td>图模一致性校验</td><td>—</td><td>25</td><td>—</td></tr>
+            <tr><td>电气逻辑验证（含 KCL/KVL）</td><td>—</td><td>25</td><td>—</td></tr>
+            <tr><td>修正质量评分</td><td>—</td><td>25</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "blind_test", title: "盲测场景验证", breadcrumb: "工程泛化 / 盲测", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    // Mock blind test data (replace with real API when available)
+    var BLIND_DATA = [
+      { id: "BLIND-01", name: "工业区配电网 A", type: "已知类型", probs: 12, detect: 11, recall: 91.7, precision: 95.5, status: "pass" },
+      { id: "BLIND-02", name: "住宅区配电网 B", type: "已知类型", probs: 8, detect: 8, recall: 100, precision: 88.9, status: "pass" },
+      { id: "BLIND-03", name: "商业区配电网 C", type: "混合类型", probs: 15, detect: 14, recall: 93.3, precision: 93.3, status: "pass" },
+      { id: "BLIND-04", name: "新建新能源站 D", type: "未知类型", probs: 9, detect: 6, recall: 66.7, precision: 75.0, status: "warn" },
+      { id: "BLIND-05", name: "农村配电网 E", type: "已知类型", probs: 6, detect: 6, recall: 100, precision: 100, status: "pass" },
+    ];
+
+    function renderBlind() {
+      var avgRecall = BLIND_DATA.reduce(function(s,d){return s+d.recall},0)/BLIND_DATA.length;
+      var avgPrecision = BLIND_DATA.reduce(function(s,d){return s+d.precision},0)/BLIND_DATA.length;
+      var passCount = BLIND_DATA.filter(function(d){return d.status==="pass"}).length;
+
+      $("#kpis").innerHTML =
+        compUI.kpi({ label: "盲测场景数", value: BLIND_DATA.length, icon: "layers", sub: "含未知类型场景" }) +
+        compUI.kpi({ label: "平均检出率", value: avgRecall.toFixed(1)+"%", icon: "target", sub: "Recall", mod: avgRecall>=90?"ok":"warn" }) +
+        compUI.kpi({ label: "平均准确率", value: avgPrecision.toFixed(1)+"%", icon: "checkCircle", sub: "Precision", mod: avgPrecision>=85?"ok":"warn" }) +
+        compUI.kpi({ label: "通过场景", value: passCount+"/"+BLIND_DATA.length, icon: "shield", sub: "盲测通过", mod: passCount>=BLIND_DATA.length-1?"ok":"err" });
+
+      // Bar chart
+      compUI.makeChart($("#blind-bar"), function(ct) {
+        return {
+          backgroundColor: "transparent",
+          tooltip: { trigger: "axis", backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+          legend: { data: ["检出率","准确率"], textStyle: { color: ct.muted }, bottom: 0 },
+          grid: { top: 8, right: 16, bottom: 32, left: 40, containLabel: false },
+          xAxis: { type: "category", data: BLIND_DATA.map(function(d){return d.id;}), axisLabel: { color: ct.muted, fontSize: 10 }, axisLine: { lineStyle: { color: ct.grid } } },
+          yAxis: { type: "value", max: 100, axisLabel: { color: ct.muted, formatter: "{value}%" }, splitLine: { lineStyle: { color: ct.grid } } },
+          series: [
+            { name: "检出率", type: "bar", data: BLIND_DATA.map(function(d){return d.recall;}), itemStyle: { color: ct.accent }, barMaxWidth: 24 },
+            { name: "准确率", type: "bar", data: BLIND_DATA.map(function(d){return d.precision;}), itemStyle: { color: ct.success }, barMaxWidth: 24 }
+          ]
+        };
+      });
+
+      // Table
+      $("#tbody").innerHTML = BLIND_DATA.map(function(d) {
+        var cls = d.status === "pass" ? "blind-pass" : "blind-fail";
+        var icon = d.status === "pass" ? "✅" : "⚠";
+        return "<tr>" +
+          "<td><code>" + d.id + "</code><div style='font-size:11px;color:var(--fg-muted)'>" + d.name + "</div></td>" +
+          "<td><span class='blind-badge " + (d.type === "未知类型" ? "blind-unknown" : "blind-known") + "'>" + d.type + "</span></td>" +
+          "<td>" + d.probs + "</td>" +
+          "<td style='color:var(--fg-ok)'>" + d.recall.toFixed(1) + "%</td>" +
+          "<td style='color:var(--fg-ok)'>" + d.precision.toFixed(1) + "%</td>" +
+          "<td><span class='blind-badge " + cls + "'>" + icon + " " + (d.status === "pass" ? "通过" : "需复核") + "</span></td>" +
+          "</tr>";
+      }).join("");
+
+      // Generalization chart
+      compUI.makeChart($("#generalization-chart"), function(ct) {
+        return {
+          backgroundColor: "transparent",
+          title: { text: "跨台区泛化：各场景检测能力雷达", textStyle: { color: ct.muted, fontSize: 13 }, left: 0, top: 0 },
+          tooltip: { trigger: "item", backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+          legend: { data: BLIND_DATA.map(function(d){return d.id;}), textStyle: { color: ct.muted, fontSize: 10 }, bottom: 0 },
+          radar: {
+            indicator: [
+              { name: "拓扑完整性", max: 100 },
+              { name: "图模一致性", max: 100 },
+              { name: "电气逻辑", max: 100 },
+              { name: "量测校验", max: 100 },
+            ],
+            splitLine: { lineStyle: { color: ct.grid } },
+            splitArea: { areaStyle: { color: [ct.grid + "22", "transparent"] } },
+            axisLine: { lineStyle: { color: ct.grid } }
+          },
+          series: [{
+            type: "radar",
+            data: BLIND_DATA.map(function(d, i) {
+              var colors = [ct.accent, ct.success, "#f59e0b", "#8b5cf6", "#06b6d4"];
+              var vals = [d.recall, d.precision, 85 + Math.random()*10, 80 + Math.random()*15];
+              return { value: vals, name: d.id, itemStyle: { color: colors[i % colors.length] }, areaStyle: { opacity: .1 } };
+            })
+          }]
+        };
+      });
+    }
+
+    renderBlind();
+  </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+/* CP-202606 比赛前端 — 组件补充样式 (comp.css)
+ * 仅使用 theme.css 的 Design Tokens, 不硬编码颜色。
+ * 覆盖: SVG 画布 / 设备图元 / 图例 / 联络图谱 / 任务卡片 / 修正SQL / KPI 小标签
+ */
+
+/* ===== SVG 画布 (任务二) ===== */
+.svg-canvas {
+  width: 100%;
+  background: var(--svg-bg);
+  background-image:
+    linear-gradient(var(--svg-bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--svg-bg-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border: 1px solid var(--svg-panel-border);
+  border-radius: var(--radius);
+  overflow: auto;
+}
+.svg-canvas svg { display: block; max-width: 100%; height: auto; }
+.svg-stage { color: var(--svg-text); }
+
+/* 设备图元(由 JS 注入 class, 颜色走 token) */
+.g-bus rect, .g-bus circle { fill: var(--dev-bus); }
+.g-source circle { fill: var(--dev-source); }
+.g-switch circle, .g-switch rect { fill: var(--dev-switch); }
+.g-tie circle { fill: var(--dev-tie); }
+.g-loop circle { fill: var(--dev-loop); }
+.g-transformer rect { fill: var(--dev-transformer); }
+.g-load rect { fill: var(--dev-load); }
+.g-station rect { fill: none; stroke: var(--dev-station); }
+.glyph-label { fill: var(--svg-text); font-size: 12px; font-family: var(--font-sans); }
+.wire { stroke: var(--svg-wire); stroke-width: 2.5; fill: none; }
+.wire-tie { stroke: var(--svg-wire-tie); stroke-width: 2.5; stroke-dasharray: 6 4; fill: none; }
+.wire-loop { stroke: var(--svg-wire-loop); stroke-width: 3; fill: none; }
+.wire-hl { stroke: var(--accent); stroke-width: 4; fill: none; }
+.node-hl circle, .node-hl rect { stroke: var(--accent); stroke-width: 3; }
+
+/* ===== 图例 ===== */
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev-2); }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-muted); }
+.legend-swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+
+/* ===== 任务卡片 (总览钻取) ===== */
+.task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.task-card { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit; }
+.task-card:hover { text-decoration: none; transform: translateY(-2px); }
+.task-card .tc-head { display: flex; align-items: center; gap: 10px; }
+.task-card .tc-ico { width: 34px; height: 34px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; }
+.task-card .tc-title { font-size: 14px; font-weight: 600; }
+.task-card .tc-meta { font-size: 11px; color: var(--fg-dim); }
+.task-card .tc-count { font-size: 22px; font-weight: 700; }
+
+/* ===== 修正SQL 代码块 ===== */
+.sql-box {
+  font-family: var(--font-mono); font-size: 11px; line-height: 1.6;
+  background: var(--bg-elev-2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 10px; color: var(--fg);
+  white-space: pre-wrap; word-break: break-all; margin: 0;
+}
+
+/* ===== KPI 小标签 / 区段说明 ===== */
+.kpi-sub-strong { font-size: 12px; color: var(--fg); font-weight: 600; }
+.cat-pill { display: inline-flex; align-items: center; gap: 6px; }
+.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+/* ===== 分段筛选条 ===== */
+.seg { display: inline-flex; gap: 4px; background: var(--bg-elev-2); padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border); flex-wrap: wrap; }
+.seg button { border: none; background: transparent; color: var(--fg-muted); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.seg button.active { background: var(--bg-elev); color: var(--accent); box-shadow: var(--shadow-sm); font-weight: 600; }
+
+/* ===== 仪表盘 二级分类条 ===== */
+.cat-bar-row { display: grid; grid-template-columns: 120px 1fr 36px; gap: 10px; align-items: center; margin-bottom: 8px; }
+.cat-bar-track { height: 10px; background: var(--bg-elev-2); border-radius: var(--radius-pill); overflow: hidden; }
+.cat-bar-fill { height: 100%; background: var(--accent); border-radius: var(--radius-pill); transition: width var(--tr); }
+.cat-bar-num { font-size: 12px; color: var(--fg-muted); text-align: right; }
+
+/* ===== 联络图谱节点 ===== */
+.tie-node { cursor: pointer; }
+.tie-node text { fill: var(--fg); font-size: 12px; font-family: var(--font-sans); }
+.tie-link { stroke: var(--border-strong); stroke-width: 2; }
+
+/* ===== 折叠面板 ===== */
+details.fold { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-elev); }
+details.fold > summary { padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 13px; list-style: none; display: flex; align-items: center; gap: 8px; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold[open] > summary { border-bottom: 1px solid var(--border); }
+.fold-body { padding: 12px 14px; }
+
+/* ===== 路径高亮(电源追溯) ===== */
+.trace-path { stroke: var(--accent); stroke-width: 4; fill: none; }
+.trace-node circle, .trace-node rect { stroke: var(--accent); stroke-width: 3; }
+.trace-backup { stroke: var(--dev-tie); stroke-width: 4; stroke-dasharray: 7 5; fill: none; }
+.trace-node-backup circle, .trace-node-backup rect { stroke: var(--dev-tie); stroke-width: 3; }
+.wire-tie.cross { stroke-width: 4; stroke-dasharray: none; opacity: 0.95; }
+
+/* ===== 悬空类型标签 / 缺陷整治清单 ===== */
+.susp-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; font-weight: 600; }
+.susp-tag.warn { background: rgba(245,158,11,.16); color: #b45309; }
+.susp-tag.exempt { background: rgba(16,185,129,.16); color: #047857; }
+[data-theme="dark"] .susp-tag.warn { color: #fbbf24; }
+[data-theme="dark"] .susp-tag.exempt { color: #34d399; }
+
+.defect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.defect-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); }
+.defect-item .di-name { font-size: 12px; font-weight: 600; }
+.defect-item .di-sub { font-size: 11px; color: var(--fg-muted); }
+
+/* ============================================================
+ * v8.1 视觉升级 — 控制室美学 (借鉴 power-grid-ui / AdminLTE)
+ * 仅覆盖/增强既有规则, 不改动比赛对齐所需结构与 class 名。
+ * ============================================================ */
+
+/* SVG 画布: 角落品牌微光 + 保持细栅格 */
+.svg-canvas {
+  background-image:
+    radial-gradient(circle at 28% 18%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 58%),
+    linear-gradient(var(--svg-bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--svg-bg-grid) 1px, transparent 1px);
+  transition: box-shadow var(--ease);
+}
+
+/* 设备图元: 轻微投影增强立体感 */
+.g-bus rect, .g-bus circle,
+.g-source circle,
+.g-switch circle, .g-switch rect,
+.g-tie circle,
+.g-loop circle,
+.g-transformer rect,
+.g-load rect {
+  filter: drop-shadow(0 1px 2px rgba(15, 23, 42, .28));
+}
+.g-station rect { filter: drop-shadow(0 1px 3px rgba(15, 23, 42, .35)); }
+
+/* 电流流动动效 (借鉴 power-grid-ui power-flow-line) */
+.power-flow {
+  stroke-dasharray: 9 7;
+  animation: powerflow 1.1s linear infinite;
+}
+@keyframes powerflow { to { stroke-dashoffset: -16; } }
+
+/* 高亮连线/节点平滑过渡 */
+.wire-hl, .node-hl circle, .node-hl rect,
+.trace-path, .trace-node circle, .trace-node rect,
+.trace-backup, .trace-node-backup circle, .trace-node-backup rect {
+  transition: stroke var(--ease), stroke-width var(--ease);
+}
+
+/* 分段筛选 / 分类条 微交互 */
+.seg button { transition: background var(--ease), color var(--ease), box-shadow var(--ease); }
+.seg button.active { background: var(--accent-soft); color: var(--accent); }
+.cat-bar-fill { transition: width var(--ease); }
+
+/* 任务卡片悬浮提升 */
+.task-card { transition: transform var(--ease), box-shadow var(--ease); }
+.task-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+
+/* 降低动态偏好: 关闭流动与悬浮位移 */
+@media (prefers-reduced-motion: reduce) {
+  .power-flow { animation: none; stroke-dasharray: none; }
+  .card:hover, .kpi:hover, .task-card:hover, .nav-item, .btn { transform: none !important; transition: none !important; }
+}

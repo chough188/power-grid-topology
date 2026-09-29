@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>反馈中心 | PowerGrid AI v8</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <style>
+    .toolbar { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4); align-items: center; flex-wrap: wrap; }
+    .kpi-line { display: flex; gap: var(--sp-4); margin-bottom: var(--sp-4); }
+    .kpi-line .kpi { flex: 1; min-width: 130px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+    @media (max-width: 920px) { .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="toolbar">
+      <span style="flex:1"></span>
+      <button class="btn" id="btn-refresh"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 18 10"/><polyline points="1 20 1 14 6 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 刷新</button>
+    </div>
+    <div class="kpi-line">
+      <div class="kpi warn"><span class="kpi-label">FP 池</span><span class="kpi-value" id="kpi-fp">—</span><span class="kpi-sub">目标 ≤ 50</span></div>
+      <div class="kpi err"><span class="kpi-label">FN 池</span><span class="kpi-value" id="kpi-fn">—</span><span class="kpi-sub">目标 ≤ 50</span></div>
+      <div class="kpi ok"><span class="kpi-label">就绪再训练</span><span class="kpi-value" id="kpi-ready">—</span><span class="kpi-sub" id="kpi-ready-sub">—</span></div>
+      <div class="kpi"><span class="kpi-label">最近 7 天</span><span class="kpi-value" id="kpi-7d">—</span><span class="kpi-sub">FP + FN</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <strong style="display:block;margin-bottom:10px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>最近 20 条 FP</strong>
+        <div id="fp-list" class="empty">加载中...</div>
+      </div>
+      <div class="card">
+        <strong style="display:block;margin-bottom:10px"><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>最近 20 条 FN</strong>
+        <div id="fn-list" class="empty">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "feedback", title: "反馈中心 (FP/FN 数据飞轮)", breadcrumb: "v8 / feedback", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    function renderList(list) {
+      if (!list || !list.length) return "<div class=\"empty\">暂无数据</div>";
+      return list.slice(0, 20).map(function (it) {
+        var t = it.anomaly_type || it.type || "—";
+        var l = it.location || "—";
+        var ts = it.created_at ? new Date(it.created_at * 1000).toLocaleString() : "—";
+        var note = it.note || it.reason || "";
+        return "<div style=\"padding:8px 0;border-bottom:1px solid var(--border)\"><span class=\"badge badge-warn\">" + t + "</span><strong style=\"margin-left:8px\">" + l + "</strong><div style=\"font-size:11px;color:var(--fg-muted);margin-top:4px\">" + ts + " · " + note + "</div></div>";
+      }).join("");
+    }
+
+    setTimeout(function () {
+      document.getElementById("btn-refresh").addEventListener("click", load);
+      load();
+      setInterval(load, 30000);
+    }, 50);
+
+    async function load() {
+      try {
+        var s = await api.feedbackStats();
+        if (s.ok && s.data) {
+          $("#kpi-fp").textContent = s.data.fp_pool_size != null ? s.data.fp_pool_size : (s.data.fp_count != null ? s.data.fp_count : 0);
+          $("#kpi-fn").textContent = s.data.fn_pool_size != null ? s.data.fn_pool_size : (s.data.fn_count != null ? s.data.fn_count : 0);
+          $("#kpi-7d").textContent = (s.data.last_7d != null) ? s.data.last_7d : ((s.data.fp_pool_size || 0) + (s.data.fn_pool_size || 0));
+          var ready = s.data.ready_for_v63 != null ? s.data.ready_for_v63 : (s.data.ready_for_retrain || s.data.ready || false);
+          $("#kpi-ready").textContent = ready ? "YES" : "NO";
+          $("#kpi-ready-sub").textContent = ready ? "GNN v63 再训练就绪" : ("FP+FN 数量未达阈值 (target=" + (s.data.fp_target_for_retrain || 50) + ")");
+        }
+      } catch (e) {
+        $("#kpi-fp").textContent = "—";
+        $("#kpi-fn").textContent = "—";
+      }
+
+      try {
+        var fp = await api.listFP(20);
+        if (fp.ok) {
+          var arr = (fp.data && (fp.data.items || fp.data.list || fp.data.fps || fp.data)) || [];
+          $("#fp-list").innerHTML = Array.isArray(arr) ? renderList(arr) : "<div class=\"empty\">暂无 FP</div>";
+        }
+      } catch (e) { $("#fp-list").innerHTML = "<div class=\"empty\">FP 列表加载失败</div>"; }
+
+      try {
+        var fn = await api.listFN(20);
+        if (fn.ok) {
+          var arr = (fn.data && (fn.data.items || fn.data.list || fn.data.fns || fn.data)) || [];
+          $("#fn-list").innerHTML = Array.isArray(arr) ? renderList(arr) : "<div class=\"empty\">暂无 FN</div>";
+        }
+      } catch (e) { $("#fn-list").innerHTML = "<div class=\"empty\">FN 列表加载失败</div>"; }
+    }
+  </script>
+</body>
+</html>

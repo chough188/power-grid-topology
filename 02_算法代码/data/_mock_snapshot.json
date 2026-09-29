@@ -1,0 +1,155 @@
+{
+  "tables": {
+    "JBS_ZWSUBSTATION": [
+      {
+        "ST_ID": "ST001",
+        "ST_NAME": "中心变电站",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      }
+    ],
+    "JBS_ZWEQUIPINFO": [
+      {
+        "EQUIP_ID": "ZW_BREAKER_001",
+        "EQUIP_NAME": "主网断路器1",
+        "EQUIP_TYPE": "BREAKER",
+        "ST_ID": "ST001",
+        "VOLTAGE_TYPE": 110
+      },
+      {
+        "EQUIP_ID": "ZW_SWITCH_001",
+        "EQUIP_NAME": "主网开关1",
+        "EQUIP_TYPE": "SWITCH",
+        "ST_ID": "ST001",
+        "VOLTAGE_TYPE": 110
+      }
+    ],
+    "JBS_ZWLINEEND": [
+      {
+        "LINEEND_ID": "LE001",
+        "LINEEND_NAME": "线路端1",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST001"
+      }
+    ],
+    "JBS_ZWTERMINAL": [
+      {
+        "ID": "ZT001",
+        "EQUIP_ID": "ZW_BREAKER_001",
+        "CONNECTIVITYNODE_ID": "N001"
+      }
+    ],
+    "JBS_ZWMEA": [
+      {
+        "CREATE_DATE": "2026-07-21",
+        "ID": "M001",
+        "MEAS_TYPE": "V"
+      }
+    ],
+    "JBS_ZWSIGNAL": [
+      {
+        "ID": "S001",
+        "POINT": 1
+      }
+    ],
+    "JBS_PWFEEDERLINE": [
+      {
+        "LINE_ID": "FL001",
+        "LINE_NAME": "馈线1",
+        "START_ST_ID": "ST001",
+        "VOLTAGE_TYPE": 10
+      }
+    ],
+    "JBS_PWROOM": [
+      {
+        "ROOM_ID": "RM001",
+        "ROOM_NAME": "配电站1",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "FL001"
+      }
+    ],
+    "JBS_PWEQUIPINFO": [
+      {
+        "EQUIP_ID": "PW_BREAKER_001",
+        "EQUIP_NAME": "配网断路器1",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "FL001",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "PW_TIE_001",
+        "EQUIP_NAME": "联络开关1",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "FL001",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "PW_TRANS_001",
+        "EQUIP_NAME": "用户配变1",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 0.4,
+        "FEEDER_ID": "FL001",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": ""
+      }
+    ],
+    "JBS_PWTERMINAL": [
+      {
+        "ID": "T001",
+        "EQUIP_ID": "PW_BREAKER_001",
+        "CONNECTIVITYNODE_ID": "N001"
+      }
+    ],
+    "JBS_PWREAL": [
+      {
+        "NUM": "1",
+        "TRAN_ID": "PW_BREAKER_001",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ001",
+        "FEEDER_ID": "FL001"
+      }
+    ],
+    "JBS_ZD_OBJECT": [
+      {
+        "OBJ_ID": "O001",
+        "OBJ_CODE": "BREAKER",
+        "OBJ_CNNAME": "断路器",
+        "OBJ_ENNAME": "Breaker"
+      },
+      {
+        "OBJ_ID": "O002",
+        "OBJ_CODE": "SWITCH",
+        "OBJ_CNNAME": "开关",
+        "OBJ_ENNAME": "Switch"
+      },
+      {
+        "OBJ_ID": "O003",
+        "OBJ_CODE": "TRANS",
+        "OBJ_CNNAME": "用户配变",
+        "OBJ_ENNAME": "Transformer"
+      }
+    ],
+    "JBS_ZD_VOLTAGETYPE": [
+      {
+        "VOLTAGE_ID": 110,
+        "VOLTAGE_NAME": "110kV"
+      },
+      {
+        "VOLTAGE_ID": 10,
+        "VOLTAGE_NAME": "10kV"
+      }
+    ],
+    "JBS_ZD_MEASTYPE": [
+      {
+        "CODE": 1,
+        "NAME_CHN": "电压"
+      }
+    ]
+  }
+}

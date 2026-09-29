@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" class="ic-svg">
+  <title>Charging Station (充电桩)</title>
+  <desc>国网 V2G 充电桩, GB/T 35689 电动汽车充放电符号</desc>
+  <rect class="ic-bg" width="256" height="256"/>
+  <g transform="translate(128,128)">
+  <style>
+    .ic-bg { fill: #ffffff; fill-opacity: 0.001; }
+    .ic-line { fill: none; stroke: #111827; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-fill { fill: #111827; }
+    .ic-line-thin { fill: none; stroke: #111827; stroke-width: 3; stroke-linecap: round; }
+    .ic-text { font-family: -apple-system, Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 600; fill: #111827; text-anchor: middle; }
+  </style>
+
+  <!-- 充电插头符号 -->
+  <line class="ic-line" x1="-90" y1="50" x2="-50" y2="50"/>
+  <rect class="ic-line" x="-50" y="20" width="100" height="60" rx="8"/>
+  <line class="ic-line" x1="-30" y1="40" x2="-30" y2="60"/>
+  <line class="ic-line" x1="30" y1="40" x2="30" y2="60"/>
+  <circle class="ic-fill" cx="-30" cy="50" r="6"/>
+  <circle class="ic-fill" cx="30" cy="50" r="6"/>
+  <!-- EV 字 -->
+  <text x="0" y="-20" class="ic-text" style="font-size:32px">⚡</text>
+  <text x="0" y="100" class="ic-text" style="font-size:18px">V2G</text>
+</g>
+</svg>

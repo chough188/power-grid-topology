@@ -1,0 +1,60 @@
+{
+  "voltage_collapse": {
+    "causes": [
+      {"type": "load_overload", "indicators": ["P>rated*0.9"], "weight": 0.35},
+      {"type": "tap_fault", "indicators": ["tap!=schedule"], "weight": 0.30},
+      {"type": "impedance_increase", "indicators": ["R>base*1.3"], "weight": 0.25},
+      {"type": "dg_dropout", "indicators": ["sgen_p=0"], "weight": 0.10}
+    ]
+  },
+  "topo_interrupt": {
+    "causes": [
+      {"type": "switch_open", "indicators": ["line.in_service=False"], "weight": 0.50},
+      {"type": "protection_trip", "indicators": ["fault_current>0"], "weight": 0.30},
+      {"type": "maintenance", "indicators": ["scheduled=True"], "weight": 0.20}
+    ]
+  },
+  "telemetry_mismatch": {
+    "causes": [
+      {"type": "ct_pt_fault", "indicators": ["ratio_error>5pct"], "weight": 0.40},
+      {"type": "communication_error", "indicators": ["data_stale"], "weight": 0.30},
+      {"type": "calibration_drift", "indicators": ["bias>3pct"], "weight": 0.30}
+    ]
+  },
+  "harmonic_pollution": {
+    "causes": [
+      {"type": "nonlinear_load", "indicators": ["rectifier/inverter"], "weight": 0.45},
+      {"type": "arcing", "indicators": ["arc_furnace"], "weight": 0.25},
+      {"type": "transformer_saturation", "indicators": ["V>1.05pu"], "weight": 0.20},
+      {"type": "capacitor_switching", "indicators": ["resonance"], "weight": 0.10}
+    ]
+  },
+  "parameter_error": {
+    "causes": [
+      {"type": "wrong_impedance", "indicators": ["R/X ratio abnormal"], "weight": 0.50},
+      {"type": "wrong_tap", "indicators": ["tap_pos abnormal"], "weight": 0.30},
+      {"type": "wrong_rating", "indicators": ["sn_mva abnormal"], "weight": 0.20}
+    ]
+  },
+  "impedance_degradation": {
+    "causes": [
+      {"type": "cable_aging", "indicators": ["R>base*1.5"], "weight": 0.50},
+      {"type": "joint_deterioration", "indicators": ["local heat"], "weight": 0.30},
+      {"type": "corrosion", "indicators": ["env_corrosion"], "weight": 0.20}
+    ]
+  },
+  "trafo_tap_fault": {
+    "causes": [
+      {"type": "motor_drive_fault", "indicators": ["tap stuck"], "weight": 0.40},
+      {"type": "control_circuit", "indicators": ["control lost"], "weight": 0.30},
+      {"type": "mechanical_wear", "indicators": ["gear stuck"], "weight": 0.30}
+    ]
+  },
+  "grounding_fault": {
+    "causes": [
+      {"type": "single_phase_ground", "indicators": ["zero_seq>0"], "weight": 0.50},
+      {"type": "cable_insulation", "indicators": ["insulation drop"], "weight": 0.30},
+      {"type": "lightning", "indicators": ["storm"], "weight": 0.20}
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 实验台 · 占位说明</title>
+<style>
+  :root{
+    --bg-page:#f8fafc; --bg-elev:#ffffff; --fg:#0f172a; --fg-muted:#475569; --fg-dim:#64748b;
+    --border:#e2e8f0; --accent:#1d4ed8; --accent-soft:#dbeafe;
+    --btn:#2563eb; --btn-hover:#1d4ed8; --radius:18px;
+    --shadow:0 8px 24px rgba(15,23,42,.10); --ease:cubic-bezier(.22,1,.36,1);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg-page:#0a1120; --bg-elev:#0f1a2e; --fg:#e8eef9; --fg-muted:#a8b6cc; --fg-dim:#7c8ba3;
+      --border:#1e2b44; --accent:#7ea6ff; --accent-soft:#152444;
+      --btn:#2563eb; --btn-hover:#3b7bf0; --shadow:0 8px 24px rgba(0,0,0,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+       background:var(--bg-page);color:var(--fg);
+       font:14px/1.7 "DM Sans",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+  .card{width:100%;max-width:560px;background:var(--bg-elev);border:1px solid var(--border);
+        border-radius:var(--radius);box-shadow:var(--shadow);padding:38px 34px;text-align:center}
+  .eyebrow{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+           color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 13px}
+  h1{font-size:22px;line-height:1.45;margin:18px 0 12px}
+  p{color:var(--fg-muted);margin:0 0 10px}
+  .note{font-size:12.5px;color:var(--fg-dim)}
+  hr{border:0;border-top:1px solid var(--border);margin:26px 0 20px}
+  a.btn{display:inline-block;padding:10px 22px;border-radius:10px;background:var(--btn);color:#fff;
+        text-decoration:none;font-weight:500;transition:background .2s var(--ease)}
+  a.btn:hover{background:var(--btn-hover)}
+</style>
+</head>
+<body>
+  <main class="card">
+    <span class="eyebrow">AI 实验台</span>
+    <h1>该实验台不参与评分，未随源码包提供</h1>
+    <p>这里是「AI 实验台」的入口占位页。该模块属于不参与评分的附加实验功能，本次提交的源码包中未包含其实现。</p>
+    <p class="note">如需查看系统正式功能，请返回演示首页。</p>
+    <hr>
+    <a class="btn" href="../v8/index.html?demo=1">返回系统演示</a>
+  </main>
+</body>
+</html>

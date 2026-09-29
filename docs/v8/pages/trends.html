@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>历史趋势 | PowerGrid AI v8</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <style>
+    .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .chart-area { height: 380px; }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="toolbar">
+      <input class="input" id="element-input" placeholder="输入元素 ID (如 bus_3)" value="bus_3" style="width:200px">
+      <select class="select" id="metric-select" style="width:140px">
+        <option value="all">全部指标</option>
+        <option value="voltage">电压</option>
+        <option value="load">负荷</option>
+        <option value="loss">线损</option>
+      </select>
+      <input class="input" id="days-input" type="number" value="14" min="1" max="365" style="width:80px">
+      <span style="font-size:11px;color:var(--fg-muted)">天</span>
+      <button class="btn btn-primary" id="btn-query">查询趋势</button>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>趋势图</strong>
+        <span class="badge" id="trend-meta">—</span>
+      </div>
+      <div id="chart-area" class="chart-area"></div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "trends", title: "历史趋势", breadcrumb: "v8 / trends", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    var LAST_TREND = null;
+    setTimeout(function () { document.getElementById("btn-query").addEventListener("click", query); }, 50);
+
+    async function query() {
+      var el = $("#element-input").value.trim() || "bus_3";
+      var metric = $("#metric-select").value;
+      var days = parseInt($("#days-input").value || "14", 10);
+      appShell.showLoading(true, "查询 " + el);
+      try {
+        var r = await api.trend(el, metric, days);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        renderChart(r.data || {});
+      } catch (e) {
+        $("#chart-area").innerHTML = "<div class=\"empty\">暂无数据 (后端可能未实现该接口) — " + e.message + "</div>";
+        renderMock(el, days);
+      } finally {
+        appShell.showLoading(false);
+      }
+    }
+
+    function renderChart(d) {
+      $("#trend-meta").textContent = (d.points || []).length + " 数据点 / " + (d.days || "—") + " 天 / trend=" + (d.trend || "—");
+      var pts = d.points || [];
+      var dates = pts.map(function (p) { return p.date || p.label || ""; });
+      var counts = pts.map(function (p) { return p.count || 0; });
+      var criticals = pts.map(function (p) { return p.critical || 0; });
+      var warnings = pts.map(function (p) { return p.warning || 0; });
+      var info = pts.map(function (p) { return p.info || 0; });
+      var T = appShell.chartTheme();
+      var chart = echarts.init(document.getElementById("chart-area"));
+      chart.setOption({
+        backgroundColor: "transparent",
+        tooltip: { trigger: "axis", backgroundColor: T.tooltipBg, borderColor: T.tooltipBorder, textStyle: { color: T.tooltipText } },
+        legend: { data: ["总数", "严重", "警告", "提示"], textStyle: { color: T.muted } },
+        grid: { left: 50, right: 20, top: 40, bottom: 40 },
+        xAxis: { type: "category", data: dates, axisLine: { lineStyle: { color: T.grid } }, axisLabel: { color: T.muted } },
+        yAxis: { type: "value", axisLine: { lineStyle: { color: T.grid } }, splitLine: { lineStyle: { color: T.grid } }, axisLabel: { color: T.muted } },
+        color: [T.accent, T.err, T.warn, T.info],
+        series: [
+          { name: "总数", type: "line", data: counts, smooth: true, lineStyle: { color: T.accent, width: 2 }, itemStyle: { color: T.accent } },
+          { name: "严重", type: "bar", data: criticals, itemStyle: { color: T.err } },
+          { name: "警告", type: "bar", data: warnings, itemStyle: { color: T.warn } },
+          { name: "提示", type: "bar", data: info, itemStyle: { color: T.info } },
+        ],
+      });
+      LAST_TREND = d;
+    }
+
+    function renderMock(el, days) {
+      var pts = [];
+      for (var i = 0; i < days; i++) {
+        pts.push({ date: "D-" + (days - 1 - i), count: Math.floor(Math.random() * 20), critical: Math.floor(Math.random() * 3), warning: Math.floor(Math.random() * 5), info: Math.floor(Math.random() * 8) });
+      }
+      renderChart({ element_id: el, days: days, points: pts, trend: "mock" });
+      $("#trend-meta").textContent = "模拟数据 (后端未返回)";
+    }
+
+    // 主题切换时重绘图表 (canvas 无法解析 CSS 变量, 必须重新取色)
+    window.addEventListener("themechange", function () {
+      if (!LAST_TREND) return;
+      var inst = echarts.getInstanceByDom(document.getElementById("chart-area"));
+      if (inst) inst.dispose();
+      renderChart(LAST_TREND);
+    });
+
+    // 窗口/侧栏尺寸变化时响应式重绘 (ECharts 不会自动 resize)
+    appShell.addResizeHandler(function () {
+      var el = document.getElementById("chart-area");
+      if (!el) return;
+      var inst = echarts.getInstanceByDom(el);
+      if (inst) inst.resize();
+    });
+
+    setTimeout(query, 200);
+  </script>
+</body>
+</html>

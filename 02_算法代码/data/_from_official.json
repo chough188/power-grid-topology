@@ -1,0 +1,320 @@
+{
+  "tables": {
+    "JBS_ZWSUBSTATION": [
+      {
+        "ST_ID": "ST00000001",
+        "ST_NAME": "",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      },
+      {
+        "ST_ID": "ST00000002",
+        "ST_NAME": "",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      },
+      {
+        "ST_ID": "ST00000003",
+        "ST_NAME": "",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      }
+    ],
+    "JBS_ZWEQUIPINFO": [
+      {
+        "EQUIP_ID": "TMP00000001",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "BREAKER",
+        "ST_ID": "ST00000001",
+        "VOLTAGE_TYPE": 110
+      },
+      {
+        "EQUIP_ID": "TMP00000002",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "SWITCH",
+        "ST_ID": "ST00000002",
+        "VOLTAGE_TYPE": 110
+      },
+      {
+        "EQUIP_ID": "TMP00000003",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "DISCONNECTOR",
+        "ST_ID": "ST00000003",
+        "VOLTAGE_TYPE": 110
+      }
+    ],
+    "JBS_ZWLINEEND": [
+      {
+        "LINEEND_ID": "LE00000001",
+        "LINEEND_NAME": "",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST00000001"
+      },
+      {
+        "LINEEND_ID": "LE00000002",
+        "LINEEND_NAME": "",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST00000002"
+      },
+      {
+        "LINEEND_ID": "LE00000003",
+        "LINEEND_NAME": "",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST00000003"
+      }
+    ],
+    "JBS_ZWTERMINAL": [
+      {
+        "ID": "T00000001",
+        "EQUIP_ID": "TMP00000001",
+        "CONNECTIVITYNODE_ID": "N00000001"
+      },
+      {
+        "ID": "T00000002",
+        "EQUIP_ID": "TMP00000002",
+        "CONNECTIVITYNODE_ID": "N00000002"
+      },
+      {
+        "ID": "T00000003",
+        "EQUIP_ID": "TMP00000003",
+        "CONNECTIVITYNODE_ID": "N00000003"
+      }
+    ],
+    "JBS_ZWMEA": [
+      {
+        "CREATE_DATE": "2026-07-23 00:00:00",
+        "ID": "T00000001",
+        "MEAS_TYPE": 1,
+        "V2000": 220.1
+      },
+      {
+        "CREATE_DATE": "2026-07-23 00:00:00",
+        "ID": "T00000002",
+        "MEAS_TYPE": 1,
+        "V2000": 220.2
+      },
+      {
+        "CREATE_DATE": "2026-07-23 00:00:00",
+        "ID": "T00000003",
+        "MEAS_TYPE": 1,
+        "V2000": 220.3
+      }
+    ],
+    "JBS_ZWSIGNAL": [
+      {
+        "ID": "T00000001",
+        "POINT": "P00000001"
+      },
+      {
+        "ID": "T00000002",
+        "POINT": "P00000002"
+      },
+      {
+        "ID": "T00000003",
+        "POINT": "P00000003"
+      }
+    ],
+    "JBS_PWFEEDERLINE": [
+      {
+        "LINE_ID": "F00000001",
+        "LINE_NAME": "",
+        "START_ST_ID": "",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F00000002",
+        "LINE_NAME": "",
+        "START_ST_ID": "",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F00000003",
+        "LINE_NAME": "",
+        "START_ST_ID": "",
+        "VOLTAGE_TYPE": 10
+      }
+    ],
+    "JBS_PWROOM": [
+      {
+        "ROOM_ID": "RM00000001",
+        "ROOM_NAME": "",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F00000001"
+      },
+      {
+        "ROOM_ID": "RM00000002",
+        "ROOM_NAME": "",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F00000002"
+      },
+      {
+        "ROOM_ID": "RM00000003",
+        "ROOM_NAME": "",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F00000003"
+      }
+    ],
+    "JBS_PWEQUIPINFO": [
+      {
+        "EQUIP_ID": "TMP00000001",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": "10",
+        "FEEDER_ID": "F00000001",
+        "DSUBSTATION_ID": "RM00000001",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP00000002",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": "10",
+        "FEEDER_ID": "F00000002",
+        "DSUBSTATION_ID": "RM00000002",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP00000003",
+        "EQUIP_NAME": "",
+        "EQUIP_TYPE": "DISCONNECTOR",
+        "VOLTAGE_TYPE": "10",
+        "FEEDER_ID": "F00000003",
+        "DSUBSTATION_ID": "RM00000003",
+        "COMPOSITESWITCH": ""
+      }
+    ],
+    "JBS_PWTERMINAL": [
+      {
+        "ID": "T00000001",
+        "EQUIP_ID": "TMP00000001",
+        "CONNECTIVITYNODE_ID": "N00000001"
+      },
+      {
+        "ID": "T00000002",
+        "EQUIP_ID": "TMP00000002",
+        "CONNECTIVITYNODE_ID": "N00000002"
+      },
+      {
+        "ID": "T00000003",
+        "EQUIP_ID": "TMP00000003",
+        "CONNECTIVITYNODE_ID": "N00000003"
+      }
+    ],
+    "JBS_PWREAL": [
+      {
+        "NUM": "M00000001",
+        "TRAN_ID": "T00000001",
+        "DATA_DATE": "2026-07-23",
+        "UA": "1.1",
+        "UB": "1.1",
+        "UC": "1.1",
+        "IA": "0.5",
+        "IB": "0.5",
+        "IC": "0.5",
+        "AP": "100",
+        "RP": "100",
+        "POINT": "P00000001",
+        "BDZ_ID": "BDZ00000001",
+        "FEEDER_ID": "F00000001"
+      },
+      {
+        "NUM": "M00000002",
+        "TRAN_ID": "T00000002",
+        "DATA_DATE": "2026-07-23",
+        "UA": "2.2",
+        "UB": "2.2",
+        "UC": "2.2",
+        "IA": "1.0",
+        "IB": "1.0",
+        "IC": "1.0",
+        "AP": "200",
+        "RP": "200",
+        "POINT": "P00000002",
+        "BDZ_ID": "BDZ00000002",
+        "FEEDER_ID": "F00000002"
+      },
+      {
+        "NUM": "M00000003",
+        "TRAN_ID": "T00000003",
+        "DATA_DATE": "2026-07-23",
+        "UA": "3.3",
+        "UB": "3.3",
+        "UC": "3.3",
+        "IA": "1.5",
+        "IB": "1.5",
+        "IC": "1.5",
+        "AP": "300",
+        "RP": "300",
+        "POINT": "P00000003",
+        "BDZ_ID": "BDZ00000003",
+        "FEEDER_ID": "F00000003"
+      }
+    ],
+    "JBS_ZD_OBJECT": [
+      {
+        "OBJ_ID": "OBJ00000001",
+        "OBJ_CODE": "OBJ00000001",
+        "OBJ_CNNAME": "main-obj-1",
+        "OBJ_ENNAME": "obj_1"
+      },
+      {
+        "OBJ_ID": "OBJ00000002",
+        "OBJ_CODE": "OBJ00000002",
+        "OBJ_CNNAME": "main-obj-2",
+        "OBJ_ENNAME": "obj_2"
+      },
+      {
+        "OBJ_ID": "OBJ00000003",
+        "OBJ_CODE": "OBJ00000003",
+        "OBJ_CNNAME": "main-obj-3",
+        "OBJ_ENNAME": "obj_3"
+      }
+    ],
+    "JBS_ZD_VOLTAGETYPE": [
+      {
+        "VOLTAGE_ID": 1,
+        "VOLTAGE_NAME": ""
+      },
+      {
+        "VOLTAGE_ID": 2,
+        "VOLTAGE_NAME": ""
+      },
+      {
+        "VOLTAGE_ID": 3,
+        "VOLTAGE_NAME": ""
+      }
+    ],
+    "JBS_ZD_MEASTYPE": [
+      {
+        "CODE": 1001,
+        "NAME_CHN": "meas-type-1"
+      },
+      {
+        "CODE": 1002,
+        "NAME_CHN": "meas-type-2"
+      },
+      {
+        "CODE": 1003,
+        "NAME_CHN": "meas-type-3"
+      }
+    ]
+  },
+  "_meta": {
+    "source_sql": "E:\\dianli\\xiangmu\\dianli\\电力拓扑图修正\\比赛要求\\date.sql",
+    "svg_dir": null,
+    "imported_at": 1785259168.1961217,
+    "table_row_counts": {
+      "JBS_ZWSUBSTATION": 3,
+      "JBS_ZWEQUIPINFO": 3,
+      "JBS_ZWLINEEND": 3,
+      "JBS_ZWTERMINAL": 3,
+      "JBS_ZWMEA": 3,
+      "JBS_ZWSIGNAL": 3,
+      "JBS_PWFEEDERLINE": 3,
+      "JBS_PWROOM": 3,
+      "JBS_PWEQUIPINFO": 3,
+      "JBS_PWTERMINAL": 3,
+      "JBS_PWREAL": 3,
+      "JBS_ZD_OBJECT": 3,
+      "JBS_ZD_VOLTAGETYPE": 3,
+      "JBS_ZD_MEASTYPE": 3
+    }
+  }
+}

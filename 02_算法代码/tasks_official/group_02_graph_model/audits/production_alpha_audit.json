@@ -1,0 +1,31 @@
+{
+  "format": "cp-202606-hybrid-alpha-audit-v4",
+  "generated_utc": "2026-07-23T14:21:34.412817+00:00",
+  "hybrid_runner_path": "E:\\dianli\\xiangmu\\dianli\\电力拓扑图修正\\02_算法代码\\tasks_official\\group_02_graph_model\\hybrid_runner.py",
+  "hybrid_runner_sha256": "db6a1787537846f8a5ce70e77c883fd09b123fc5e078953fa00bbefb6557b3eb",
+  "default_alpha": 0.0,
+  "alpha_by_task_default": "None",
+  "model_version_default": "v3",
+  "production_alpha_status": "no_prod_alpha_gt_0",
+  "expected_posture": "rules_only_with_gae_coldstart_attached",
+  "rationale": "Round15 multi_agent complete (3 base networks from MATPOWER added); 800 ctdt_v2_injection counterfactuals evaluated with detector_workflow.py; alpha remains 0 per playbook. Detector workflow verified GAE attachment via HybridConfig (model=GAE_GraphSAGE_v3_fixed_vocab, in_dim=24) but skipped second pass because alpha=0. Results: micro recall=40%, task 1.1 recall=100%, task 2.2 recall=100%. No human_confirmed labels available yet.",
+  "preconditions_for_enabling": [
+    "human_confirmed labels for at least one task_code (>= 100 samples)",
+    "shadow run: alpha=0 vs alpha=0.3 on test split, recall gain >= +5pp",
+    "committee approval per GNN_ALPHA_PLAYBOOK.md"
+  ],
+  "playbook_ref": "03_数据集/expansion_pipeline/GNN_ALPHA_PLAYBOOK.md",
+  "round15_context": {
+    "total_samples": 1489,
+    "train_samples": 1272,
+    "val_samples": 100,
+    "test_samples": 117,
+    "multi_agent_added": 3,
+    "ctdt_v2_injection": 800,
+    "ctdt_v2": 500,
+    "injection_workflow_micro_recall": 0.4,
+    "injection_workflow_task_1_1_recall": 1.0,
+    "injection_workflow_task_2_2_recall": 1.0,
+    "gae_checkpoint_sha256": "c04fe8fe944af194d94ab971fc6f873295095ee7ddd5c14bad51729491934804"
+  }
+}

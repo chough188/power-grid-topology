@@ -1,0 +1,27 @@
+# docker-compose.yml (DEV) for CP-202606 配电网图模拓扑智能识别与修正系统
+# v18.7.10 — Dual config strategy:
+#   - This file (02_算法代码/docker-compose.yml)  : DEV mode, port 8001, single service
+#   - 04_模型封装/docker-compose.yml              : PROD canonical, port 8000, full stack
+# Use 'docker compose -f 04_模型封装/docker-compose.yml up' for production.
+# Path context: this file lives in 02_算法代码/, mounts ./output (local dev results)
+
+services:
+  topo-detection:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"   # dev port to avoid clash with 04_ prod (8000)
+    volumes:
+      - ./output:/app/output
+      - ../03_数据集:/app/03_数据集
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+      - MODEL_PATH=/app/output/gnn_graph_binary_v52.pt
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

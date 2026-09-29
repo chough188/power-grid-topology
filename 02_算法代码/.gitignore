@@ -1,0 +1,26 @@
+# Gitignore for algorithm code directory
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+.DS_Store
+.vscode/
+.idea/
+# Pipeline run artifacts (keep human-readable reports in output/)
+output/pipeline_real_run*/
+output/demo_*/
+checkpoints/
+logs/
+*.pt
+*.pth
+*.onnx
+*.gguf
+*.safetensors
+*.bin
+!tests/test_*.py

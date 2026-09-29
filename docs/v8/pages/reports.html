@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>报告中心 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/export_csv.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+    <style>
+    .rep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); }
+    .rep-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); }
+    .rep-card h3 { margin: 0 0 4px; font-size: 14px; }
+    .rep-card p { font-size: 12px; color: var(--fg-muted); margin: 0 0 12px; min-height: 32px; }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="card page-section">
+      <div class="section-title">分析报告成果（按比赛要求四类组织）</div>
+      <p style="font-size:12px;color:var(--fg-muted);margin:0 0 14px">详见《拓扑校验问题标准输出.xlsx》。所有导出严格对齐标准 6 表 schema，可直接作为参赛提交成果。</p>
+      <div class="rep-grid" id="rep-cards"></div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">一键导出全套标准成果</div>
+      <p style="font-size:12px;color:var(--fg-muted);margin:0 0 12px">将 6 张标准表合并导出为《拓扑校验问题标准输出.xlsx》（与比赛交付文件同名同构）。</p>
+      <button class="btn btn-primary" id="btn-all">导出全套《拓扑校验问题标准输出.xlsx》（6 Sheet）</button>
+      <button class="btn btn-ghost" id="btn-csv-all">导出全部 6 表 CSV（离线 · 免依赖）</button>
+      <span class="badge" id="all-meta" style="margin-left:10px">—</span>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "reports", title: "报告中心", breadcrumb: "运营与交付 / 报告中心", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    function sheetProblems() { return compApi.getProblems().then(function (l) { return { name: "拓扑校验问题清单", headers: compApi.STANDARD_HEADERS.problems, rows: l.map(function (p) { return [p.seq, compApi.l1Name(p.l1), compApi.l2Name(p.l2), p.devId, p.devName, p.feeder, p.station, p.desc, p.fix, p.sql]; }) }; }); }
+    function sheetBreak() { return compApi.getBreakpoints().then(function (l) { return { name: "拓扑连通性异常诊断与断点定位结果", headers: compApi.STANDARD_HEADERS.breakpoints, rows: l.map(function (b) { return [b.seq, b.startId, b.endId, b.breakType, b.thisSideId, b.thisSideName, b.otherSideId, b.otherSideName, b.fix, b.sql, b.note || ""]; }) }; }); }
+    function sheetTie() { return compApi.getTieSwitches().then(function (l) { return { name: "联络开关自动识别与可视化梳理任务结果", headers: compApi.STANDARD_HEADERS.tieSwitches, rows: l.map(function (t) { return [t.lineId, t.lineName, t.substation, t.swId, t.swName, t.hasTie, t.tieLineId, t.tieLineName, t.tieSub]; }) }; }); }
+    function sheetLoop() { return compApi.getLoops().then(function (l) { return { name: "非计划性合环拓扑识别任务结果", headers: compApi.STANDARD_HEADERS.loops, rows: l.map(function (x) { return [x.lineId, x.lineName, x.substation, x.loopLineId, x.loopLineName, x.loopSub, x.suspectSwId, x.suspectSwName, x.sql]; }) }; }); }
+    function sheetQuality() { return compApi.getQuality().then(function (l) { return { name: "模型修正质量评分任务结果", headers: compApi.STANDARD_HEADERS.quality, rows: l.map(function (q) { return [q.seq, q.station, q.stationId, q.feeder, q.feederId, q.before, q.after]; }) }; }); }
+    function sheetTax() { return compApi.getTaxonomy().then(function (tax) { var rows = []; tax.forEach(function (t) { t.items.forEach(function (it) { rows.push([t.code + " " + t.name, it.code + " " + it.name]); }); }); return { name: "问题类型下拉选项", headers: compApi.STANDARD_HEADERS.taxonomy, rows: rows }; }); }
+
+    setTimeout(function () {
+      var cards = [
+        { title: "① 拓扑异常问题清单", desc: "sheet1：全量问题（一级/二级分类、设备、馈线、厂站、说明、方案、SQL）。", fn: sheetProblems, file: "拓扑异常问题清单.xlsx" },
+        { title: "② 故障定位结果", desc: "sheet2：断点定位（起点/终点、断点类型、本侧/对侧疑似断点、方案、SQL）。", fn: sheetBreak, file: "故障定位结果.xlsx" },
+        { title: "③ 联络拓扑梳理台账", desc: "sheet3：联络开关与馈线配对关系台账，支持一键导出。", fn: sheetTie, file: "联络拓扑梳理台账.xlsx" },
+        { title: "④ 模型质量评分及整改对比", desc: "sheet5：修正前/后评分对比 + 四维雷达支撑。", fn: sheetQuality, file: "质量评分对比.xlsx" }
+      ];
+      $("#rep-cards").innerHTML = cards.map(function (c, i) {
+        return "<div class='rep-card'><h3>" + c.title + "</h3><p>" + c.desc + "</p><button class='btn btn-sm' data-i='" + i + "'>导出 XLSX</button></div>";
+      }).join("");
+      cards.forEach(function (c, i) {
+        document.querySelector("[data-i='" + i + "']").addEventListener("click", function () {
+          c.fn().then(function (s) { compUI.exportXLSX(c.file, [s]); appShell.toast("已导出：" + c.file, "ok"); });
+        });
+      });
+
+      $("#btn-all").addEventListener("click", function () {
+        Promise.all([sheetProblems(), sheetBreak(), sheetTie(), sheetLoop(), sheetQuality(), sheetTax()]).then(function (sheets) {
+          compUI.exportXLSX("拓扑校验问题标准输出.xlsx", sheets);
+          $("#all-meta").textContent = "已导出 6 张标准表";
+          appShell.toast("已导出全套标准成果（6 Sheet）", "ok");
+        });
+      });
+
+      $("#all-meta").textContent = "共 6 张标准表";
+
+      $("#btn-csv-all").addEventListener("click", function () {
+        if (global.compCSV) {
+          global.compCSV.exportAll6().then(function (n) { appShell.toast("已导出 " + n + " 张标准 CSV", "ok"); }).catch(function (e) { appShell.toast("导出失败: " + (e && e.message), "err"); });
+        } else { appShell.toast("导出模块未加载", "err"); }
+      });
+    }, 50);
+  </script>
+<script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "id": "CASE-1782580334848",
+  "anomaly_type": "topo_interrupt",
+  "network": "case118",
+  "ground_truth": {
+    "location": "line_15",
+    "expected_conf": 0.95
+  },
+  "detection_result": {
+    "location": "line_15",
+    "detected_conf": 0.93
+  },
+  "root_cause": "switch_open",
+  "fix_action": "close switch",
+  "lessons": "例行巡检发现",
+  "created_at": 1782580334.8482742
+}

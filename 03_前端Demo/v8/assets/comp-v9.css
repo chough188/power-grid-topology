@@ -1,0 +1,1206 @@
+/*
+ * PowerGrid AI Operations — v9 组件升级层 (comp-v9.css)
+ * SVG拓扑科技风 / 滚动条 / 微交互 / 工业美学组件
+ * 增量覆盖层: [data-v9] 命名空间隔离
+ */
+
+/* ============================================================
+   0. CSS Custom Properties (v9 Token)
+   ============================================================ */
+[data-v9] {
+  --v9-accent:          #00e0a0;
+  --v9-accent-rgb:      0, 224, 160;
+  --v9-accent-dim:      rgba(var(--v9-accent-rgb), 0.12);
+  --v9-accent-glow:     rgba(var(--v9-accent-rgb), 0.35);
+  --v9-accent-strong:   rgba(var(--v9-accent-rgb), 0.55);
+  --v9-scanline:        rgba(var(--v9-accent-rgb), 0.03);
+  --v9-hud-line:        rgba(var(--v9-accent-rgb), 0.18);
+  --v9-hud-line-dark:   rgba(var(--v9-accent-rgb), 0.35);
+  --v9-grid-color:      rgba(var(--v9-accent-rgb), 0.06);
+  --v9-grid-color-dark: rgba(var(--v9-accent-rgb), 0.12);
+  --v9-skeleton-base:   #1a1f2e;
+  --v9-skeleton-shine:  #2a3045;
+  --v9-pulse-duration:  2.4s;
+  --v9-blink-duration:  0.9s;
+  --v9-breathe-duration: 2.8s;
+}
+
+[data-v9][data-theme="dark"] {
+  --v9-scanline:        rgba(var(--v9-accent-rgb), 0.04);
+  --v9-hud-line:        rgba(var(--v9-accent-rgb), 0.40);
+  --v9-grid-color:     rgba(var(--v9-accent-rgb), 0.14);
+  --v9-skeleton-base:   #111520;
+  --v9-skeleton-shine:  #1e2538;
+}
+
+/* ============================================================
+   1. SVG 拓扑画布科技风升级
+   ============================================================ */
+
+/* --- 1.1 HUD 角标装饰 (四角 L 形线条) --- */
+[data-v9] .svg-canvas {
+  position: relative;
+  background-color: #f5f7fa;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      var(--v9-grid-color) 0px,
+      var(--v9-grid-color) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--v9-grid-color) 0px,
+      var(--v9-grid-color) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      var(--v9-scanline) 0px,
+      var(--v9-scanline) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  background-size: 40px 40px, 40px 40px, 100% 6px;
+  overflow: hidden;
+}
+
+[data-v9][data-theme="dark"] .svg-canvas {
+  background-color: #0c1018;
+}
+
+/* 四角 HUD L 形线条 */
+[data-v9] .svg-canvas::before,
+[data-v9] .svg-canvas::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-v9] .svg-canvas::before {
+  top: 8px;
+  left: 8px;
+  border-top: 2px solid var(--v9-hud-line);
+  border-left: 2px solid var(--v9-hud-line);
+  box-shadow:
+    12px 0 0 -1px var(--v9-hud-line),
+    0 12px 0 -1px var(--v9-hud-line);
+}
+
+[data-v9] .svg-canvas::after {
+  bottom: 8px;
+  right: 8px;
+  border-bottom: 2px solid var(--v9-hud-line);
+  border-right: 2px solid var(--v9-hud-line);
+  box-shadow:
+    -12px 0 0 -1px var(--v9-hud-line),
+    0 -12px 0 -1px var(--v9-hud-line);
+}
+
+/* 额外两角用子伪元素 (.svg-canvas 内部 .hud-corner 辅助) */
+[data-v9] .svg-canvas .hud-corner-tr,
+[data-v9] .svg-canvas .hud-corner-bl {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-v9] .svg-canvas .hud-corner-tr {
+  top: 8px;
+  right: 8px;
+  border-top: 2px solid var(--v9-hud-line);
+  border-right: 2px solid var(--v9-hud-line);
+  box-shadow:
+    -12px 0 0 -1px var(--v9-hud-line),
+    0 12px 0 -1px var(--v9-hud-line);
+}
+
+[data-v9] .svg-canvas .hud-corner-bl {
+  bottom: 8px;
+  left: 8px;
+  border-bottom: 2px solid var(--v9-hud-line);
+  border-left: 2px solid var(--v9-hud-line);
+  box-shadow:
+    12px 0 0 -1px var(--v9-hud-line),
+    0 -12px 0 -1px var(--v9-hud-line);
+}
+
+/* 暗色模式下 HUD 角标更亮 */
+[data-v9][data-theme="dark"] .svg-canvas::before,
+[data-v9][data-theme="dark"] .svg-canvas::after,
+[data-v9][data-theme="dark"] .svg-canvas .hud-corner-tr,
+[data-v9][data-theme="dark"] .svg-canvas .hud-corner-bl {
+  border-color: var(--v9-hud-line-dark);
+  box-shadow:
+    12px 0 0 -1px var(--v9-hud-line-dark),
+    0 12px 0 -1px var(--v9-hud-line-dark);
+}
+
+[data-v9][data-theme="dark"] .svg-canvas .hud-corner-tr {
+  box-shadow:
+    -12px 0 0 -1px var(--v9-hud-line-dark),
+    0 12px 0 -1px var(--v9-hud-line-dark);
+}
+
+[data-v9][data-theme="dark"] .svg-canvas .hud-corner-bl {
+  box-shadow:
+    12px 0 0 -1px var(--v9-hud-line-dark),
+    0 -12px 0 -1px var(--v9-hud-line-dark);
+}
+
+/* --- 1.2 设备图元发光效果 --- */
+[data-v9] .svg-canvas svg .device-node,
+[data-v9] .svg-canvas svg image.device-icon,
+[data-v9] .svg-canvas svg use.device-symbol {
+  filter: drop-shadow(0 0 4px var(--v9-accent-dim));
+  transition: filter 0.3s ease;
+}
+
+[data-v9] .svg-canvas svg .device-node:hover,
+[data-v9] .svg-canvas svg image.device-icon:hover,
+[data-v9] .svg-canvas svg use.device-symbol:hover {
+  filter:
+    drop-shadow(0 0 6px var(--v9-accent-glow))
+    drop-shadow(0 0 18px var(--v9-accent-dim));
+}
+
+[data-v9][data-theme="dark"] .svg-canvas svg .device-node,
+[data-v9][data-theme="dark"] .svg-canvas svg image.device-icon,
+[data-v9][data-theme="dark"] .svg-canvas svg use.device-symbol {
+  filter: drop-shadow(0 0 6px var(--v9-accent-dim));
+}
+
+[data-v9][data-theme="dark"] .svg-canvas svg .device-node:hover,
+[data-v9][data-theme="dark"] .svg-canvas svg image.device-icon:hover,
+[data-v9][data-theme="dark"] .svg-canvas svg use.device-symbol:hover {
+  filter:
+    drop-shadow(0 0 8px var(--v9-accent-glow))
+    drop-shadow(0 0 24px var(--v9-accent-dim));
+}
+
+/* 连线发光 */
+[data-v9] .svg-canvas svg line.feeder-line,
+[data-v9] .svg-canvas svg path.feeder-line {
+  stroke: var(--v9-accent);
+  stroke-opacity: 0.45;
+  filter: drop-shadow(0 0 3px var(--v9-accent-dim));
+  transition: stroke-opacity 0.3s ease, filter 0.3s ease;
+}
+
+[data-v9][data-theme="dark"] .svg-canvas svg line.feeder-line,
+[data-v9][data-theme="dark"] .svg-canvas svg path.feeder-line {
+  stroke-opacity: 0.65;
+  filter: drop-shadow(0 0 5px var(--v9-accent-dim));
+}
+
+/* ============================================================
+   2. 滚动条科技风
+   ============================================================ */
+
+/* Webkit (Chrome / Edge / Safari) */
+[data-v9] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-v9] ::-webkit-scrollbar-track {
+  background: rgba(var(--v9-accent-rgb), 0.04);
+  border-radius: 4px;
+}
+
+[data-v9] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--v9-accent-rgb), 0.25),
+    rgba(var(--v9-accent-rgb), 0.12)
+  );
+  border-radius: 4px;
+  border: 1px solid rgba(var(--v9-accent-rgb), 0.08);
+  transition: background 0.25s ease;
+}
+
+[data-v9] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--v9-accent-rgb), 0.45),
+    rgba(var(--v9-accent-rgb), 0.25)
+  );
+}
+
+[data-v9] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+[data-v9] * {
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(var(--v9-accent-rgb), 0.2)
+    rgba(var(--v9-accent-rgb), 0.04);
+}
+
+[data-v9][data-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgba(var(--v9-accent-rgb), 0.06);
+}
+
+[data-v9][data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--v9-accent-rgb), 0.35),
+    rgba(var(--v9-accent-rgb), 0.18)
+  );
+}
+
+[data-v9][data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--v9-accent-rgb), 0.55),
+    rgba(var(--v9-accent-rgb), 0.32)
+  );
+}
+
+[data-v9][data-theme="dark"] * {
+  scrollbar-color:
+    rgba(var(--v9-accent-rgb), 0.3)
+    rgba(var(--v9-accent-rgb), 0.06);
+}
+
+/* ============================================================
+   3. 微交互增强
+   ============================================================ */
+
+/* --- 3.1 按钮 hover box-shadow 扩散 --- */
+[data-v9] .btn {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.35s ease,
+    transform 0.2s ease;
+}
+
+[data-v9] .btn:hover {
+  box-shadow:
+    0 0 0 1px var(--v9-accent-dim),
+    0 2px 12px var(--v9-accent-dim),
+    0 4px 24px rgba(var(--v9-accent-rgb), 0.06);
+}
+
+[data-v9] .btn:active {
+  transform: scale(0.97);
+}
+
+/* --- 3.2 btn-primary 流光扫过效果 --- */
+@keyframes v9-btn-sweep {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+[data-v9] .btn-primary {
+  background-image:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 35%,
+      rgba(255, 255, 255, 0.18) 45%,
+      rgba(255, 255, 255, 0.28) 50%,
+      rgba(255, 255, 255, 0.18) 55%,
+      transparent 65%,
+      transparent 100%
+    );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: v9-btn-sweep 4s ease-in-out infinite;
+}
+
+[data-v9] .btn-primary:hover {
+  box-shadow:
+    0 0 0 1px var(--v9-accent-dim),
+    0 2px 16px var(--v9-accent-glow),
+    0 6px 32px rgba(var(--v9-accent-rgb), 0.12);
+}
+
+/* --- 3.3 nav-item.active 脉冲动画 --- */
+@keyframes v9-nav-pulse {
+  0%, 100% { opacity: 1; transform: scaleX(1); }
+  50%      { opacity: 0.5; transform: scaleX(0.7); }
+}
+
+[data-v9] .nav-item.active {
+  position: relative;
+}
+
+[data-v9] .nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleX(1);
+  width: 3px;
+  height: 60%;
+  border-radius: 2px;
+  background: var(--v9-accent);
+  animation: v9-nav-pulse var(--v9-pulse-duration) ease-in-out infinite;
+}
+
+/* --- 3.4 表格行 hover 左侧 accent 条 --- */
+[data-v9] .table tbody tr {
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+[data-v9] .table tbody tr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--v9-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.25s ease;
+}
+
+[data-v9] .table tbody tr:hover {
+  background-color: rgba(var(--v9-accent-rgb), 0.04);
+}
+
+[data-v9] .table tbody tr:hover::before {
+  transform: scaleY(1);
+}
+
+[data-v9][data-theme="dark"] .table tbody tr:hover {
+  background-color: rgba(var(--v9-accent-rgb), 0.08);
+}
+
+/* --- 3.5 input/select focus 发光边框 --- */
+[data-v9] .input,
+[data-v9] .select {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.25s ease;
+}
+
+[data-v9] .input:focus,
+[data-v9] .select:focus {
+  border-color: var(--v9-accent);
+  box-shadow:
+    0 0 0 3px var(--v9-accent-dim),
+    0 0 12px rgba(var(--v9-accent-rgb), 0.08);
+  outline: none;
+}
+
+[data-v9][data-theme="dark"] .input:focus,
+[data-v9][data-theme="dark"] .select:focus {
+  box-shadow:
+    0 0 0 3px rgba(var(--v9-accent-rgb), 0.18),
+    0 0 16px rgba(var(--v9-accent-rgb), 0.12);
+}
+
+/* ============================================================
+   4. Toast 通知升级
+   ============================================================ */
+
+/* --- 4.1 左侧渐变色条 --- */
+[data-v9] .toast {
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(
+    180deg,
+    var(--v9-accent),
+    rgba(var(--v9-accent-rgb), 0.3)
+  ) 1;
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+}
+
+[data-v9] .toast.toast-error {
+  border-image: linear-gradient(
+    180deg,
+    #ff4d6a,
+    rgba(255, 77, 106, 0.3)
+  ) 1;
+}
+
+[data-v9] .toast.toast-warn {
+  border-image: linear-gradient(
+    180deg,
+    #ffb020,
+    rgba(255, 176, 32, 0.3)
+  ) 1;
+}
+
+[data-v9] .toast.toast-info {
+  border-image: linear-gradient(
+    180deg,
+    #3ea8ff,
+    rgba(62, 168, 255, 0.3)
+  ) 1;
+}
+
+/* --- 4.2 入场动画: slideIn + scale --- */
+@keyframes v9-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes v9-toast-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.92);
+  }
+}
+
+[data-v9] .toast.toast-enter {
+  animation: v9-toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+[data-v9] .toast.toast-leave {
+  animation: v9-toast-out 0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+/* ============================================================
+   5. 状态指示灯升级
+   ============================================================ */
+
+/* --- 5.1 .ok 脉冲呼吸 --- */
+@keyframes v9-pulse-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(52, 211, 153, 0.5);
+    opacity: 1;
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(52, 211, 153, 0);
+    opacity: 0.75;
+  }
+}
+
+[data-v9] .status-dot.ok {
+  animation: v9-pulse-breathe var(--v9-breathe-duration) ease-in-out infinite;
+}
+
+/* --- 5.2 .err 快速闪烁 (告警感) --- */
+@keyframes v9-blink-fast {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.15; }
+}
+
+[data-v9] .status-dot.err {
+  animation: v9-blink-fast var(--v9-blink-duration) ease-in-out infinite;
+}
+
+/* --- 5.3 .warn 缓慢明暗交替 --- */
+@keyframes v9-warn-dim {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+[data-v9] .status-dot.warn {
+  animation: v9-warn-dim 2s ease-in-out infinite;
+}
+
+/* ============================================================
+   6. Hero 区域升级
+   ============================================================ */
+
+/* --- 6.1 颗粒纹理 + 几何装饰线条 --- */
+[data-v9] .hero {
+  position: relative;
+  overflow: hidden;
+  background-image:
+    radial-gradient(ellipse 1px 1px at 10% 20%, var(--v9-accent-dim) 0%, transparent 100%),
+    radial-gradient(ellipse 1px 1px at 30% 65%, var(--v9-accent-dim) 0%, transparent 100%),
+    radial-gradient(ellipse 1px 1px at 55% 10%, var(--v9-accent-dim) 0%, transparent 100%),
+    radial-gradient(ellipse 1px 1px at 75% 80%, var(--v9-accent-dim) 0%, transparent 100%),
+    radial-gradient(ellipse 1px 1px at 90% 40%, var(--v9-accent-dim) 0%, transparent 100%),
+    radial-gradient(ellipse 1.5px 1.5px at 20% 45%, rgba(var(--v9-accent-rgb), 0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 1.5px 1.5px at 50% 85%, rgba(var(--v9-accent-rgb), 0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 1.5px 1.5px at 80% 15%, rgba(var(--v9-accent-rgb), 0.06) 0%, transparent 100%);
+}
+
+/* 控制台感几何线条装饰 */
+[data-v9] .hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    /* 顶部横线 */
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--v9-hud-line) 15%,
+      transparent 16%,
+      transparent 40%,
+      var(--v9-hud-line) 55%,
+      transparent 56%
+    ) no-repeat 0 0 / 100% 1px,
+    /* 底部横线 */
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--v9-hud-line) 25%,
+      transparent 26%,
+      transparent 70%,
+      var(--v9-hud-line) 85%,
+      transparent 86%
+    ) no-repeat 0 100% / 100% 1px,
+    /* 左侧竖线 */
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--v9-hud-line) 20%,
+      transparent 21%
+    ) no-repeat 0 0 / 1px 100%,
+    /* 右侧竖线 */
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--v9-hud-line) 30%,
+      transparent 31%
+    ) no-repeat 100% 0 / 1px 100%;
+}
+
+[data-v9] .hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- 6.2 Hero-badge glow --- */
+[data-v9] .hero-badge {
+  box-shadow:
+    0 0 8px var(--v9-accent-dim),
+    0 0 24px rgba(var(--v9-accent-rgb), 0.06);
+  border: 1px solid rgba(var(--v9-accent-rgb), 0.2);
+}
+
+[data-v9][data-theme="dark"] .hero-badge {
+  box-shadow:
+    0 0 12px var(--v9-accent-dim),
+    0 0 36px rgba(var(--v9-accent-rgb), 0.10);
+  border-color: rgba(var(--v9-accent-rgb), 0.3);
+}
+
+/* ============================================================
+   7. 空状态和骨架屏升级
+   ============================================================ */
+
+/* --- 7.1 Skeleton 多色渐变 shimmer --- */
+@keyframes v9-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+[data-v9] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--v9-skeleton-base) 0%,
+    var(--v9-skeleton-base) 30%,
+    var(--v9-skeleton-shine) 42%,
+    rgba(var(--v9-accent-rgb), 0.06) 50%,
+    var(--v9-skeleton-shine) 58%,
+    var(--v9-skeleton-base) 70%,
+    var(--v9-skeleton-base) 100%
+  );
+  background-size: 800px 100%;
+  animation: v9-shimmer 2s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+[data-v9][data-theme="dark"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--v9-skeleton-base) 0%,
+    var(--v9-skeleton-base) 30%,
+    var(--v9-skeleton-shine) 42%,
+    rgba(var(--v9-accent-rgb), 0.10) 50%,
+    var(--v9-skeleton-shine) 58%,
+    var(--v9-skeleton-base) 70%,
+    var(--v9-skeleton-base) 100%
+  );
+  background-size: 800px 100%;
+}
+
+/* --- 7.2 空状态装饰几何图标 --- */
+[data-v9] .empty-state {
+  position: relative;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+[data-v9] .empty-state::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 20px;
+  border: 2px dashed rgba(var(--v9-accent-rgb), 0.25);
+  border-radius: 50%;
+  position: relative;
+}
+
+[data-v9] .empty-state::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: -36px auto 20px;
+  background: transparent;
+  border: 2px solid rgba(var(--v9-accent-rgb), 0.25);
+  transform: rotate(45deg);
+}
+
+/* 用 CSS 几何组合：圆环 + 菱形，形成科技感空状态图标 */
+[data-v9] .empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+[data-v9] .empty-state-icon::before {
+  content: '';
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(var(--v9-accent-rgb), 0.18);
+  border-radius: 50%;
+}
+
+[data-v9] .empty-state-icon::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid rgba(var(--v9-accent-rgb), 0.22);
+  transform: rotate(45deg);
+}
+
+/* 六边形外框装饰 */
+[data-v9] .empty-state-hex {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+[data-v9] .empty-state-hex::before {
+  content: '';
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border: 1.5px solid rgba(var(--v9-accent-rgb), 0.15);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+[data-v9] .empty-state-hex::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid rgba(var(--v9-accent-rgb), 0.22);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+[data-v9][data-theme="dark"] .empty-state::before {
+  border-color: rgba(var(--v9-accent-rgb), 0.35);
+}
+
+[data-v9][data-theme="dark"] .empty-state::after {
+  border-color: rgba(var(--v9-accent-rgb), 0.35);
+}
+
+[data-v9][data-theme="dark"] .empty-state-icon::before {
+  border-color: rgba(var(--v9-accent-rgb), 0.28);
+}
+
+[data-v9][data-theme="dark"] .empty-state-icon::after {
+  border-color: rgba(var(--v9-accent-rgb), 0.32);
+}
+
+[data-v9][data-theme="dark"] .empty-state-hex::before {
+  border-color: rgba(var(--v9-accent-rgb), 0.22);
+}
+
+[data-v9][data-theme="dark"] .empty-state-hex::after {
+  border-color: rgba(var(--v9-accent-rgb), 0.30);
+}
+
+/* ============================================================
+   8. 通用辅助动画 (Keyframes)
+   ============================================================ */
+
+/* 流光渐变 (通用) */
+@keyframes v9-glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--v9-accent-dim); }
+  50%      { box-shadow: 0 0 12px var(--v9-accent-glow); }
+}
+
+/* 渐显上移 */
+@keyframes v9-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 扫描线动画 */
+@keyframes v9-scanline-move {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+/* 淡入 */
+@keyframes v9-fade-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* 缩放弹入 */
+@keyframes v9-scale-in {
+  0%   { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   9. 工具类 (Utility Classes)
+   ============================================================ */
+
+/* 发光卡片 */
+[data-v9] .card-glow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+[data-v9] .card-glow:hover {
+  box-shadow:
+    0 0 0 1px var(--v9-accent-dim),
+    0 4px 24px rgba(var(--v9-accent-rgb), 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+[data-v9][data-theme="dark"] .card-glow:hover {
+  box-shadow:
+    0 0 0 1px rgba(var(--v9-accent-rgb), 0.18),
+    0 4px 32px rgba(var(--v9-accent-rgb), 0.14),
+    0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 科技分割线 */
+[data-v9] .divider-tech {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--v9-accent-rgb), 0.2) 20%,
+    rgba(var(--v9-accent-rgb), 0.2) 80%,
+    transparent 100%
+  );
+  margin: 16px 0;
+}
+
+/* 标签/徽章科技风 */
+[data-v9] .badge-tech {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--v9-accent);
+  background: rgba(var(--v9-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--v9-accent-rgb), 0.18);
+  border-radius: 3px;
+}
+
+[data-v9][data-theme="dark"] .badge-tech {
+  background: rgba(var(--v9-accent-rgb), 0.12);
+  border-color: rgba(var(--v9-accent-rgb), 0.28);
+}
+
+/* ============================================================
+ * v9.1 动态特效增强层 (借鉴 v8_lab SCADA 控制室美学)
+ * 集成: 脉冲报警 / 电流流动 / 扫描线 / 渐变文字 / 旋转Orb
+ * ============================================================ */
+
+/* --- 1. 脉冲报警环 (故障节点视觉报警) --- */
+[data-v9] .v9-pulse-ring {
+  position: absolute;
+  border: 2px solid var(--err, #dc2626);
+  border-radius: 50%;
+  animation: v9-pulse-expand 1.6s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes v9-pulse-expand {
+  0%   { transform: scale(.35); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* --- 2. 电流流动虚线 (SVG 拓扑线路动态流动) --- */
+[data-v9] .v9-power-flow {
+  stroke-dasharray: 8 10;
+  animation: v9-flow-dash 1s linear infinite;
+}
+@keyframes v9-flow-dash {
+  to { stroke-dashoffset: -18; }
+}
+
+/* --- 3. 扫描线 (面板/画布扫描光效) --- */
+[data-v9] .v9-scan-line {
+  position: relative;
+  overflow: hidden;
+}
+[data-v9] .v9-scan-line::after {
+  content: "";
+  position: absolute;
+  inset: -50% 0 auto;
+  height: 40%;
+  background: linear-gradient(transparent, rgba(6, 182, 212, .1), transparent);
+  animation: v9-scan-move 3s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes v9-scan-move {
+  to { transform: translateY(500%); }
+}
+
+/* --- 4. 渐变文字 (hero 标题等展示文字) --- */
+[data-v9] .v9-gradient-text {
+  background: linear-gradient(90deg, var(--fg, #0f172a), var(--accent-cyan, #06b6d4), var(--success, #22c55e));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* --- 5. 旋转Orb (三层嵌套圆环, 可用于 loading/hero) --- */
+[data-v9] .v9-orb {
+  width: 120px; height: 120px;
+  border: 1px solid var(--accent-cyan, #06b6d4);
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(6, 182, 212, .18);
+  animation: v9-orb-spin 12s linear infinite;
+  position: relative;
+}
+[data-v9] .v9-orb::before,
+[data-v9] .v9-orb::after {
+  content: "";
+  position: absolute;
+  border: 1px dashed var(--success, #22c55e);
+  border-radius: 50%;
+}
+[data-v9] .v9-orb::before { inset: 20%; }
+[data-v9] .v9-orb::after {
+  inset: 39%;
+  background: var(--accent-cyan, #06b6d4);
+  box-shadow: 0 0 30px var(--accent-cyan, #06b6d4);
+}
+@keyframes v9-orb-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- 6. SVG 画布电流流动 + 脉冲增强 (叠加到 .svg-canvas) --- */
+[data-v9] .svg-canvas {
+  animation: v9-canvas-glow 4s ease-in-out infinite alternate;
+}
+@keyframes v9-canvas-glow {
+  0%   { box-shadow: 0 0 8px rgba(6, 182, 212, .06); }
+  100% { box-shadow: 0 0 20px rgba(6, 182, 212, .14); }
+}
+
+/* --- 7. 状态点增强脉冲 (叠加到已有 .status-dot) --- */
+[data-v9] .status-dot.ok::after,
+[data-v9] .status-dot.warn::after,
+[data-v9] .status-dot.err::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  animation: v9-dot-ping 2s ease-in-out infinite;
+}
+[data-v9] .status-dot.err::after {
+  animation-duration: 1s;
+}
+@keyframes v9-dot-ping {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50%      { transform: scale(1.6); opacity: 0; }
+}
+
+/* --- 8. 暗色适配 --- */
+[data-v9][data-theme="dark"] .v9-scan-line::after {
+  background: linear-gradient(transparent, rgba(34, 211, 238, .08), transparent);
+}
+[data-v9][data-theme="dark"] .v9-orb {
+  box-shadow: 0 0 60px rgba(34, 211, 238, .25);
+}
+[data-v9][data-theme="dark"] .v9-orb::after {
+  box-shadow: 0 0 40px #22d3ee;
+}
+[data-v9][data-theme="dark"] .svg-canvas {
+  animation: v9-canvas-glow-dark 4s ease-in-out infinite alternate;
+}
+@keyframes v9-canvas-glow-dark {
+  0%   { box-shadow: 0 0 12px rgba(34, 211, 238, .08); }
+  100% { box-shadow: 0 0 28px rgba(34, 211, 238, .18); }
+}
+
+/* --- 无障碍: 降低动态偏好关闭所有 v9.1 动画 --- */
+@media (prefers-reduced-motion: reduce) {
+  [data-v9] .v9-pulse-ring,
+  [data-v9] .v9-power-flow,
+  [data-v9] .v9-scan-line::after,
+  [data-v9] .v9-orb,
+  [data-v9] .svg-canvas,
+  [data-v9] .status-dot.ok::after,
+  [data-v9] .status-dot.warn::after,
+  [data-v9] .status-dot.err::after {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+ * 9.2 Windows 11 Fluent 窗口外壳组件
+ * 标题栏(亚克力) + 系统控制按钮(最小化/最大化/关闭) + Fluent Reveal 光标高光
+ * 纯视觉增强层: 全部 [data-v9] 命名空间, 不改动任何比赛契约 / class / 内容。
+ * 注: 强调色统一由 theme-v9.css 的 [data-v9]:root (Windows 蓝) 控制, 此处不再字面量。
+ * ============================================================ */
+
+/* ---- 9.2.1 标题栏(亚克力 drag 区) — 仅在桌面宽度启用, 移动端由 theme-v9 收起 ---- */
+@media (min-width: 769px) {
+  [data-v9] .win-titlebar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--v9-titlebar-h, 38px);
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px 0 14px;
+    background: var(--bg-elev);
+    background: color-mix(in srgb, var(--bg-elev) 72%, transparent);
+    backdrop-filter: blur(22px) saturate(1.6);
+    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    border-bottom: 1px solid var(--border);
+    -webkit-app-region: drag;
+    app-region: drag;
+    user-select: none;
+  }
+  [data-v9][data-theme="dark"] .win-titlebar {
+    background: color-mix(in srgb, #0c0f16 70%, transparent);
+    border-bottom-color: rgba(255, 255, 255, .08);
+  }
+
+  [data-v9] .win-icon {
+    display: inline-flex;
+    width: 18px; height: 18px;
+    color: var(--v9-accent);
+    flex: 0 0 auto;
+  }
+  [data-v9] .win-icon svg { width: 18px; height: 18px; }
+
+  [data-v9] .win-title-text {
+    font-family: "Segoe UI Semibold", "Segoe UI Variable", "Segoe UI", system-ui, "Microsoft YaHei", sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  [data-v9] .win-spacer { flex: 1 1 auto; }
+
+  /* 系统控制按钮 (最小化 / 最大化 / 关闭) — 46px 热区, 贴近 Win11 */
+  [data-v9] .win-traffic {
+    display: flex;
+    align-items: center;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+  [data-v9] .win-ctrl-btn {
+    width: var(--v9-ctrl-size, 46px);
+    height: var(--v9-titlebar-h, 38px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    cursor: default;
+    transition: background-color .15s ease, color .15s ease;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+  [data-v9] .win-ctrl-btn svg { width: 11px; height: 11px; }
+  [data-v9] .win-ctrl-min:hover,
+  [data-v9] .win-ctrl-max:hover,
+  [data-v9] .win-ctrl-close:hover { background: rgba(127, 127, 127, .22); }
+
+  /* 标题栏命令面板按钮 (P1-1) — 非拖拽区, 可点击 */
+  [data-v9] .win-cmdk-btn {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 26px;
+    padding: 0 10px;
+    margin-left: 4px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--bg-elev) 60%, transparent);
+    color: var(--fg-muted);
+    font-size: 12px;
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    cursor: default;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  }
+  [data-v9] .win-cmdk-btn:hover {
+    color: var(--v9-accent);
+    border-color: color-mix(in srgb, var(--v9-accent) 45%, var(--border));
+    background: color-mix(in srgb, var(--v9-accent) 12%, transparent);
+  }
+  [data-v9] .win-cmdk-kbd { font-weight: 700; font-size: 11px; opacity: .8; }
+
+  /* 关闭键改为非破坏性收起 (P0-2): 仅隐藏 .app, 不退出会话 */
+  [data-v9] .app.win-collapsed { display: none; }
+
+  /* 紧凑模式 (最小化语义): 隐藏次级工具栏, 仅留标题栏 + 内容 */
+  [data-v9] .app.win-compact .topbar { display: none; }
+}
+
+/* ---- 9.2.3 侧栏导航：评分要点悬停提示 (P1-2) ---- */
+[data-v9] .nav-item { position: relative; }
+[data-v9] .nav-clause {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  color: var(--v9-accent);
+  background: color-mix(in srgb, var(--v9-accent) 14%, transparent);
+  border-radius: 6px;
+  padding: 1px 7px;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+[data-v9] .nav-item:hover .nav-clause,
+[data-v9] .nav-item:focus-visible .nav-clause { opacity: 1; transform: translateX(0); }
+[data-v9] .nav-item.active .nav-clause { opacity: .85; transform: translateX(0); }
+
+/* ---- 9.2.4 首访引导走查 banner (P0-3) ---- */
+[data-v9] .wt-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg, 12px);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--v9-accent) 14%, var(--bg-elev)), var(--bg-elev));
+  border: 1px solid color-mix(in srgb, var(--v9-accent) 35%, var(--border));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+[data-v9] .wt-banner-ico { display: inline-flex; color: var(--v9-accent); flex: 0 0 auto; }
+[data-v9] .wt-banner-ico svg { width: 18px; height: 18px; }
+[data-v9] .wt-banner-text { font-size: 13px; color: var(--fg); line-height: 1.5; flex: 1 1 auto; }
+[data-v9] .wt-banner-text strong { color: var(--v9-accent); }
+[data-v9] .wt-banner-go {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: var(--v9-accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--ease, ease), filter var(--ease, ease), box-shadow .15s ease;
+}
+[data-v9] .wt-banner-go:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 6px 16px color-mix(in srgb, var(--v9-accent) 35%, transparent); }
+[data-v9] .wt-banner-x {
+  flex: 0 0 auto;
+  width: 28px; height: 28px;
+  border: none; background: transparent;
+  color: var(--fg-muted);
+  font-size: 18px; line-height: 1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+[data-v9] .wt-banner-x:hover { background: rgba(127, 127, 127, .18); color: var(--fg); }
+
+/* ---- 9.2.2 Fluent Reveal: 光标跟随高光 (卡片/按钮 hover 时显示) ---- */
+[data-v9] .card,
+[data-v9] .kpi,
+[data-v9] .task-card,
+[data-v9] .btn {
+  position: relative;
+}
+[data-v9] .card::after,
+[data-v9] .kpi::after,
+[data-v9] .task-card::after,
+[data-v9] .btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(200px circle at var(--reveal-x, 50%) var(--reveal-y, 50%), rgba(var(--v9-accent-rgb), .16), transparent 60%);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+[data-v9] .card:hover::after,
+[data-v9] .kpi:hover::after,
+[data-v9] .task-card:hover::after,
+[data-v9] .btn:hover::after { opacity: 1; }
+
+/* ---- 9.2.3 无障碍: 降低动态偏好时关闭 reveal 高光 ---- */
+@media (prefers-reduced-motion: reduce) {
+  [data-v9] .card::after,
+  [data-v9] .kpi::after,
+  [data-v9] .task-card::after,
+  [data-v9] .btn::after { display: none; }
+}

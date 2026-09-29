@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联络开关梳理 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+    <style>.sql-cell code { display:block; white-space:pre-wrap; word-break:break-all; }</style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div class="card page-section">
+      <div class="section-title">1.3 联络开关自动识别与可视化梳理（标准输出 sheet3）</div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>线路id</th><th>线路名称</th><th>上级变电站名称</th><th>联络开关id</th><th>联络开关名称</th><th>是否有联络</th><th>联络线路id</th><th>联络线路名称</th><th>联络线变电站名称</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-sm" id="btn-csv">导出 CSV</button>
+        <button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">全网馈线联络关系图谱</div>
+      <div id="tie-graph"></div>
+      <div class="legend" style="margin-top:10px">
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-tie)"></span>联络开关</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--svg-wire-tie)"></span>联络连线（紫色虚线）</span>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">1.4 疑似联络开关智能识别与复核研判</div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>问题设备id</th><th>问题设备名称</th><th>所属馈线</th><th>所属厂站</th><th>问题说明</th><th>修正方案</th></tr></thead>
+          <tbody id="tbody-suspect"></tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--fg-muted);margin:8px 0 0">判定约束：配电站、箱变属末端设备，仅具备进线回路、无出线回路，站内开关不纳入联络开关识别范围。</p>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "tie_switch", title: "联络开关梳理", breadcrumb: "任务一 / 联络开关梳理 (1.3 · 1.4 · sheet3)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    var LAST = [], SUSPECT = [];
+
+    setTimeout(function () {
+      compApi.getTieSwitches().then(function (list) {
+        LAST = list;
+        var hasTie = list.filter(function (x) { return x.hasTie === "是"; }).length;
+        $("#kpis").innerHTML =
+          compUI.kpi({ label: "梳理馈线数", value: list.length, icon: "list", sub: "全网馈线" }) +
+          compUI.kpi({ label: "有联络馈线对", value: hasTie, mod: "ok", icon: "link", sub: "合规联络开关" }) +
+          compUI.kpi({ label: "联络线路配对", value: hasTie, mod: "info", icon: "share2", sub: "馈线-馈线" });
+        $("#tbody").innerHTML = list.map(function (t) {
+          return "<tr><td><code>" + t.lineId + "</code></td><td>" + t.lineName + "</td><td>" + t.substation + "</td><td><code>" + t.swId + "</code></td><td>" + t.swName + "</td><td>" + (t.hasTie === "是" ? '<span class="badge badge-ok">是</span>' : '<span class="badge">否</span>') + "</td><td><code>" + t.tieLineId + "</code></td><td>" + t.tieLineName + "</td><td>" + t.tieSub + "</td></tr>";
+        }).join("");
+      });
+
+      compApi.getGraphs().then(function (g) { $("#tie-graph").innerHTML = '<div class="svg-canvas">' + compUI.renderTieRelation(g) + '</div>'; });
+
+      compApi.getProblems({ l1: "1", l2: "1.4" }).then(function (s) {
+        SUSPECT = s;
+        $("#tbody-suspect").innerHTML = s.length ? s.map(function (p) {
+          return "<tr><td><code>" + p.devId + "</code></td><td>" + p.devName + "</td><td>" + p.feeder + "</td><td>" + p.station + "</td><td style='max-width:260px;color:var(--fg-muted)'>" + p.desc + "</td><td style='max-width:220px'>" + p.fix + "</td></tr>";
+        }).join("") : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--fg-muted)">无疑似联络开关</td></tr>';
+      });
+
+      $("#btn-csv").addEventListener("click", function () {
+        var rows = LAST.map(function (t) { return [t.lineId, t.lineName, t.substation, t.swId, t.swName, t.hasTie, t.tieLineId, t.tieLineName, t.tieSub]; });
+        compUI.exportCSV("联络开关梳理结果.csv", compApi.STANDARD_HEADERS.tieSwitches, rows); appShell.toast("已导出 CSV", "ok");
+      });
+      $("#btn-xlsx").addEventListener("click", function () {
+        var rows = LAST.map(function (t) { return [t.lineId, t.lineName, t.substation, t.swId, t.swName, t.hasTie, t.tieLineId, t.tieLineName, t.tieSub]; });
+        compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "联络开关自动识别与可视化梳理任务结果", headers: compApi.STANDARD_HEADERS.tieSwitches, rows: rows }]); appShell.toast("已导出标准 XLSX", "ok");
+      });
+    }, 50);
+  </script>
+<script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

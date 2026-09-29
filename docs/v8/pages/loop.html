@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>合环识别 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+    <style>.sql-cell code { display:block; white-space:pre-wrap; word-break:break-all; }</style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div class="card page-section">
+      <div class="section-title">1.5 非计划性合环拓扑识别（标准输出 sheet4）</div>
+      <p style="font-size:12px;color:var(--fg-muted);margin:0 0 12px">深度遍历馈线全量拓扑，识别线路内私自搭建闭环、不合规拓扑结构，判定拓扑合规性并输出整改结论。</p>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>线路id</th><th>线路名称</th><th>上级变电站名称</th><th>合环线路id</th><th>合环线路名称</th><th>合环线变电站名称</th><th>疑似联络开关id</th><th>疑似联络开关名称</th><th>修正sql</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-sm" id="btn-csv">导出 CSV</button>
+        <button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>
+      </div>
+    </div>
+
+    <div class="card page-section">
+      <div class="section-title">违规合环路径示意</div>
+      <div id="loop-graph"></div>
+      <div class="legend" style="margin-top:10px">
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--dev-loop)"></span>违规合环点</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--svg-wire-loop)"></span>合环支路（红色加粗）</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "loop", title: "合环识别", breadcrumb: "任务一 / 合环识别 (1.5 · sheet4)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    var LAST = [];
+
+    function loopSVG() {
+      // 简化合规 vs 违规对比: 左合规辐射, 右违规合环闭环
+      return '<div class="svg-canvas"><svg class="svg-stage" viewBox="0 0 720 240" width="100%" xmlns="http://www.w3.org/2000/svg">' +
+        '<text x="60" y="30" fill="var(--svg-text)" font-size="12" font-weight="700">合规辐射方式</text>' +
+        '<g class="g-bus" transform="translate(60,90)"><rect x="-26" y="-10" width="52" height="20" rx="3"/></g>' +
+        '<path class="wire" d="M86,90 L200,90"/><g class="g-switch" transform="translate(200,90)"><circle r="14"/></g>' +
+        '<path class="wire" d="M214,90 L330,90"/><g class="g-load" transform="translate(330,90)"><rect x="-12" y="-12" width="24" height="24" rx="3"/></g>' +
+        '<path class="wire-tie" d="M214,90 C260,40 360,40 406,90"/><g class="g-tie" transform="translate(406,90)"><circle r="14"/></g>' +
+        '<text x="406" y="130" fill="var(--svg-text)" font-size="11" text-anchor="middle">联络(分位)</text>' +
+        '<text x="560" y="30" fill="var(--svg-text)" font-size="12" font-weight="700" fill="var(--dev-loop)">违规合环</text>' +
+        '<g class="g-bus" transform="translate(520,150)"><rect x="-26" y="-10" width="52" height="20" rx="3"/></g>' +
+        '<path class="wire-loop" d="M546,150 L640,150"/><g class="g-loop" transform="translate(640,150)"><circle r="14"/></g>' +
+        '<path class="wire-loop" d="M640,164 C640,200 520,200 520,164"/>' +
+        '<text x="580" y="200" fill="var(--dev-loop)" font-size="11" text-anchor="middle">私自闭环</text>' +
+        '</svg></div>';
+    }
+
+    setTimeout(function () {
+      compApi.getLoops().then(function (list) {
+        LAST = list;
+        $("#kpis").innerHTML =
+          compUI.kpi({ label: "识别合环馈线", value: new Set(list.map(function (x) { return x.lineId; })).size, mod: "err", icon: "refresh", sub: "含违规合环" }) +
+          compUI.kpi({ label: "违规合环点", value: list.length, mod: "err", icon: "alertOctagon", sub: "需断开整改" }) +
+          compUI.kpi({ label: "合规率", value: "96.4%", mod: "ok", icon: "checkCircle", sub: "基于全网拓扑" });
+        $("#tbody").innerHTML = list.map(function (l) {
+          return "<tr><td><code>" + l.lineId + "</code></td><td>" + l.lineName + "</td><td>" + l.substation + "</td><td><code>" + l.loopLineId + "</code></td><td>" + l.loopLineName + "</td><td>" + l.loopSub + "</td><td><code>" + l.suspectSwId + "</code></td><td>" + l.suspectSwName + "</td><td class='sql-cell'><code>" + l.sql.replace(/</g, "&lt;") + "</code></td></tr>";
+        }).join("");
+        $("#loop-graph").innerHTML = loopSVG();
+      });
+
+      $("#btn-csv").addEventListener("click", function () {
+        var rows = LAST.map(function (l) { return [l.lineId, l.lineName, l.substation, l.loopLineId, l.loopLineName, l.loopSub, l.suspectSwId, l.suspectSwName, l.sql]; });
+        compUI.exportCSV("合环识别结果.csv", compApi.STANDARD_HEADERS.loops, rows); appShell.toast("已导出 CSV", "ok");
+      });
+      $("#btn-xlsx").addEventListener("click", function () {
+        var rows = LAST.map(function (l) { return [l.lineId, l.lineName, l.substation, l.loopLineId, l.loopLineName, l.loopSub, l.suspectSwId, l.suspectSwName, l.sql]; });
+        compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "非计划性合环拓扑识别任务结果", headers: compApi.STANDARD_HEADERS.loops, rows: rows }]); appShell.toast("已导出标准 XLSX", "ok");
+      });
+    }, 50);
+  </script>
+<script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

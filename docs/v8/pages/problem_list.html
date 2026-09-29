@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>异常问题清单 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <style>
+    .toolbar { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4); flex-wrap: wrap; align-items: center; }
+    .toolbar > select, .toolbar > input { width: auto; min-width: 150px; }
+    .table td.sql-cell { max-width: 320px; }
+    .sql-cell code { display: block; white-space: pre-wrap; word-break: break-all; max-height: 48px; overflow: hidden; }
+    .sql-cell code.open { max-height: none; }
+    .tiny-btn { font-size: 11px; padding: 2px 8px; }
+    .col-toggle { display: none; }
+    @media (max-width: 720px) {
+      .col-detail { display: none; }
+      .col-toggle { display: table-cell; }
+      table { font-size: var(--fs-xs); }
+      .table td, .table th { padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="toolbar">
+      <select class="select" id="f-l1" aria-label="一级分类"></select>
+      <select class="select" id="f-l2" aria-label="二级分类"></select>
+      <select class="select" id="f-feeder" aria-label="所属馈线"><option value="">全部馈线</option></select>
+      <select class="select" id="f-station" aria-label="所属厂站"><option value="">全部厂站</option></select>
+      <input class="input" id="f-q" type="search" placeholder="搜索设备ID/名称/说明…" style="min-width:200px" aria-label="搜索">
+      <span style="flex:1"></span>
+      <span class="badge" id="badge-count">—</span>
+      <button class="btn btn-sm" id="btn-csv">导出 CSV</button>
+      <button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>
+    </div>
+
+    <details class="fold" style="margin-bottom:14px">
+      <summary><span id="ico-susp"></span> 1.1 悬空判定规则与豁免清单（精准校验 · 杜绝误判）</summary>
+      <div class="fold-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-weight:600;margin-bottom:6px">三类异常（应判定为悬空）</div>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--fg-muted);line-height:1.9">
+              <li><b>单端悬空端点</b>：开关/刀闸等非末端设备仅单侧连接，对侧无连通</li>
+              <li><b>多设备连片悬空</b>：多个设备成片缺少对侧拓扑连接</li>
+              <li><b>无母线接入拓扑孤岛</b>：设备群组未接入任何母线形成孤岛</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight:600;margin-bottom:6px">豁免设备（末端设备 · 不纳入悬空）</div>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--fg-muted);line-height:1.9">
+              <li>电力用户 / 配变（末端负荷）</li>
+              <li>电缆终端头</li>
+              <li>备用间隔（仅单侧、预留）</li>
+              <li>配电站 / 箱变（仅进线无出线，站内开关均豁免）</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--fg-dim)">判定依据：任务一 模块一 1.1。下方表格对 1.1 类问题已标注悬空类型 / 豁免状态。</div>
+      </div>
+    </details>
+
+    <div class="card" style="padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <strong>问题分布（按二级分类）</strong>
+        <span class="badge" id="chart-meta">—</span>
+      </div>
+      <div id="chart" class="chart-responsive"></div>
+    </div>
+
+    <div class="card" style="padding:0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr>
+            <th>序号</th><th>一级分类</th><th>二级分类</th><th>问题设备id</th><th>问题设备名称</th>
+            <th>所属馈线</th><th>所属厂站</th><th class="col-detail">问题说明</th><th class="col-detail">修正方案</th>
+            <th class="col-detail">修正sql</th><th class="col-toggle">展开</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "problem_list", title: "异常问题清单", breadcrumb: "任务一 / 异常问题清单 (标准输出 sheet1)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+
+    $("#ico-susp").innerHTML = appShell.icon("breakpoint");
+    var LAST = [];
+    var chartInst = null;
+
+    function toRow(p) {
+      return [p.seq, compApi.l1Name(p.l1), compApi.l2Name(p.l2), p.devId, p.devName, p.feeder, p.station, p.desc, p.fix, p.sql];
+    }
+    function badgeFor(l1) {
+      var c = compUI.catColor(l1);
+      return '<span class="badge" style="background:' + c + '22;color:' + c + '">' + compApi.l1Name(l1).split(" ")[0] + '</span>';
+    }
+
+    function render() {
+      var l1 = $("#f-l1").value, l2 = $("#f-l2").value, fd = $("#f-feeder").value, st = $("#f-station").value, q = $("#f-q").value.trim();
+      var rows = LAST.filter(function (p) {
+        if (l1 && p.l1 !== l1) return false;
+        if (l2 && p.l2 !== l2) return false;
+        if (fd && p.feeder !== fd) return false;
+        if (st && p.station !== st) return false;
+        if (q) { var hay = (p.devId + p.devName + p.desc + p.fix).toLowerCase(); if (hay.indexOf(q.toLowerCase()) < 0) return false; }
+        return true;
+      });
+      $("#badge-count").textContent = rows.length + " / " + LAST.length + " 项";
+      var tb = $("#tbody");
+      if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--fg-muted)">无匹配问题</td></tr>'; return; }
+      tb.innerHTML = rows.map(function (p, i) {
+        var main = "<tr>" +
+          "<td>" + p.seq + "</td>" +
+          "<td>" + badgeFor(p.l1) + "</td>" +
+          "<td><span style='color:var(--fg-muted)'>" + p.l2 + "</span> " + compApi.l2Name(p.l2) + "</td>" +
+          "<td><code>" + p.devId + "</code></td>" +
+          "<td>" + p.devName + (p.suspType ? '<span class="susp-tag ' + (p.suspType.indexOf("豁免") >= 0 ? "exempt" : "warn") + '">' + p.suspType + '</span>' : "") + "</td>" +
+          "<td>" + p.feeder + "</td>" +
+          "<td>" + p.station + "</td>" +
+          "<td class='col-detail' style='max-width:260px;color:var(--fg-muted)'>" + p.desc + "</td>" +
+          "<td class='col-detail' style='max-width:220px'>" + p.fix + "</td>" +
+          "<td class='col-detail sql-cell'><code>" + p.sql.replace(/</g, "&lt;") + "</code></td>" +
+          "<td class='col-toggle'><button class='btn tiny-btn' type='button' data-i='" + i + "' aria-expanded='false' onclick='toggleRow(" + i + ")'>详情</button></td>" +
+          "</tr>";
+        var detail = "<tr class='row-detail' id='detail-" + i + "' aria-hidden='true' style='display:none'><td colspan='11' style='background:var(--bg-elev-2);padding:10px 12px'>" +
+          "<div style='font-size:11px;color:var(--fg-muted);margin-bottom:4px'>问题说明</div><div style='margin-bottom:8px'>" + p.desc + "</div>" +
+          "<div style='font-size:11px;color:var(--fg-muted);margin-bottom:4px'>修正方案</div><div style='margin-bottom:8px'>" + p.fix + "</div>" +
+          "<div style='font-size:11px;color:var(--fg-muted);margin-bottom:4px'>修正SQL</div><pre class='sql-box'>" + p.sql.replace(/</g, "&lt;") + "</pre></td></tr>";
+        return main + detail;
+      }).join("");
+    }
+
+    window.toggleRow = function (i) {
+      var r = document.getElementById("detail-" + i); if (!r) return;
+      var open = r.style.display === "none";
+      r.style.display = open ? "table-row" : "none";
+      r.setAttribute("aria-hidden", open ? "false" : "true");
+    };
+
+    function renderChart() {
+      var counts = {};
+      LAST.forEach(function (p) { var k = p.l2 + " " + compApi.l2Name(p.l2); counts[k] = (counts[k] || 0) + 1; });
+      var entries = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
+      compUI.makeChart($("#chart"), function (ct) {
+        return {
+          backgroundColor: "transparent",
+          tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+          grid: { left: 10, right: 24, top: 16, bottom: 10, containLabel: true },
+          xAxis: { type: "value", axisLabel: { color: ct.muted }, splitLine: { lineStyle: { color: ct.grid } } },
+          yAxis: { type: "category", data: entries, axisLabel: { color: ct.muted, fontSize: 11 }, axisLine: { lineStyle: { color: ct.grid } } },
+          series: [{ type: "bar", data: entries.map(function (k) { return counts[k]; }), itemStyle: { color: ct.accent, borderRadius: [0, 4, 4, 0] }, barMaxWidth: 16 }]
+        };
+      });
+    }
+
+    function currentRows() {
+      var l1 = $("#f-l1").value, l2 = $("#f-l2").value, fd = $("#f-feeder").value, st = $("#f-station").value, q = $("#f-q").value.trim();
+      return LAST.filter(function (p) {
+        if (l1 && p.l1 !== l1) return false; if (l2 && p.l2 !== l2) return false;
+        if (fd && p.feeder !== fd) return false; if (st && p.station !== st) return false;
+        if (q) { var hay = (p.devId + p.devName + p.desc + p.fix).toLowerCase(); if (hay.indexOf(q.toLowerCase()) < 0) return false; }
+        return true;
+      });
+    }
+
+    setTimeout(function () {
+      // 一级/二级 联动
+      compApi.getTaxonomy().then(function (tax) {
+        var l1sel = $("#f-l1");
+        l1sel.innerHTML = '<option value="">全部一级分类</option>' + tax.map(function (t) { return "<option value='" + t.code + "'>" + t.code + " " + t.name + "</option>"; }).join("");
+        l1sel.addEventListener("change", function () {
+          var t = tax.find(function (x) { return x.code === l1sel.value; });
+          $("#f-l2").innerHTML = '<option value="">全部二级分类</option>' + (t ? t.items.map(function (it) { return "<option value='" + it.code + "'>" + it.code + " " + it.name + "</option>"; }).join("") : "");
+          render();
+        });
+        $("#f-l2").addEventListener("change", render);
+      });
+
+      compApi.getProblems().then(function (list) {
+        LAST = list;
+        var feeders = [], stations = [];
+        list.forEach(function (p) { if (feeders.indexOf(p.feeder) < 0) feeders.push(p.feeder); if (stations.indexOf(p.station) < 0) stations.push(p.station); });
+        $("#f-feeder").innerHTML += feeders.map(function (f) { return "<option value='" + f + "'>" + f + "</option>"; }).join("");
+        $("#f-station").innerHTML += stations.map(function (s) { return "<option value='" + s + "'>" + s + "</option>"; }).join("");
+        $("#f-feeder").addEventListener("change", render);
+        $("#f-station").addEventListener("change", render);
+        $("#f-q").addEventListener("input", render);
+        render();
+        renderChart();
+        $("#chart-meta").textContent = LAST.length + " 项";
+      }).catch(function (e) { appShell.toast("加载失败: " + e.message, "err"); });
+
+      $("#btn-csv").addEventListener("click", function () {
+        var rows = currentRows().map(toRow);
+        compUI.exportCSV("拓扑校验问题清单.csv", compApi.STANDARD_HEADERS.problems, rows);
+        appShell.toast("已导出 " + rows.length + " 条 CSV", "ok");
+      });
+      $("#btn-xlsx").addEventListener("click", function () {
+        var rows = currentRows().map(toRow);
+        compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "拓扑校验问题清单", headers: compApi.STANDARD_HEADERS.problems, rows: rows }]);
+        appShell.toast("已导出标准 XLSX（10 列对齐）", "ok");
+      });
+    }, 50);
+  </script>
+  <script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>

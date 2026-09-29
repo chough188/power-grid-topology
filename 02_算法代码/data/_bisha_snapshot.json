@@ -1,0 +1,2032 @@
+{
+  "tables": {
+    "JBS_ZWSUBSTATION": [
+      {
+        "ST_ID": "ST001",
+        "ST_NAME": "变电站1",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      },
+      {
+        "ST_ID": "ST002",
+        "ST_NAME": "变电站2",
+        "TOP_AC_VOLTAGE_TYPE": 110
+      }
+    ],
+    "JBS_ZWEQUIPINFO": [
+      {
+        "EQUIP_ID": "ZWB001",
+        "EQUIP_NAME": "主网断路器1",
+        "EQUIP_TYPE": "BREAKER",
+        "ST_ID": "ST001",
+        "VOLTAGE_TYPE": 110,
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "ZWB002",
+        "EQUIP_NAME": "主网断路器2",
+        "EQUIP_TYPE": "BREAKER",
+        "ST_ID": "ST002",
+        "VOLTAGE_TYPE": 110,
+        "RUN_STATUS": 1
+      }
+    ],
+    "JBS_ZWLINEEND": [
+      {
+        "LINEEND_ID": "LE001",
+        "LINEEND_NAME": "主网线路端1",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST001"
+      },
+      {
+        "LINEEND_ID": "LE002",
+        "LINEEND_NAME": "主网线路端2",
+        "VOLTAGE_TYPE": 110,
+        "ST_ID": "ST002"
+      }
+    ],
+    "JBS_ZWTERMINAL": [
+      {
+        "ID": "ZT10",
+        "EQUIP_ID": "ZWB001",
+        "CONNECTIVITYNODE_ID": "ZN1A"
+      },
+      {
+        "ID": "ZT11",
+        "EQUIP_ID": "ZWB001",
+        "CONNECTIVITYNODE_ID": "ZN1B"
+      },
+      {
+        "ID": "ZT20",
+        "EQUIP_ID": "ZWB002",
+        "CONNECTIVITYNODE_ID": "ZN2A"
+      },
+      {
+        "ID": "ZT21",
+        "EQUIP_ID": "ZWB002",
+        "CONNECTIVITYNODE_ID": "ZN2B"
+      }
+    ],
+    "JBS_ZWMEA": [
+      {
+        "CREATE_DATE": "2026-07-21",
+        "ID": "ZW_M1",
+        "MEAS_TYPE": "V",
+        "V0000": 110278.85359691577,
+        "V0001": 109050.02151044534,
+        "V0002": 109550.05863673823,
+        "V0003": 109446.42147629765,
+        "V0004": 110472.94242832802,
+        "V0005": 110353.39897484583,
+        "V0006": 110784.35913540969,
+        "V0007": 109173.87766525883,
+        "V0008": 109843.84363937053,
+        "V0009": 109059.59443887614,
+        "V0010": 109437.27594960721,
+        "V0011": 110010.71057620672,
+        "V0012": 109053.07193936773,
+        "V0013": 109397.6753013733,
+        "V0014": 110299.76887555905,
+        "V0015": 110089.88296120643,
+        "V0016": 109440.88124408139,
+        "V0017": 110178.53136775181,
+        "V0018": 110618.86091335566,
+        "V0019": 109012.99751935613,
+        "V0020": 110611.63850366561,
+        "V0021": 110396.27878997645,
+        "V0022": 109680.50103303598,
+        "V0023": 109310.95899962356,
+        "V0024": 110914.42614441356,
+        "V0025": 109673.18909022525,
+        "V0026": 109185.4916867603,
+        "V0027": 109193.43275366693,
+        "V0028": 110694.98873269492,
+        "V0029": 110207.45206273378,
+        "V0030": 110614.25654654876,
+        "V0031": 110459.46357338763,
+        "V0032": 110072.4561829094,
+        "V0033": 110946.23152795873,
+        "V0034": 109757.0687544167,
+        "V0035": 110104.08126254646,
+        "V0036": 110658.80932850599,
+        "V0037": 110237.0395047285,
+        "V0038": 110723.41380062155,
+        "V0039": 110154.70429051353,
+        "V0040": 110409.14367242984,
+        "V0041": 109091.64876731133,
+        "V0042": 109455.7965513031,
+        "V0043": 109578.77592720422,
+        "V0044": 109159.58395384725,
+        "V0045": 109465.58177272206,
+        "V0046": 109202.00285881945,
+        "V0047": 109555.94720622018,
+        "V0048": 110271.3688885288,
+        "V0049": 109729.66435794017,
+        "V0050": 109740.36193423376,
+        "V0051": 109419.01406154297,
+        "V0052": 109533.95564409823,
+        "V0053": 110873.30917542499,
+        "V0054": 110296.07077049318,
+        "V0055": 110218.26201133398,
+        "V0056": 109342.27729639619,
+        "V0057": 110458.2535959007,
+        "V0058": 109326.80498752385,
+        "V0059": 109758.9108835153,
+        "V0060": 110979.0467012732,
+        "V0061": 110279.99951970819,
+        "V0062": 110113.8994875493,
+        "V0063": 110369.22850197976,
+        "V0064": 110685.70384037962,
+        "V0065": 110551.99982309248,
+        "V0066": 109458.09614392821,
+        "V0067": 109064.20048780808,
+        "V0068": 109630.90609611817,
+        "V0069": 109535.4817519514,
+        "V0070": 109421.96568717265,
+        "V0071": 110885.8194286701,
+        "V0072": 110752.73525294533,
+        "V0073": 109629.35576159696,
+        "V0074": 110310.87733058976,
+        "V0075": 109791.26380212134,
+        "V0076": 110829.09517948108,
+        "V0077": 109917.7037051748,
+        "V0078": 109529.7603329961,
+        "V0079": 109493.25501538797,
+        "V0080": 110122.7362683263,
+        "V0081": 109525.48321704587,
+        "V0082": 110169.17198044708,
+        "V0083": 110795.64576720496,
+        "V0084": 109798.80101028079,
+        "V0085": 109438.64151831457,
+        "V0086": 110995.07521299022,
+        "V0087": 110019.05258735293,
+        "V0088": 109181.81882434759,
+        "V0089": 109094.23275084946,
+        "V0090": 109219.29826070133,
+        "V0091": 110254.89208340619,
+        "V0092": 110584.15872872593,
+        "V0093": 109844.31993359937,
+        "V0094": 109127.05541230392,
+        "V0095": 109763.23857301308
+      },
+      {
+        "CREATE_DATE": "2026-07-21",
+        "ID": "ZW_M2",
+        "MEAS_TYPE": "V",
+        "V0000": 110992.24276048019,
+        "V0001": 110058.22869019827,
+        "V0002": 110942.15675522723,
+        "V0003": 110721.559404469,
+        "V0004": 109022.96204388564,
+        "V0005": 110441.44363872039,
+        "V0006": 110363.42073805314,
+        "V0007": 110073.94066081759,
+        "V0008": 109533.65037990508,
+        "V0009": 110281.92359715962,
+        "V0010": 109223.10434719175,
+        "V0011": 109869.53050133822,
+        "V0012": 109907.44741265841,
+        "V0013": 110907.63185504216,
+        "V0014": 110751.70588075639,
+        "V0015": 109526.77810150218,
+        "V0016": 110001.17222610059,
+        "V0017": 109357.30376106026,
+        "V0018": 110825.25567868965,
+        "V0019": 110741.03713967353,
+        "V0020": 109596.88958289726,
+        "V0021": 110277.89898973201,
+        "V0022": 110217.94042287635,
+        "V0023": 109305.67853709927,
+        "V0024": 110525.0216001503,
+        "V0025": 110078.75806023926,
+        "V0026": 110557.25295726111,
+        "V0027": 110060.70734439035,
+        "V0028": 109001.14379225588,
+        "V0029": 109648.31211400934,
+        "V0030": 109038.95348477167,
+        "V0031": 110858.19723252923,
+        "V0032": 110757.44375564637,
+        "V0033": 110663.33105872235,
+        "V0034": 109615.02825080532,
+        "V0035": 109115.85033298837,
+        "V0036": 110756.01919840809,
+        "V0037": 110893.89889059598,
+        "V0038": 109171.30690413575,
+        "V0039": 109971.98092663323,
+        "V0040": 109138.42503693677,
+        "V0041": 110521.20433051446,
+        "V0042": 110531.66885861398,
+        "V0043": 109256.78292899953,
+        "V0044": 109950.56475619746,
+        "V0045": 110099.60718698989,
+        "V0046": 109530.11325788012,
+        "V0047": 110744.86608217051,
+        "V0048": 109846.27588040178,
+        "V0049": 109423.59641088416,
+        "V0050": 110078.59217755892,
+        "V0051": 110459.86213817995,
+        "V0052": 109402.3021267794,
+        "V0053": 109623.43258260179,
+        "V0054": 110990.29871332178,
+        "V0055": 110299.75611527891,
+        "V0056": 109876.20016782901,
+        "V0057": 110035.15168207118,
+        "V0058": 109242.00839173653,
+        "V0059": 109449.39467406312,
+        "V0060": 109676.17112429491,
+        "V0061": 110176.61743691447,
+        "V0062": 109460.22946519316,
+        "V0063": 109440.43476890311,
+        "V0064": 109141.98617201806,
+        "V0065": 110262.2059145402,
+        "V0066": 109457.88356762231,
+        "V0067": 110810.84002601226,
+        "V0068": 110719.2708005075,
+        "V0069": 109141.71469977731,
+        "V0070": 109476.009268738,
+        "V0071": 110337.95555659255,
+        "V0072": 109428.47361474088,
+        "V0073": 109264.62369745005,
+        "V0074": 110871.02848116134,
+        "V0075": 110142.08618665057,
+        "V0076": 109945.34205262359,
+        "V0077": 110569.2388485815,
+        "V0078": 110614.99399553328,
+        "V0079": 109380.81982872376,
+        "V0080": 109193.86162845764,
+        "V0081": 109862.10236481276,
+        "V0082": 109847.15724603985,
+        "V0083": 109934.04933607335,
+        "V0084": 110458.1516989197,
+        "V0085": 110346.7290945866,
+        "V0086": 110968.33042273193,
+        "V0087": 109196.83574230391,
+        "V0088": 109805.24256420454,
+        "V0089": 109678.60521078993,
+        "V0090": 110723.34507270558,
+        "V0091": 109497.31266784057,
+        "V0092": 109380.41781688163,
+        "V0093": 109897.22709566627,
+        "V0094": 109843.76327966881,
+        "V0095": 109557.09028933388
+      }
+    ],
+    "JBS_ZWSIGNAL": [
+      {
+        "ID": "ZW_S1",
+        "POINT": 1
+      },
+      {
+        "ID": "ZW_S2",
+        "POINT": 1
+      }
+    ],
+    "JBS_PWFEEDERLINE": [
+      {
+        "LINE_ID": "F101",
+        "LINE_NAME": "馈线1-1",
+        "START_ST_ID": "ST001",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F102",
+        "LINE_NAME": "馈线1-2",
+        "START_ST_ID": "ST001",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F103",
+        "LINE_NAME": "馈线1-3",
+        "START_ST_ID": "ST001",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F104",
+        "LINE_NAME": "馈线1-4",
+        "START_ST_ID": "ST001",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F201",
+        "LINE_NAME": "馈线2-1",
+        "START_ST_ID": "ST002",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F202",
+        "LINE_NAME": "馈线2-2",
+        "START_ST_ID": "ST002",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F203",
+        "LINE_NAME": "馈线2-3",
+        "START_ST_ID": "ST002",
+        "VOLTAGE_TYPE": 10
+      },
+      {
+        "LINE_ID": "F204",
+        "LINE_NAME": "馈线2-4",
+        "START_ST_ID": "ST002",
+        "VOLTAGE_TYPE": 10
+      }
+    ],
+    "JBS_PWROOM": [
+      {
+        "ROOM_ID": "RM001",
+        "ROOM_NAME": "配电站1",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101"
+      },
+      {
+        "ROOM_ID": "RM002",
+        "ROOM_NAME": "配电站2",
+        "TOP_VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201"
+      }
+    ],
+    "JBS_PWEQUIPINFO": [
+      {
+        "EQUIP_ID": "DISC001",
+        "EQUIP_NAME": "隔离开关001",
+        "EQUIP_TYPE": "DISCONNECTOR",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000001",
+        "EQUIP_NAME": "BREAKER1",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000002",
+        "EQUIP_NAME": "SWITCH2",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000003",
+        "EQUIP_NAME": "SWITCH3",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000004",
+        "EQUIP_NAME": "SWITCH4",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000005",
+        "EQUIP_NAME": "SWITCH5",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000006",
+        "EQUIP_NAME": "SWITCH6",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000007",
+        "EQUIP_NAME": "SWITCH7",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000008",
+        "EQUIP_NAME": "TRANS8",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000009",
+        "EQUIP_NAME": "BREAKER9",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000010",
+        "EQUIP_NAME": "SWITCH10",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000011",
+        "EQUIP_NAME": "SWITCH11",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000012",
+        "EQUIP_NAME": "SWITCH12",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000013",
+        "EQUIP_NAME": "SWITCH13",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000014",
+        "EQUIP_NAME": "SWITCH14",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000015",
+        "EQUIP_NAME": "SWITCH15",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000016",
+        "EQUIP_NAME": "TRANS16",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F102",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000017",
+        "EQUIP_NAME": "BREAKER17",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000018",
+        "EQUIP_NAME": "SWITCH18",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000019",
+        "EQUIP_NAME": "SWITCH19",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000020",
+        "EQUIP_NAME": "SWITCH20",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000021",
+        "EQUIP_NAME": "SWITCH21",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000022",
+        "EQUIP_NAME": "SWITCH22",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000023",
+        "EQUIP_NAME": "SWITCH23",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000024",
+        "EQUIP_NAME": "TRANS24",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F103",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000025",
+        "EQUIP_NAME": "BREAKER25",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000026",
+        "EQUIP_NAME": "SWITCH26",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000027",
+        "EQUIP_NAME": "SWITCH27",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000028",
+        "EQUIP_NAME": "SWITCH28",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000029",
+        "EQUIP_NAME": "SWITCH29",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000030",
+        "EQUIP_NAME": "SWITCH30",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000031",
+        "EQUIP_NAME": "SWITCH31",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000032",
+        "EQUIP_NAME": "TRANS32",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F104",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000033",
+        "EQUIP_NAME": "BREAKER33",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000034",
+        "EQUIP_NAME": "SWITCH34",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000035",
+        "EQUIP_NAME": "SWITCH35",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000036",
+        "EQUIP_NAME": "SWITCH36",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000037",
+        "EQUIP_NAME": "SWITCH37",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000038",
+        "EQUIP_NAME": "SWITCH38",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000039",
+        "EQUIP_NAME": "SWITCH39",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000040",
+        "EQUIP_NAME": "TRANS40",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000041",
+        "EQUIP_NAME": "BREAKER41",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000042",
+        "EQUIP_NAME": "SWITCH42",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000043",
+        "EQUIP_NAME": "SWITCH43",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000044",
+        "EQUIP_NAME": "XF44",
+        "EQUIP_TYPE": "XF",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000045",
+        "EQUIP_NAME": "SWITCH45",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000046",
+        "EQUIP_NAME": "SWITCH46",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000047",
+        "EQUIP_NAME": "SWITCH47",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000048",
+        "EQUIP_NAME": "TRANS48",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000049",
+        "EQUIP_NAME": "BREAKER49",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000050",
+        "EQUIP_NAME": "SWITCH50",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000051",
+        "EQUIP_NAME": "SWITCH51",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000052",
+        "EQUIP_NAME": "SWITCH52",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000053",
+        "EQUIP_NAME": "SWITCH53",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000054",
+        "EQUIP_NAME": "SWITCH54",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000055",
+        "EQUIP_NAME": "SWITCH55",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000056",
+        "EQUIP_NAME": "TRANS56",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TMP00000057",
+        "EQUIP_NAME": "BREAKER57",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000058",
+        "EQUIP_NAME": "SWITCH58",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000059",
+        "EQUIP_NAME": "SWITCH59",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000060",
+        "EQUIP_NAME": "SWITCH60",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000061",
+        "EQUIP_NAME": "SWITCH61",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000062",
+        "EQUIP_NAME": "SWITCH62",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000063",
+        "EQUIP_NAME": "SWITCH63",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00000064",
+        "EQUIP_NAME": "TRANS64",
+        "EQUIP_TYPE": "TRANS",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "RM002",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 0
+      },
+      {
+        "EQUIP_ID": "TIE001",
+        "EQUIP_NAME": "联络开关001",
+        "EQUIP_TYPE": "SWITCH",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "RM001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      },
+      {
+        "EQUIP_ID": "TMP00013138",
+        "EQUIP_NAME": "必杀设备TMP00013138",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F201",
+        "DSUBSTATION_ID": "ST001",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP00047197",
+        "EQUIP_NAME": "必杀设备TMP00047197",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F202",
+        "DSUBSTATION_ID": "ST002",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP00007913",
+        "EQUIP_NAME": "必杀设备TMP00007913",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F203",
+        "DSUBSTATION_ID": "ST001",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP00007907",
+        "EQUIP_NAME": "必杀设备TMP00007907",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F204",
+        "DSUBSTATION_ID": "ST002",
+        "COMPOSITESWITCH": ""
+      },
+      {
+        "EQUIP_ID": "TMP_PLANNED_TIE",
+        "EQUIP_NAME": "计划合环联络开关",
+        "EQUIP_TYPE": "BREAKER",
+        "VOLTAGE_TYPE": 10,
+        "FEEDER_ID": "F101",
+        "DSUBSTATION_ID": "ST001",
+        "COMPOSITESWITCH": "",
+        "RUN_STATUS": 1
+      }
+    ],
+    "JBS_PWTERMINAL": [
+      {
+        "ID": "PT_DISC_001",
+        "EQUIP_ID": "DISC001",
+        "CONNECTIVITYNODE_ID": "DISC_NODE_A"
+      },
+      {
+        "ID": "PT_DISC_002",
+        "EQUIP_ID": "ZWB001",
+        "CONNECTIVITYNODE_ID": "DISC_NODE_A"
+      },
+      {
+        "ID": "PT000001",
+        "EQUIP_ID": "DISC001",
+        "CONNECTIVITYNODE_ID": "N11H"
+      },
+      {
+        "ID": "PT000002",
+        "EQUIP_ID": "TMP00000001",
+        "CONNECTIVITYNODE_ID": "N1101"
+      },
+      {
+        "ID": "PT000003",
+        "EQUIP_ID": "DISC001",
+        "CONNECTIVITYNODE_ID": "N1101"
+      },
+      {
+        "ID": "PT000004",
+        "EQUIP_ID": "TMP00000002",
+        "CONNECTIVITYNODE_ID": "N1102"
+      },
+      {
+        "ID": "PT000005",
+        "EQUIP_ID": "TMP00000001",
+        "CONNECTIVITYNODE_ID": "N1102"
+      },
+      {
+        "ID": "PT000006",
+        "EQUIP_ID": "TMP00000003",
+        "CONNECTIVITYNODE_ID": "N1103"
+      },
+      {
+        "ID": "PT000007",
+        "EQUIP_ID": "TMP00000002",
+        "CONNECTIVITYNODE_ID": "N1103"
+      },
+      {
+        "ID": "PT000008",
+        "EQUIP_ID": "TMP00000004",
+        "CONNECTIVITYNODE_ID": "N1104"
+      },
+      {
+        "ID": "PT000009",
+        "EQUIP_ID": "TMP00000003",
+        "CONNECTIVITYNODE_ID": "N1104"
+      },
+      {
+        "ID": "PT000010",
+        "EQUIP_ID": "TMP00000005",
+        "CONNECTIVITYNODE_ID": "N1105"
+      },
+      {
+        "ID": "PT000011",
+        "EQUIP_ID": "TMP00000004",
+        "CONNECTIVITYNODE_ID": "N1105"
+      },
+      {
+        "ID": "PT000012",
+        "EQUIP_ID": "TMP00000006",
+        "CONNECTIVITYNODE_ID": "N1106"
+      },
+      {
+        "ID": "PT000013",
+        "EQUIP_ID": "TMP00000005",
+        "CONNECTIVITYNODE_ID": "N1106"
+      },
+      {
+        "ID": "PT000014",
+        "EQUIP_ID": "TMP00000007",
+        "CONNECTIVITYNODE_ID": "N1107"
+      },
+      {
+        "ID": "PT000015",
+        "EQUIP_ID": "TMP00000006",
+        "CONNECTIVITYNODE_ID": "N1107"
+      },
+      {
+        "ID": "PT000016",
+        "EQUIP_ID": "TMP00000008",
+        "CONNECTIVITYNODE_ID": "N1107"
+      },
+      {
+        "ID": "PT000017",
+        "EQUIP_ID": "TMP00000009",
+        "CONNECTIVITYNODE_ID": "N12H"
+      },
+      {
+        "ID": "PT000018",
+        "EQUIP_ID": "TMP00000010",
+        "CONNECTIVITYNODE_ID": "N1201"
+      },
+      {
+        "ID": "PT000019",
+        "EQUIP_ID": "TMP00000009",
+        "CONNECTIVITYNODE_ID": "N1201"
+      },
+      {
+        "ID": "PT000020",
+        "EQUIP_ID": "TMP00000011",
+        "CONNECTIVITYNODE_ID": "N1202"
+      },
+      {
+        "ID": "PT000021",
+        "EQUIP_ID": "TMP00000010",
+        "CONNECTIVITYNODE_ID": "N1202"
+      },
+      {
+        "ID": "PT000022",
+        "EQUIP_ID": "TMP00000012",
+        "CONNECTIVITYNODE_ID": "N1203"
+      },
+      {
+        "ID": "PT000023",
+        "EQUIP_ID": "TMP00000011",
+        "CONNECTIVITYNODE_ID": "N1203"
+      },
+      {
+        "ID": "PT000024",
+        "EQUIP_ID": "TMP00000013",
+        "CONNECTIVITYNODE_ID": "N1204"
+      },
+      {
+        "ID": "PT000025",
+        "EQUIP_ID": "TMP00000012",
+        "CONNECTIVITYNODE_ID": "N1204"
+      },
+      {
+        "ID": "PT000026",
+        "EQUIP_ID": "TMP00000014",
+        "CONNECTIVITYNODE_ID": "N1205"
+      },
+      {
+        "ID": "PT000027",
+        "EQUIP_ID": "TMP00000013",
+        "CONNECTIVITYNODE_ID": "N1205"
+      },
+      {
+        "ID": "PT000028",
+        "EQUIP_ID": "TMP00000015",
+        "CONNECTIVITYNODE_ID": "N1206"
+      },
+      {
+        "ID": "PT000029",
+        "EQUIP_ID": "TMP00000014",
+        "CONNECTIVITYNODE_ID": "N1206"
+      },
+      {
+        "ID": "PT000030",
+        "EQUIP_ID": "TMP00000016",
+        "CONNECTIVITYNODE_ID": "N1206"
+      },
+      {
+        "ID": "PT000031",
+        "EQUIP_ID": "TMP00000017",
+        "CONNECTIVITYNODE_ID": "N13H"
+      },
+      {
+        "ID": "PT000032",
+        "EQUIP_ID": "TMP00000018",
+        "CONNECTIVITYNODE_ID": "N1301"
+      },
+      {
+        "ID": "PT000033",
+        "EQUIP_ID": "TMP00000017",
+        "CONNECTIVITYNODE_ID": "N1301"
+      },
+      {
+        "ID": "PT000034",
+        "EQUIP_ID": "TMP00000019",
+        "CONNECTIVITYNODE_ID": "N1302"
+      },
+      {
+        "ID": "PT000035",
+        "EQUIP_ID": "TMP00000018",
+        "CONNECTIVITYNODE_ID": "N1302"
+      },
+      {
+        "ID": "PT000036",
+        "EQUIP_ID": "TMP00000020",
+        "CONNECTIVITYNODE_ID": "N1303"
+      },
+      {
+        "ID": "PT000037",
+        "EQUIP_ID": "TMP00000019",
+        "CONNECTIVITYNODE_ID": "N1303"
+      },
+      {
+        "ID": "PT000038",
+        "EQUIP_ID": "TMP00000021",
+        "CONNECTIVITYNODE_ID": "N1304"
+      },
+      {
+        "ID": "PT000039",
+        "EQUIP_ID": "TMP00000020",
+        "CONNECTIVITYNODE_ID": "N1304"
+      },
+      {
+        "ID": "PT000040",
+        "EQUIP_ID": "TMP00000022",
+        "CONNECTIVITYNODE_ID": "N1305"
+      },
+      {
+        "ID": "PT000041",
+        "EQUIP_ID": "TMP00000021",
+        "CONNECTIVITYNODE_ID": "N1305"
+      },
+      {
+        "ID": "PT000042",
+        "EQUIP_ID": "TMP00000023",
+        "CONNECTIVITYNODE_ID": "N1306"
+      },
+      {
+        "ID": "PT000043",
+        "EQUIP_ID": "TMP00000022",
+        "CONNECTIVITYNODE_ID": "N1306"
+      },
+      {
+        "ID": "PT000044",
+        "EQUIP_ID": "TMP00000024",
+        "CONNECTIVITYNODE_ID": "N1306"
+      },
+      {
+        "ID": "PT000045",
+        "EQUIP_ID": "TMP00000025",
+        "CONNECTIVITYNODE_ID": "N14H"
+      },
+      {
+        "ID": "PT000046",
+        "EQUIP_ID": "TMP00000026",
+        "CONNECTIVITYNODE_ID": "N1401"
+      },
+      {
+        "ID": "PT000047",
+        "EQUIP_ID": "TMP00000025",
+        "CONNECTIVITYNODE_ID": "N1401"
+      },
+      {
+        "ID": "PT000048",
+        "EQUIP_ID": "TMP00000027",
+        "CONNECTIVITYNODE_ID": "N1402"
+      },
+      {
+        "ID": "PT000049",
+        "EQUIP_ID": "TMP00000026",
+        "CONNECTIVITYNODE_ID": "N1402"
+      },
+      {
+        "ID": "PT000050",
+        "EQUIP_ID": "TMP00000028",
+        "CONNECTIVITYNODE_ID": "N1403"
+      },
+      {
+        "ID": "PT000051",
+        "EQUIP_ID": "TMP00000027",
+        "CONNECTIVITYNODE_ID": "N1403"
+      },
+      {
+        "ID": "PT000052",
+        "EQUIP_ID": "TMP00000029",
+        "CONNECTIVITYNODE_ID": "N1404"
+      },
+      {
+        "ID": "PT000053",
+        "EQUIP_ID": "TMP00000028",
+        "CONNECTIVITYNODE_ID": "N1404"
+      },
+      {
+        "ID": "PT000054",
+        "EQUIP_ID": "TMP00000030",
+        "CONNECTIVITYNODE_ID": "N1405"
+      },
+      {
+        "ID": "PT000055",
+        "EQUIP_ID": "TMP00000029",
+        "CONNECTIVITYNODE_ID": "N1405"
+      },
+      {
+        "ID": "PT000056",
+        "EQUIP_ID": "TMP00000031",
+        "CONNECTIVITYNODE_ID": "N1406"
+      },
+      {
+        "ID": "PT000057",
+        "EQUIP_ID": "TMP00000030",
+        "CONNECTIVITYNODE_ID": "N1406"
+      },
+      {
+        "ID": "PT000058",
+        "EQUIP_ID": "TMP00000032",
+        "CONNECTIVITYNODE_ID": "N1406"
+      },
+      {
+        "ID": "PT000059",
+        "EQUIP_ID": "TMP00000033",
+        "CONNECTIVITYNODE_ID": "N21H"
+      },
+      {
+        "ID": "PT000060",
+        "EQUIP_ID": "TMP00000034",
+        "CONNECTIVITYNODE_ID": "N2101"
+      },
+      {
+        "ID": "PT000061",
+        "EQUIP_ID": "TMP00000033",
+        "CONNECTIVITYNODE_ID": "N2101"
+      },
+      {
+        "ID": "PT000062",
+        "EQUIP_ID": "TMP00000035",
+        "CONNECTIVITYNODE_ID": "N2102"
+      },
+      {
+        "ID": "PT000063",
+        "EQUIP_ID": "TMP00000034",
+        "CONNECTIVITYNODE_ID": "N2102"
+      },
+      {
+        "ID": "PT000064",
+        "EQUIP_ID": "TMP00000036",
+        "CONNECTIVITYNODE_ID": "N2103"
+      },
+      {
+        "ID": "PT000065",
+        "EQUIP_ID": "TMP00000035",
+        "CONNECTIVITYNODE_ID": "N2103"
+      },
+      {
+        "ID": "PT000066",
+        "EQUIP_ID": "TMP00000037",
+        "CONNECTIVITYNODE_ID": "N2104"
+      },
+      {
+        "ID": "PT000067",
+        "EQUIP_ID": "TMP00000036",
+        "CONNECTIVITYNODE_ID": "N2104"
+      },
+      {
+        "ID": "PT000068",
+        "EQUIP_ID": "TMP00000038",
+        "CONNECTIVITYNODE_ID": "N2105"
+      },
+      {
+        "ID": "PT000069",
+        "EQUIP_ID": "TMP00000037",
+        "CONNECTIVITYNODE_ID": "N2105"
+      },
+      {
+        "ID": "PT000070",
+        "EQUIP_ID": "TMP00000039",
+        "CONNECTIVITYNODE_ID": "N2106"
+      },
+      {
+        "ID": "PT000071",
+        "EQUIP_ID": "TMP00000038",
+        "CONNECTIVITYNODE_ID": "N2106"
+      },
+      {
+        "ID": "PT000072",
+        "EQUIP_ID": "TMP00000040",
+        "CONNECTIVITYNODE_ID": "N2106"
+      },
+      {
+        "ID": "PT000073",
+        "EQUIP_ID": "TMP00000041",
+        "CONNECTIVITYNODE_ID": "N22H"
+      },
+      {
+        "ID": "PT000074",
+        "EQUIP_ID": "TMP00000042",
+        "CONNECTIVITYNODE_ID": "N2201"
+      },
+      {
+        "ID": "PT000075",
+        "EQUIP_ID": "TMP00000041",
+        "CONNECTIVITYNODE_ID": "N2201"
+      },
+      {
+        "ID": "PT000076",
+        "EQUIP_ID": "TMP00000043",
+        "CONNECTIVITYNODE_ID": "N2202"
+      },
+      {
+        "ID": "PT000077",
+        "EQUIP_ID": "TMP00000042",
+        "CONNECTIVITYNODE_ID": "N2202"
+      },
+      {
+        "ID": "PT000078",
+        "EQUIP_ID": "TMP00000044",
+        "CONNECTIVITYNODE_ID": "N2203"
+      },
+      {
+        "ID": "PT000079",
+        "EQUIP_ID": "TMP00000043",
+        "CONNECTIVITYNODE_ID": "N2203"
+      },
+      {
+        "ID": "PT000080",
+        "EQUIP_ID": "TMP00000045",
+        "CONNECTIVITYNODE_ID": "N2204"
+      },
+      {
+        "ID": "PT000081",
+        "EQUIP_ID": "TMP00000044",
+        "CONNECTIVITYNODE_ID": "N2204"
+      },
+      {
+        "ID": "PT000082",
+        "EQUIP_ID": "TMP00000046",
+        "CONNECTIVITYNODE_ID": "N2205"
+      },
+      {
+        "ID": "PT000083",
+        "EQUIP_ID": "TMP00000045",
+        "CONNECTIVITYNODE_ID": "N2205"
+      },
+      {
+        "ID": "PT000084",
+        "EQUIP_ID": "TMP00000047",
+        "CONNECTIVITYNODE_ID": "N2206"
+      },
+      {
+        "ID": "PT000085",
+        "EQUIP_ID": "TMP00000046",
+        "CONNECTIVITYNODE_ID": "N2206"
+      },
+      {
+        "ID": "PT000086",
+        "EQUIP_ID": "TMP00000048",
+        "CONNECTIVITYNODE_ID": "N2206"
+      },
+      {
+        "ID": "PT000087",
+        "EQUIP_ID": "TMP00000049",
+        "CONNECTIVITYNODE_ID": "N23H"
+      },
+      {
+        "ID": "PT000088",
+        "EQUIP_ID": "TMP00000050",
+        "CONNECTIVITYNODE_ID": "N2301"
+      },
+      {
+        "ID": "PT000089",
+        "EQUIP_ID": "TMP00000049",
+        "CONNECTIVITYNODE_ID": "N2301"
+      },
+      {
+        "ID": "PT000090",
+        "EQUIP_ID": "TMP00000051",
+        "CONNECTIVITYNODE_ID": "N2302"
+      },
+      {
+        "ID": "PT000091",
+        "EQUIP_ID": "TMP00000050",
+        "CONNECTIVITYNODE_ID": "N2302"
+      },
+      {
+        "ID": "PT000092",
+        "EQUIP_ID": "TMP00000052",
+        "CONNECTIVITYNODE_ID": "N2303"
+      },
+      {
+        "ID": "PT000093",
+        "EQUIP_ID": "TMP00000051",
+        "CONNECTIVITYNODE_ID": "N2303"
+      },
+      {
+        "ID": "PT000094",
+        "EQUIP_ID": "TMP00000053",
+        "CONNECTIVITYNODE_ID": "N2304"
+      },
+      {
+        "ID": "PT000095",
+        "EQUIP_ID": "TMP00000052",
+        "CONNECTIVITYNODE_ID": "N2304"
+      },
+      {
+        "ID": "PT000096",
+        "EQUIP_ID": "TMP00000054",
+        "CONNECTIVITYNODE_ID": "N2305"
+      },
+      {
+        "ID": "PT000097",
+        "EQUIP_ID": "TMP00000053",
+        "CONNECTIVITYNODE_ID": "N2305"
+      },
+      {
+        "ID": "PT000098",
+        "EQUIP_ID": "TMP00000055",
+        "CONNECTIVITYNODE_ID": "N2306"
+      },
+      {
+        "ID": "PT000099",
+        "EQUIP_ID": "TMP00000054",
+        "CONNECTIVITYNODE_ID": "N2306"
+      },
+      {
+        "ID": "PT000100",
+        "EQUIP_ID": "TMP00000056",
+        "CONNECTIVITYNODE_ID": "N2306"
+      },
+      {
+        "ID": "PT000101",
+        "EQUIP_ID": "TMP00000057",
+        "CONNECTIVITYNODE_ID": "N24H"
+      },
+      {
+        "ID": "PT000102",
+        "EQUIP_ID": "TMP00000058",
+        "CONNECTIVITYNODE_ID": "N2401"
+      },
+      {
+        "ID": "PT000103",
+        "EQUIP_ID": "TMP00000057",
+        "CONNECTIVITYNODE_ID": "N2401"
+      },
+      {
+        "ID": "PT000104",
+        "EQUIP_ID": "TMP00000059",
+        "CONNECTIVITYNODE_ID": "N2402"
+      },
+      {
+        "ID": "PT000105",
+        "EQUIP_ID": "TMP00000058",
+        "CONNECTIVITYNODE_ID": "N2402"
+      },
+      {
+        "ID": "PT000106",
+        "EQUIP_ID": "TMP00000060",
+        "CONNECTIVITYNODE_ID": "N2403"
+      },
+      {
+        "ID": "PT000107",
+        "EQUIP_ID": "TMP00000059",
+        "CONNECTIVITYNODE_ID": "N2403"
+      },
+      {
+        "ID": "PT000108",
+        "EQUIP_ID": "TMP00000061",
+        "CONNECTIVITYNODE_ID": "N2404"
+      },
+      {
+        "ID": "PT000109",
+        "EQUIP_ID": "TMP00000060",
+        "CONNECTIVITYNODE_ID": "N2404"
+      },
+      {
+        "ID": "PT000110",
+        "EQUIP_ID": "TMP00000062",
+        "CONNECTIVITYNODE_ID": "N2405"
+      },
+      {
+        "ID": "PT000111",
+        "EQUIP_ID": "TMP00000061",
+        "CONNECTIVITYNODE_ID": "N2405"
+      },
+      {
+        "ID": "PT000112",
+        "EQUIP_ID": "TMP00000063",
+        "CONNECTIVITYNODE_ID": "N2406"
+      },
+      {
+        "ID": "PT000113",
+        "EQUIP_ID": "TMP00000062",
+        "CONNECTIVITYNODE_ID": "N2406"
+      },
+      {
+        "ID": "PT000114",
+        "EQUIP_ID": "TMP00000064",
+        "CONNECTIVITYNODE_ID": "N2406"
+      },
+      {
+        "ID": "PT000115",
+        "EQUIP_ID": "TIE001",
+        "CONNECTIVITYNODE_ID": "TIENODE1"
+      },
+      {
+        "ID": "PT000116",
+        "EQUIP_ID": "TMP00000002",
+        "CONNECTIVITYNODE_ID": "TIENODE1"
+      },
+      {
+        "ID": "PT000117",
+        "EQUIP_ID": "TMP00000034",
+        "CONNECTIVITYNODE_ID": "TIENODE1"
+      },
+      {
+        "ID": "TERM_TMP00013138",
+        "EQUIP_ID": "TMP00013138",
+        "CONNECTIVITYNODE_ID": "CN_TMP00013138"
+      },
+      {
+        "ID": "TERM_TMP00047197",
+        "EQUIP_ID": "TMP00047197",
+        "CONNECTIVITYNODE_ID": "CN_TMP00047197"
+      },
+      {
+        "ID": "TERM_TMP00007913",
+        "EQUIP_ID": "TMP00007913",
+        "CONNECTIVITYNODE_ID": "CN_TMP00007913"
+      },
+      {
+        "ID": "TERM_TMP00007907",
+        "EQUIP_ID": "TMP00007907",
+        "CONNECTIVITYNODE_ID": "CN_TMP00007907"
+      },
+      {
+        "ID": "TERM_TIE_A",
+        "EQUIP_ID": "TMP_PLANNED_TIE",
+        "CONNECTIVITYNODE_ID": "CN_TIE_BRIDGE"
+      },
+      {
+        "ID": "TERM_BRIDGE_F101",
+        "EQUIP_ID": "TMP_PLANNED_TIE",
+        "CONNECTIVITYNODE_ID": "DISC_NODE_A"
+      },
+      {
+        "ID": "TERM_BRIDGE_F201",
+        "EQUIP_ID": "TMP_PLANNED_TIE",
+        "CONNECTIVITYNODE_ID": "N21H"
+      }
+    ],
+    "JBS_PWREAL": [
+      {
+        "NUM": "1",
+        "TRAN_ID": "TMP00000001",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ101",
+        "FEEDER_ID": "F101",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "2",
+        "TRAN_ID": "TMP00000009",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ102",
+        "FEEDER_ID": "F102",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "3",
+        "TRAN_ID": "TMP00000017",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ103",
+        "FEEDER_ID": "F103",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "4",
+        "TRAN_ID": "TMP00000025",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ104",
+        "FEEDER_ID": "F104",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "1",
+        "TRAN_ID": "TMP00000033",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ201",
+        "FEEDER_ID": "F201",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "2",
+        "TRAN_ID": "TMP00000041",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ202",
+        "FEEDER_ID": "F202",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "3",
+        "TRAN_ID": "TMP00000049",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ203",
+        "FEEDER_ID": "F203",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "4",
+        "TRAN_ID": "TMP00000057",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ204",
+        "FEEDER_ID": "F204",
+        "UA": "5774.0",
+        "UB": "5774.0",
+        "UC": "5774.0",
+        "IA": "100.0",
+        "IB": "100.0",
+        "IC": "100.0",
+        "AP": "1500.0",
+        "RP": "200.0"
+      },
+      {
+        "NUM": "999",
+        "TRAN_ID": "TMP00000002",
+        "DATA_DATE": "2026-07-21",
+        "POINT": "1",
+        "BDZ_ID": "BDZ-MISMATCH",
+        "FEEDER_ID": "F101",
+        "UA": "0.0",
+        "UB": "0.0",
+        "UC": "0.0",
+        "IA": "0.0",
+        "IB": "0.0",
+        "IC": "0.0",
+        "AP": "0.0",
+        "RP": "0.0"
+      }
+    ],
+    "JBS_ZD_OBJECT": [
+      {
+        "OBJ_ID": "O001",
+        "OBJ_CODE": "BREAKER",
+        "OBJ_CNNAME": "断路器",
+        "OBJ_ENNAME": "Breaker"
+      },
+      {
+        "OBJ_ID": "O002",
+        "OBJ_CODE": "SWITCH",
+        "OBJ_CNNAME": "开关",
+        "OBJ_ENNAME": "Switch"
+      },
+      {
+        "OBJ_ID": "O003",
+        "OBJ_CODE": "DISCONNECTOR",
+        "OBJ_CNNAME": "隔离开关",
+        "OBJ_ENNAME": "Disconnector"
+      },
+      {
+        "OBJ_ID": "O004",
+        "OBJ_CODE": "TRANSFORMER",
+        "OBJ_CNNAME": "变压器",
+        "OBJ_ENNAME": "Transformer"
+      },
+      {
+        "OBJ_ID": "O005",
+        "OBJ_CODE": "TRANS",
+        "OBJ_CNNAME": "用户配变",
+        "OBJ_ENNAME": "Customer Transformer"
+      },
+      {
+        "OBJ_ID": "O006",
+        "OBJ_CODE": "XF",
+        "OBJ_CNNAME": "箱变",
+        "OBJ_ENNAME": "Box Transformer"
+      },
+      {
+        "OBJ_ID": "O007",
+        "OBJ_CODE": "ROOM",
+        "OBJ_CNNAME": "配电站",
+        "OBJ_ENNAME": "Distribution Room"
+      },
+      {
+        "OBJ_ID": "O008",
+        "OBJ_CODE": "CABLE_HEAD",
+        "OBJ_CNNAME": "电缆终端头",
+        "OBJ_ENNAME": "Cable Head"
+      },
+      {
+        "OBJ_ID": "O009",
+        "OBJ_CODE": "SPARE_BAY",
+        "OBJ_CNNAME": "备用间隔",
+        "OBJ_ENNAME": "Spare Bay"
+      },
+      {
+        "OBJ_ID": "O010",
+        "OBJ_CODE": "TIE",
+        "OBJ_CNNAME": "联络开关",
+        "OBJ_ENNAME": "Tie Switch"
+      },
+      {
+        "OBJ_ID": "O011",
+        "OBJ_CODE": "BUS",
+        "OBJ_CNNAME": "母线",
+        "OBJ_ENNAME": "Bus"
+      },
+      {
+        "OBJ_ID": "O012",
+        "OBJ_CODE": "LINE",
+        "OBJ_CNNAME": "线路",
+        "OBJ_ENNAME": "Line"
+      },
+      {
+        "OBJ_ID": "O013",
+        "OBJ_CODE": "SOURCE",
+        "OBJ_CNNAME": "电源",
+        "OBJ_ENNAME": "Source"
+      }
+    ],
+    "JBS_ZD_VOLTAGETYPE": [
+      {
+        "VOLTAGE_ID": 110,
+        "VOLTAGE_NAME": "110kV"
+      },
+      {
+        "VOLTAGE_ID": 35,
+        "VOLTAGE_NAME": "35kV"
+      },
+      {
+        "VOLTAGE_ID": 10,
+        "VOLTAGE_NAME": "10kV"
+      },
+      {
+        "VOLTAGE_ID": 0.4,
+        "VOLTAGE_NAME": "0.4kV"
+      }
+    ],
+    "JBS_ZD_MEASTYPE": [
+      {
+        "CODE": 1,
+        "NAME_CHN": "电压A相"
+      },
+      {
+        "CODE": 2,
+        "NAME_CHN": "电压B相"
+      },
+      {
+        "CODE": 3,
+        "NAME_CHN": "电压C相"
+      },
+      {
+        "CODE": 4,
+        "NAME_CHN": "电流A相"
+      }
+    ]
+  },
+  "svg_devices": [
+    "DISC001",
+    "SVG_ONLY_001",
+    "SVG_ONLY_002",
+    "TIE001",
+    "TMP00000001",
+    "TMP00000002",
+    "TMP00000003",
+    "TMP00000004",
+    "TMP00000005",
+    "TMP00000006",
+    "TMP00000007",
+    "TMP00000008",
+    "TMP00000009",
+    "TMP00000010",
+    "TMP00000011",
+    "TMP00000012",
+    "TMP00000013",
+    "TMP00000014",
+    "TMP00000015",
+    "TMP00000016",
+    "TMP00000017",
+    "TMP00000018",
+    "TMP00000019",
+    "TMP00000020",
+    "TMP00000021",
+    "TMP00000022",
+    "TMP00000023",
+    "TMP00000024",
+    "TMP00000025",
+    "TMP00000026",
+    "TMP00000027",
+    "TMP00000028",
+    "TMP00000029",
+    "TMP00000030",
+    "TMP00000031",
+    "TMP00000032",
+    "TMP00000033",
+    "TMP00000034",
+    "TMP00000035",
+    "TMP00000036",
+    "TMP00000037",
+    "TMP00000038",
+    "TMP00000039",
+    "TMP00000040",
+    "TMP00000041",
+    "TMP00000042",
+    "TMP00000043",
+    "TMP00000044",
+    "TMP00000045",
+    "TMP00000046",
+    "TMP00000047",
+    "TMP00000048",
+    "TMP00000049",
+    "TMP00000050",
+    "TMP00000051",
+    "TMP00000052",
+    "TMP00000053",
+    "TMP00000054",
+    "TMP00000055",
+    "TMP00000056",
+    "TMP00000057",
+    "TMP00000058",
+    "TMP00000059",
+    "TMP00000060",
+    "TMP00000061",
+    "TMP00000062",
+    "TMP00000063",
+    "TMP00000064",
+    "TMP00007907",
+    "TMP00007913",
+    "TMP00013138",
+    "TMP00047197",
+    "TMP_PLANNED_TIE"
+  ],
+  "plan_list": [
+    "TMP_PLANNED_TIE"
+  ],
+  "svg_only_devices": [
+    "SVG_ONLY_001",
+    "SVG_ONLY_002"
+  ]
+}

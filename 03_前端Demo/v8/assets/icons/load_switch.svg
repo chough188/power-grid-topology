@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" class="ic-svg">
+  <title>Load Switch (负荷开关 Q)</title>
+  <desc>GB/T 35689 负荷开关符号, 斜线表示常开态</desc>
+  <rect class="ic-bg" width="256" height="256"/>
+  <g transform="translate(128,128)">
+  <style>
+    .ic-bg { fill: #ffffff; fill-opacity: 0.001; }
+    .ic-line { fill: none; stroke: #111827; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-fill { fill: #111827; }
+    .ic-line-thin { fill: none; stroke: #111827; stroke-width: 3; stroke-linecap: round; }
+    .ic-text { font-family: -apple-system, Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 600; fill: #111827; text-anchor: middle; }
+  </style>
+
+  <!-- 方框 + 一道横线穿过表示通态 -->
+  <line class="ic-line" x1="-100" y1="0" x2="-72" y2="0"/>
+  <line class="ic-line" x1="72" y1="0" x2="100" y2="0"/>
+  <line class="ic-line" x1="-72" y1="-26" x2="72" y2="26"/>
+  <circle class="ic-fill" cx="-72" cy="-26" r="5"/>
+  <circle class="ic-fill" cx="72" cy="26" r="5"/>
+  <text x="0" y="62" class="ic-text">Q</text>
+</g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" class="ic-svg">
+  <title>Busbar (母线 BUS)</title>
+  <desc>国网母线符号, 粗实线表示母线主干</desc>
+  <rect class="ic-bg" width="256" height="256"/>
+  <g transform="translate(128,128)">
+  <style>
+    .ic-bg { fill: #ffffff; fill-opacity: 0.001; }
+    .ic-line { fill: none; stroke: #111827; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-fill { fill: #111827; }
+    .ic-line-thin { fill: none; stroke: #111827; stroke-width: 3; stroke-linecap: round; }
+    .ic-text { font-family: -apple-system, Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 600; fill: #111827; text-anchor: middle; }
+  </style>
+
+  <!-- 国网: 粗横线 + 圆端 -->
+  <line class="ic-line" x1="-100" y1="0" x2="100" y2="0" stroke-width="12"/>
+  <circle class="ic-fill" cx="-110" cy="0" r="10"/>
+  <circle class="ic-fill" cx="110" cy="0" r="10"/>
+  <line class="ic-line" x1="-100" y1="-30" x2="-80" y2="10"/>
+  <line class="ic-line" x1="80" y1="10" x2="100" y2="-30"/>
+  <text x="0" y="60" class="ic-text">BUS</text>
+</g>
+</svg>

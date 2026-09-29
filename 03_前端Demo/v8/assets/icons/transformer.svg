@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" class="ic-svg">
+  <title>Transformer (变压器 T)</title>
+  <desc>GB/T 35689 双绕组变压器符号, 双圆相交</desc>
+  <rect class="ic-bg" width="256" height="256"/>
+  <g transform="translate(128,128)">
+  <style>
+    .ic-bg { fill: #ffffff; fill-opacity: 0.001; }
+    .ic-line { fill: none; stroke: #111827; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-fill { fill: #111827; }
+    .ic-line-thin { fill: none; stroke: #111827; stroke-width: 3; stroke-linecap: round; }
+    .ic-text { font-family: -apple-system, Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 600; fill: #111827; text-anchor: middle; }
+  </style>
+
+  <!-- 国网: 双圆相交 (自耦/双绕组简化) -->
+  <circle class="ic-line" cx="-32" cy="0" r="48"/>
+  <circle class="ic-line" cx="32" cy="0" r="48"/>
+  <line class="ic-line" x1="-100" y1="0" x2="-80" y2="0"/>
+  <line class="ic-line" x1="80" y1="0" x2="100" y2="0"/>
+  <text x="0" y="6" class="ic-text">T</text>
+  <text x="0" y="84" class="ic-text" style="font-size:18px">双绕组</text>
+</g>
+</svg>

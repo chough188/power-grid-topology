@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>异常列表 | PowerGrid AI v8</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <link rel="preload" as="script" href="../assets/echarts.min.js">
+  <style>
+    .toolbar { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4); flex-wrap: wrap; align-items: center; }
+    .toolbar > select, .toolbar > input { width: auto; min-width: 140px; }
+    table { font-size: var(--fs-sm); }
+    .empty-big { padding: 80px 20px; text-align: center; color: var(--fg-muted); }
+    .empty-big .spinner { margin: 0 auto 12px; }
+    /* 超窄屏(<640px): 折叠「详情/操作」列, 改为行内展开 (col-toggle 控制) */
+    .col-toggle { display: none; }
+    .row-detail { display: none; }
+    .row-detail.open { display: table-row; }
+    @media (max-width: 640px) {
+      .col-details, .col-actions { display: none; }
+      .col-toggle { display: table-cell; }
+      table { font-size: var(--fs-xs); }
+      .table td, .table th { padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="toolbar">
+      <select class="select" id="network-select" style="width:160px"></select>
+      <select class="select" id="filter-type" style="width:200px"></select>
+      <select class="select" id="filter-layer" style="width:120px"><option value="">所有层级</option><option value="L1">L1 拓扑</option><option value="L2">L2 测量</option><option value="L3">L3 参数</option><option value="L4">L4 潮流</option><option value="L5">L5 GNN</option></select>
+      <select class="select" id="sort-select" aria-label="排序字段" style="width:150px">
+        <option value="default">原始顺序</option>
+        <option value="confidence" selected>置信度</option>
+        <option value="layer">层级</option>
+        <option value="type">按类型</option>
+      </select>
+      <button class="btn btn-sm" id="sort-dir" type="button" aria-label="切换排序方向" title="切换排序方向（升序/降序）" style="min-width:80px">降序</button>
+      <button class="btn btn-primary" id="btn-detect"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="3" y1="12" x2="21" y2="12"/></svg> 运行检测</button>
+      <span style="flex:1"></span>
+      <span class="badge" id="badge-count">—</span>
+      <button class="btn btn-sm" id="btn-export"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 导出 CSV</button>
+    </div>
+    <div class="card" style="padding:12px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong><span class="sec-ico"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="14"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="6" y1="20" x2="6" y2="4"/></svg></span>异常类型分布</strong>
+        <span class="badge" id="chart-anomaly-meta">—</span>
+      </div>
+      <div id="chart-anomalies" style="height:240px"></div>
+    </div>
+    <div class="card" style="padding:0">
+      <div id="empty-state" class="empty">
+        <div class="spinner" style="margin:0 auto 12px;display:none" id="spin"></div>
+        <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div style="font-weight:600;margin-bottom:4px">点击"运行检测"扫描异常</div>
+        <div style="font-size:11px">28 种异常类型,5 层检测,基于 PandaPower + 物理约束 + GNN</div>
+      </div>
+      <div id="result-wrap" style="display:none">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>类型</th><th>层级</th><th>位置</th><th>置信度</th><th class="col-details">详情</th><th class="col-actions">操作</th><th class="col-toggle">展开</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/echarts.min.js"></script>
+  <script>
+    appShell.renderShell({ page: "anomalies", title: "异常列表 (28 类)", breadcrumb: "v8 / anomalies", body: document.getElementById("page-content").innerHTML });
+
+    var $ = function (s) { return document.querySelector(s); };
+    var ALL_TYPES = ["topo_interrupt","virtual_faulty","model_mismatch","ghost_topology","topo_obfuscation","telemetry_mismatch","signal_mismatch","measurement_outlier","stale_data","measurement_bias","duplicate_measurement","parameter_error","impedance_degradation","bypass_operation","load_transfer_residual","load_shift","reverse_power_flow","branch_contingency","bus_section_mismatch","voltage_collapse","voltage_regulation","dg_intermittent","communication_loss","protection_misconfig","trafo_tap_fault","grounding_fault","clock_drift","harmonic_pollution"];
+    var LAST = [];
+    var anomalyChartInst = null;
+    var SORT_ASC = false;   // false = 降序(desc), true = 升序(asc)
+    var ICON_DOWN = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><line x1='12' y1='5' x2='12' y2='19'/><polyline points='19 12 12 19 5 12'/></svg>";
+    var ICON_UP = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><line x1='12' y1='19' x2='12' y2='5'/><polyline points='5 12 12 5 19 12'/></svg>";
+    var ICON_FP = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'/><line x1='4' y1='22' x2='4' y2='15'/></svg>";
+    var ICON_FN = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='10'/><line x1='15' y1='9' x2='9' y2='15'/><line x1='9' y1='9' x2='15' y2='15'/></svg>";
+    var ICON_CHEVRON_DOWN = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><polyline points='6 9 12 15 18 9'/></svg>";
+    var ICON_CHEVRON_UP = "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><polyline points='18 15 12 9 6 15'/></svg>";
+    // 操作列 FP/FN 按钮 (主行与展开行复用)
+    function actBtns(a) {
+      var t = (a.type || "");
+      var l = (a.location || "");
+      return "<button class=\"btn btn-sm\" type=\"button\" onclick=\"reportFP('" + t + "','" + l + "')\">" + ICON_FP + " FP</button> " +
+             "<button class=\"btn btn-sm\" type=\"button\" onclick=\"reportFN('" + t + "','" + l + "')\">" + ICON_FN + " FN</button>";
+    }
+    // 超窄屏: 点击「展开」在下方 detail 行显示完整详情 + 操作
+    function toggleDetail(idx) {
+      var row = document.getElementById("detail-" + idx);
+      if (!row) return;
+      var open = row.classList.toggle("open");
+      row.setAttribute("aria-hidden", open ? "false" : "true");
+      var btn = document.querySelector("[data-toggle='" + idx + "']");
+      if (btn) {
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        btn.innerHTML = (open ? ICON_CHEVRON_UP + " 收起" : ICON_CHEVRON_DOWN + " 详情");
+      }
+    }
+    // 同步排序方向按钮的文案/禁用态 (原始顺序时无方向可言)
+    function updateSortControls() {
+      var btn = document.getElementById("sort-dir");
+      var sb = $("#sort-select").value;
+      btn.disabled = (sb === "default");
+      btn.innerHTML = (SORT_ASC ? ICON_UP + " 升序" : ICON_DOWN + " 降序");
+      btn.setAttribute("aria-pressed", SORT_ASC ? "true" : "false");
+    }
+
+    setTimeout(function () {
+      // 类型下拉
+      var ts = $("#filter-type");
+      ts.innerHTML = "<option value=\"\">所有类型 (" + ALL_TYPES.length + ")</option>" +
+        ALL_TYPES.map(function (t) { return "<option value=\"" + t + "\">" + t + "</option>"; }).join("");
+
+      // 网络下拉
+      (async function () {
+        try {
+          var r = await api.networks();
+          var sel = $("#network-select");
+          var list = (r.data && Array.isArray(r.data)) ? r.data : (r.data && r.data.networks) || [];
+          sel.innerHTML = (list.length ? list : ["case33bw", "case14", "case57"]).map(function (n) {
+            var v = typeof n === "string" ? n : (n.name || "case33bw");
+            return "<option value=\"" + v + "\"" + (v === CONFIG.DEFAULT_NETWORK ? " selected" : "") + ">" + v + "</option>";
+          }).join("");
+        } catch (e) {
+          $("#network-select").innerHTML = "<option value=\"case33bw\">case33bw</option>";
+        }
+      })();
+
+      document.getElementById("btn-detect").addEventListener("click", runDetect);
+      document.getElementById("filter-type").addEventListener("change", renderTable);
+      document.getElementById("filter-layer").addEventListener("change", renderTable);
+      document.getElementById("sort-select").addEventListener("change", function () { updateSortControls(); renderTable(); });
+      document.getElementById("sort-dir").addEventListener("click", function () { SORT_ASC = !SORT_ASC; updateSortControls(); renderTable(); });
+      updateSortControls();
+      document.getElementById("btn-export").addEventListener("click", exportCSV);
+      window.addEventListener("themechange", function () { renderAnomalyChart(); });
+
+      // 窗口/侧栏尺寸变化时响应式重绘 (ECharts 不会自动 resize)
+      appShell.addResizeHandler(function () {
+        var el = document.getElementById("chart-anomalies");
+        if (!el) return;
+        var inst = echarts.getInstanceByDom(el);
+        if (inst) inst.resize();
+      });
+    }, 50);
+
+    async function runDetect() {
+      $("#spin").style.display = "block";
+      $("#empty-state").style.display = "block";
+      $("#result-wrap").style.display = "none";
+      $("#badge-count").textContent = "检测中...";
+      var name = $("#network-select").value || CONFIG.DEFAULT_NETWORK;
+      try {
+        var r = await api.detect({ network_name: name, inject_anomalies: true, anomaly_count: 4, random_seed: 42 });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        LAST = (r.data && r.data.anomalies) || [];
+        $("#badge-count").textContent = LAST.length + " 项异常";
+        $("#empty-state").style.display = "none";
+        $("#result-wrap").style.display = "block";
+        renderTable();
+        renderAnomalyChart();
+        var am = document.getElementById("chart-anomaly-meta");
+        if (am) am.textContent = LAST.length + " 项";
+        appShell.toast("检测完成: " + LAST.length + " 项", "ok");
+      } catch (e) {
+        appShell.toast("检测失败: " + e.message, "err");
+        $("#empty-state").innerHTML = "<div style=\"color:var(--fg-err)\">检测失败: " + e.message + "</div>";
+      } finally {
+        $("#spin").style.display = "none";
+      }
+    }
+
+    function renderTable() {
+      var tf = $("#filter-type").value;
+      var lf = $("#filter-layer").value;
+      var sb = $("#sort-select").value;
+      var rows = LAST.filter(function (a) {
+        if (tf && a.type !== tf) return false;
+        if (lf && a.layer !== lf) return false;
+        return true;
+      });
+      // 展示层排序 (不影响原始 LAST 顺序); 方向由 SORT_ASC 控制
+      var cmp = function (x, y) { return SORT_ASC ? (x < y ? -1 : x > y ? 1 : 0) : (x > y ? -1 : x < y ? 1 : 0); };
+      if (sb === "confidence") rows.sort(function (a, b) { return cmp((a.confidence || 0), (b.confidence || 0)); });
+      else if (sb === "layer") rows.sort(function (a, b) { return cmp(String(a.layer || ""), String(b.layer || "")); });
+      else if (sb === "type") rows.sort(function (a, b) { return cmp(String(a.type || ""), String(b.type || "")); });
+      // default: 保持原始顺序
+      var tbody = $("#tbody");
+      if (rows.length === 0) {
+        tbody.innerHTML = "<tr><td colspan=\"8\" style=\"text-align:center;padding:30px;color:var(--fg-muted)\">无匹配项</td></tr>";
+        return;
+      }
+      tbody.innerHTML = rows.map(function (a, i) {
+        var sev = (a.confidence || 0) > 0.8 ? "badge-err" : (a.confidence || 0) > 0.6 ? "badge-warn" : "badge-info";
+        var det = (a.details || a.reason || "—");
+        var main = "<tr>" +
+          "<td>" + (i + 1) + "</td>" +
+          "<td><span class=\"badge " + sev + "\">" + (a.type || "") + "</span></td>" +
+          "<td>" + (a.layer || "—") + "</td>" +
+          "<td><code style=\"font-size:11px\">" + (a.location || "") + "</code></td>" +
+          "<td><strong>" + ((a.confidence || 0).toFixed(2)) + "</strong></td>" +
+          "<td class=\"col-details\" style=\"font-size:11px;color:var(--fg-muted);max-width:300px\">" + det + "</td>" +
+          "<td class=\"col-actions\">" + actBtns(a) + "</td>" +
+          "<td class=\"col-toggle\"><button class=\"btn btn-sm\" type=\"button\" data-toggle=\"" + i + "\" aria-expanded=\"false\" aria-label=\"展开详情\" onclick=\"toggleDetail(" + i + ")\">" + ICON_CHEVRON_DOWN + " 详情</button></td>" +
+          "</tr>";
+        var detail = "<tr class=\"row-detail\" id=\"detail-" + i + "\" aria-hidden=\"true\"><td colspan=\"8\" style=\"background:var(--bg-elev-2);padding:10px 12px\">" +
+          "<div style=\"font-size:11px;color:var(--fg-muted);margin-bottom:6px\">详情</div>" +
+          "<div style=\"margin-bottom:8px\">" + det + "</div>" +
+          "<div>" + actBtns(a) + "</div>" +
+          "</td></tr>";
+        return main + detail;
+      }).join("");
+    }
+
+    function reportFP(type, location) {
+      api.feedbackFP({ anomaly_type: type, location: location, network_name: $("#network-select").value, note: "用户标记 FP" })
+        .then(function (r) { appShell.toast(r.ok ? "已标记 FP" : "上报失败 HTTP " + r.status, r.ok ? "ok" : "err"); })
+        .catch(function (e) { appShell.toast("上报失败: " + e.message, "err"); });
+    }
+    function reportFN(type, location) {
+      api.feedbackFN({ anomaly_type: type, location: location, network_name: $("#network-select").value, note: "用户标记 FN" })
+        .then(function (r) { appShell.toast(r.ok ? "已标记 FN" : "上报失败 HTTP " + r.status, r.ok ? "ok" : "err"); })
+        .catch(function (e) { appShell.toast("上报失败: " + e.message, "err"); });
+    }
+
+    function renderAnomalyChart() {
+      var el = document.getElementById("chart-anomalies");
+      if (!el) return;
+      if (anomalyChartInst) anomalyChartInst.dispose();
+      if (!LAST.length) { el.innerHTML = '<div class="empty">运行检测后显示分布</div>'; return; }
+      var ct = appShell.chartTheme();
+      var counts = {};
+      LAST.forEach(function (a) { var k = a.type || "unknown"; counts[k] = (counts[k] || 0) + 1; });
+      var entries = Object.keys(counts).sort(function (x, y) { return counts[y] - counts[x]; });
+      var names = entries;
+      var vals = entries.map(function (k) { return counts[k]; });
+      anomalyChartInst = echarts.init(el);
+      anomalyChartInst.setOption({
+        backgroundColor: "transparent",
+        tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, backgroundColor: ct.tooltipBg, borderColor: ct.tooltipBorder, textStyle: { color: ct.tooltipText } },
+        grid: { left: 150, right: 24, top: 16, bottom: 24 },
+        xAxis: { type: "value", axisLabel: { color: ct.muted }, splitLine: { lineStyle: { color: ct.grid } } },
+        yAxis: { type: "category", data: names, axisLabel: { color: ct.muted, fontSize: 11 }, axisLine: { lineStyle: { color: ct.grid } } },
+        series: [{ type: "bar", data: vals, itemStyle: { color: ct.accent, borderRadius: [0,4,4,0] }, barMaxWidth: 18 }]
+      });
+    }
+
+    function exportCSV() {
+      if (!LAST.length) { appShell.toast("暂无数据可导出", "warn"); return; }
+      var lines = ["#,type,layer,location,confidence,details"];
+      LAST.forEach(function (a, i) {
+        var det = (a.details || a.reason || "").replace(/"/g, '""');
+        lines.push([i + 1, a.type, a.layer || "", a.location || "", (a.confidence || 0).toFixed(3), '"' + det + '"'].join(","));
+      });
+      var blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "anomalies_" + Date.now() + ".csv"; a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      appShell.toast("已导出 " + LAST.length + " 条", "ok");
+    }
+  </script>
+</body>
+</html>

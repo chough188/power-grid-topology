@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>主配网接口 | CP-202606 配电网图模校验</title>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/comp.css">
+  <script src="../assets/config.js"></script>
+  <script src="../assets/api.js"></script>
+  <script src="../assets/shell.js"></script>
+  <script src="../assets/api_competition.js"></script>
+  <script src="../assets/comp_ui.js"></script>
+    <style>.sql-cell code { display:block; white-space:pre-wrap; word-break:break-all; }</style>
+</head>
+<body>
+  <div id="page-content">
+    <div class="kpi-grid" id="kpis"></div>
+    <div id="groups"></div>
+    <div class="card page-section">
+      <div class="section-title">导出主配网接口问题（标准输出 sheet1 子集 · 一级分类=4）</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" id="btn-csv">导出 CSV</button>
+        <button class="btn btn-primary btn-sm" id="btn-xlsx">导出标准 XLSX</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    appShell.renderShell({ page: "main_net", title: "主配网接口", breadcrumb: "任务一 / 主配网接口 (4.1 · 4.2)", body: document.getElementById("page-content").innerHTML });
+    var $ = function (s) { return document.querySelector(s); };
+    var LAST = [];
+    function rowHtml(p) {
+      return "<tr><td><code>" + p.devId + "</code></td><td>" + p.devName + "</td><td>" + p.feeder + "</td><td>" + p.station + "</td><td style='max-width:240px;color:var(--fg-muted)'>" + p.desc + "</td><td style='max-width:200px'>" + p.fix + "</td><td class='sql-cell'><code>" + p.sql.replace(/</g, "&lt;") + "</code></td></tr>";
+    }
+    setTimeout(function () {
+      compApi.getProblems({ l1: "4" }).then(function (list) {
+        LAST = list;
+        var byL2 = {};
+        list.forEach(function (p) { (byL2[p.l2] = byL2[p.l2] || []).push(p); });
+        var subs = [
+          { code: "4.1", name: "主配接口漏拼接校验任务", desc: "主网出线间隔与配网进线设备未建立对接关联，跨层级拓扑缺失。" },
+          { code: "4.2", name: "主配接口错拼接校验任务", desc: "主网出线间隔错误对接到非本段母线配网进线，跨层级错拼接。" }
+        ];
+        var kpis = "";
+        subs.forEach(function (s) { kpis += compUI.kpi({ label: s.code + " " + s.name, value: (byL2[s.code] || []).length, mod: (byL2[s.code] || []).length ? "warn" : "ok", icon: "share2", sub: "项" }); });
+        $("#kpis").innerHTML = kpis;
+        $("#groups").innerHTML = subs.map(function (s) {
+          var items = byL2[s.code] || [];
+          return "<details class='fold' " + (items.length ? "open" : "") + "><summary><span class='status-dot " + (items.length ? "warn" : "ok") + "'></span> " + s.code + " " + s.name + " <span class='badge' style='margin-left:8px'>" + items.length + " 项</span></summary>" +
+            "<div class='fold-body'><p style='font-size:12px;color:var(--fg-muted);margin:0 0 10px'>" + s.desc + "</p>" +
+            (items.length ? "<div class='table-responsive'><table class='table'><thead><tr><th>问题设备id</th><th>问题设备名称</th><th>所属馈线</th><th>所属厂站</th><th>问题说明</th><th>修正方案</th><th>修正sql</th></tr></thead><tbody>" + items.map(rowHtml).join("") + "</tbody></table></div>" : "<div class='empty'>未发现该类问题</div>") +
+            "</div></details>";
+        }).join("");
+        $("#btn-csv").addEventListener("click", function () { compUI.exportCSV("主配网接口问题.csv", compApi.STANDARD_HEADERS.problems, LAST.map(function (p) { return [p.seq, compApi.l1Name(p.l1), compApi.l2Name(p.l2), p.devId, p.devName, p.feeder, p.station, p.desc, p.fix, p.sql]; })); appShell.toast("已导出 CSV", "ok"); });
+        $("#btn-xlsx").addEventListener("click", function () { compUI.exportXLSX("拓扑校验问题标准输出.xlsx", [{ name: "拓扑校验问题清单", headers: compApi.STANDARD_HEADERS.problems, rows: LAST.map(function (p) { return [p.seq, compApi.l1Name(p.l1), compApi.l2Name(p.l2), p.devId, p.devName, p.feeder, p.station, p.desc, p.fix, p.sql]; }) }]); appShell.toast("已导出标准 XLSX", "ok"); });
+      });
+    }, 50);
+  </script>
+<script src="../assets/xlsx.full.min.js"></script>
+</body>
+</html>
