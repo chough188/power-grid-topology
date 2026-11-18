@@ -10,7 +10,7 @@
 
 **https://chough188.github.io/power-grid-topology/v8/index.html?demo=1**
 
-其中 `demo=1` 为免登录演示态，去掉该参数则进入登录页。该地址由 `docs/` 目录发布，需在仓库 `Settings → Pages` 中将 Source 设为 `main` 分支的 `/docs` 目录后生效。
+其中 `demo=1`（或 `?kiosk=1`）为免登录演示态，命中后会写入 `sessionStorage`，站内跳转保持免登录；去掉该参数则进入登录页。也可在 `v8/assets/config.js` 中设置 `DEMO_SKIP_LOGIN = true` 实现永久免登录。该地址由 `docs/` 目录发布（仓库 `Settings → Pages` 已将 Source 设为 `main` 分支的 `/docs` 目录）。
 
 > `docs/` 是 `03_前端Demo/` 的镜像副本（Pages 只支持从仓库根目录或 `/docs` 发布）。前端有改动时，需同步复制一份到 `docs/`。
 
@@ -18,7 +18,7 @@
 
 ## 核心能力
 
-### 官方 12 项二级任务
+### 官方 12 项二级校验任务（1.x–4.x）
 
 | 分类 | 任务 | 说明 |
 |---|---|---|
@@ -43,6 +43,18 @@
 | 5.1 | SVG 图形标准化美化排版 |
 | 5.2 | SVG 图形交互式增删设备 |
 | 5.3 | 自动生成 SVG 接线图 |
+
+---
+
+### 前端页面清单（2 个入口页 + 23 个详情页）
+
+| 分组 | 页面 |
+|---|---|
+| 入口 | `index.html` 主界面、`login.html` 登录页 |
+| 任务一 拓扑与图模 | `topology.html` 拓扑可视化、`problem_list.html` 异常问题清单、`breakpoint.html` 断点定位、`tie_switch.html` 联络开关梳理、`loop.html` 合环识别、`graph_consistency.html` 图模一致性、`elec_logic.html` 电气逻辑、`main_net.html` 主配网接口、`corrections.html` 修正方案 |
+| 任务二 评分与 SVG | `quality.html` 质量评分对比、`svg_beautify.html` SVG 美化与出图、`svg_edit.html` 交互式增删设备、`icons.html` 电力设备图标系统 |
+| 运营与交付 | `dashboard.html` 总览仪表盘、`competition.html` 比赛验收证据、`blind_test.html` 盲测场景验证、`n1_analysis.html` N-1 安全分析、`reports.html` 报告中心、`trends.html` 历史趋势、`anomalies.html` 异常列表 |
+| 系统与现场 | `settings.html` 系统设置、`feedback.html` 反馈中心、`mobile.html` 现场作业 |
 
 ---
 
@@ -72,12 +84,16 @@ power-grid-topology/
 │   ├── data/                      # 图模快照数据（snapshot.json 等）
 │   ├── tests_official/ tests_e2e/ # 官方轨单测与端到端测试
 │   └── requirements.txt
-├── 03_前端Demo/v8/                 # 前端演示（纯静态，零构建）
-│   ├── index.html                 # 主界面
-│   ├── pages/                     # 任务详情页
-│   ├── assets/                    # 样式、脚本、图表库、图标
-│   ├── shots/                     # 界面截图
-│   └── 使用指南.md
+├── 03_前端Demo/
+│   ├── v8/                        # 前端演示（纯静态，零构建）
+│   │   ├── index.html             # 主界面
+│   │   ├── login.html             # 登录页（?demo=1 免登录）
+│   │   ├── pages/                 # 任务详情页（23 个）
+│   │   ├── assets/                # 样式、脚本、图表库、图标
+│   │   ├── shots/                 # 界面截图
+│   │   ├── 使用指南.md
+│   │   └── 安装疑难解答.md
+│   └── v8_lab/index.html          # AI 实验台占位页（不计入评分）
 ├── docs/                          # GitHub Pages 发布目录（03_前端Demo 的镜像）
 └── requirements.txt               # 全项目合并依赖
 ```

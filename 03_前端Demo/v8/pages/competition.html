@@ -53,13 +53,13 @@
         <div class="phys-row">
           <div class="phys-chip">
             <div class="phys-chip-title">KCL 电流守恒定律</div>
-            <div class="phys-chip-val" id="kcl-rate">99.2%</div>
+            <div class="phys-chip-val" id="kcl-rate">98.7%</div>
             <div class="phys-chip-note">ΣI_in = ΣI_out · 节点电流平衡验证</div>
             <div class="kcl-detail">KCL（基尔霍夫电流定律）：任一节点，流入电流总和等于流出电流总和。<br>公式：|ΣI_in - ΣI_out| ≤ tolerance（容差 0.5A）</div>
           </div>
           <div class="phys-chip">
             <div class="phys-chip-title">KVL 电压守恒定律</div>
-            <div class="phys-chip-val" id="kvl-rate">98.7%</div>
+            <div class="phys-chip-val" id="kvl-rate">99.2%</div>
             <div class="phys-chip-note">ΣU_drop = 0 · 回路电压代数和验证</div>
             <div class="kvl-detail">KVL（基尔霍夫电压定律）：任一闭合回路，沿任意方向电压升/降的代数和为零。<br>公式：ΣU = 0（容差 0.1V）</div>
           </div>
@@ -133,7 +133,7 @@
           '<div class="e-card"><div class="e-value">' + bps.length + ' / 2</div><div class="e-label">断点定位测试任务覆盖</div></div>' +
           '<div class="e-card"><div class="e-value">4</div><div class="e-label">SVG 自动出图类型</div></div>' +
           '<div class="e-card"><div class="e-value">+' + d.qualityImprove + '</div><div class="e-label">模型质量平均提升</div></div>' +
-          '<div class="e-card"><div class="e-value">99.2%</div><div class="e-label">KCL/KVL 合规率</div></div>';
+          '<div class="e-card"><div class="e-value">98.95%</div><div class="e-label">KCL/KVL 平均合规率</div></div>';
 
         var SH = compApi.STANDARD_HEADERS;
         var sheets = [
